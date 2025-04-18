@@ -72,10 +72,10 @@ export const CardName = styled.div`
 `;
 
 export const CardTitle = styled.div`
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
-    color: #1b1818dd;
-    width: 200px;
+    color: ${COLORS.black200};
+    width: 100px;
 
     @media screen and (min-width: 681px) {
         font-size: 22px;

@@ -41,15 +41,12 @@ export default function Homepage() {
           </Box>
         </HiddenOnMobile>
       </JobFiltersContainer>
-
       <HomeJobWrapper >
         <Stack position='sticky' top={0}>
           <HomeJobFilter />
         </Stack>
-
         <JobListWrapper>
           <JobsHeaderWrapper>
-
             <HiddenOnSSMobile>
               <Box sx={{
                 display: 'flex',
@@ -63,14 +60,11 @@ export default function Homepage() {
                 </Numbutton>
               </Box>
             </HiddenOnSSMobile>
-
-
             <SortWrapper>
               <MobilePM>Sort by:</MobilePM>
               <ArrowsDownUp size={20} />
               <SortSelect options={options} selectedOption={sortOption} onChange={(value) => setSortOption(value as string)} />
             </SortWrapper>
-
           </JobsHeaderWrapper>
           <JobList />
         </JobListWrapper>

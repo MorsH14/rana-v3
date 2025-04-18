@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import {
@@ -7,6 +7,7 @@ import {
   HeaderContainer,
   NavImgSettings,
   HeaderLocation,
+  StyledLink,
 } from "./styles";
 import { MapPin } from "@phosphor-icons/react/dist/ssr";
 import RoundedBtn from "../Buttons/RoundedBtn";
@@ -15,29 +16,30 @@ import { HiddenOnDesktop, HiddenOnMobile } from "@/styles/globals.styles";
 import { Box } from "@mui/material";
 import Search from "../Inputs/Search";
 import { COLORS } from "@/utils/colors.util";
-import { InputSearch } from "@/utils/constants";
-
+import { HeaderLink } from "@/utils/constants";
 
 export default function Header() {
+
   return (
     <>
       <HiddenOnMobile>
         <HeaderContainer>
           <Link href="/">
-            <Logo>
-              {/* <Parallelogram color="white" size={22} weight="fill" /> */}
-              RanaJob
-            </Logo>
+            <Logo>Rana</Logo>
           </Link>
+
           <ATags>
-            {InputSearch.map((item, index) => (
-              <Link key={index} href={item.route}>
+            {HeaderLink.map((item, index) => (
+              <StyledLink
+                key={index}
+                href={item.route}
+              >
                 {item.label}
-              </Link>
+              </StyledLink>
             ))}
           </ATags>
           <HeaderLocation>
-            <MapPin size={16} weight="thin" /> New York, NY
+          <MapPin size={16} weight="thin" /> Ilorin, Kwara State
           </HeaderLocation>
           <NavImgSettings>
             <Link href="/profile">
@@ -52,9 +54,9 @@ export default function Header() {
       </HiddenOnMobile>
 
       <HiddenOnDesktop>
-        <Box p={'10px'} bgcolor={COLORS.black100}>
+        <Box p={"10px"} bgcolor={COLORS.black100}>
           <Search
-            value=''
+            value=""
             onChange={(e) => {
               console.log(e.target.value);
             }}

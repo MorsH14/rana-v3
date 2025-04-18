@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Stack } from "@mui/material";
 import Select from "@/components/Select/Select";
 import { DesktopNavIcon, Hr, SortDesktopWrapper, SortMainWrapper } from "./home.styles";
+import { MapPin, Money } from "@phosphor-icons/react/dist/ssr";
 
 const options = [
   { value: "designer", label: "Designer" },
@@ -55,7 +56,7 @@ export default function SelectProp() {
       {/* Price Select in ₦ */}
       <SortDesktopWrapper>
         <DesktopNavIcon>
-          <MagnifyingGlass size={18} weight="bold" color="#f5f5f5eb" />
+          <Money size={18} weight="bold" color="#f5f5f5eb" />
         </DesktopNavIcon>
         <Select
           options={amount}
@@ -68,7 +69,7 @@ export default function SelectProp() {
       {/* Location Select */}
       <SortDesktopWrapper>
         <DesktopNavIcon>
-          <MagnifyingGlass size={18} weight="bold" color="#f5f5f5eb" />
+          <MapPin size={18} weight="bold" color="#f5f5f5eb" />
         </DesktopNavIcon>
         <Select
           options={location}

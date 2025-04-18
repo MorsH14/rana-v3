@@ -8,7 +8,7 @@ const jobData = [
     date: "20th May 2023",
     salary: "$120/hr",
     location: "California, CA",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Full-Time", "Remote", "UX/UI"],
   },
   {
@@ -17,7 +17,7 @@ const jobData = [
     date: "15th June 2023",
     salary: "$150/hr",
     location: "New York, NY",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Full-Time", "Hybrid", "Backend"],
   },
   {
@@ -26,7 +26,7 @@ const jobData = [
     date: "10th July 2023",
     salary: "$130/hr",
     location: "Seattle, WA",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Full-Time", "Remote", "AI/ML"],
   },
   {
@@ -35,7 +35,7 @@ const jobData = [
     date: "5th August 2023",
     salary: "$110/hr",
     location: "Austin, TX",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Contract", "On-site", "React"],
   },
   {
@@ -44,7 +44,7 @@ const jobData = [
     date: "30th April 2023",
     salary: "$140/hr",
     location: "Palo Alto, CA",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Part-Time", "Remote", "Security"],
   },
   {
@@ -53,7 +53,7 @@ const jobData = [
     date: "5th August 2023",
     salary: "$110/hr",
     location: "Austin, TX",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Contract", "On-site", "React"],
   },
   {
@@ -62,7 +62,7 @@ const jobData = [
     date: "30th April 2023",
     salary: "$140/hr",
     location: "Palo Alto, CA",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Part-Time", "Remote", "Security"],
   },
   {
@@ -71,7 +71,7 @@ const jobData = [
     date: "5th August 2023",
     salary: "$110/hr",
     location: "Austin, TX",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Contract", "On-site", "React"],
   },
   {
@@ -80,7 +80,7 @@ const jobData = [
     date: "30th April 2023",
     salary: "$140/hr",
     location: "Palo Alto, CA",
-    logo: "",
+    logo: "/assets/images/logo.jpeg",
     chips: ["Part-Time", "Remote", "Security"],
   },
 ];

@@ -2,6 +2,7 @@
 
 import { COLORS } from "@/utils/colors.util";
 import styled from "@emotion/styled";
+import Link from "next/link";
 
 export const HeaderContainer = styled.div`
   background: ${COLORS.black100};
@@ -29,14 +30,24 @@ export const Logo = styled.div`
   gap: 10px;
 `;
 
-export const ATags = styled.a`
+export const ATags = styled.div`
+  display: flex;
+  gap: 20px;
+  height: 100%;
+`;
+
+export const StyledLink = styled(Link)`
   font-size: 14px;
   font-weight: 600;
   color: ${COLORS.gray200};
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom:  2px solid ${COLORS.gray200};
+  cursor: pointer;
+  height: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  gap: 20px;
 `;
 export const HeaderLocation = styled.div`
   font-size: 13px;

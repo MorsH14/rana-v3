@@ -1,21 +1,26 @@
-import * as PhosphorIcons from '@phosphor-icons/react/dist/ssr';
+'use client';
+
+import * as PhosphorIcons from '@phosphor-icons/react';
 import { RoundedBtnWrapper } from './Button.styles';
+import { ComponentType } from 'react';
 
 interface RoundedBtnProps {
-    icon: string; 
+  icon: keyof typeof PhosphorIcons;
 }
 
 export default function RoundedBtn({ icon }: RoundedBtnProps) {
-    const IconComponent = (PhosphorIcons as any)[icon]; 
+  const IconComponent = PhosphorIcons[icon] as ComponentType<{ size?: number; weight?: string }>;
 
-    if (!IconComponent) {
-        console.warn(`Icon "${icon}" not found in Phosphor Icons`);
-        return null;
+  if (!IconComponent) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Icon "${icon}" not found in Phosphor Icons`);
     }
+    return null;
+  }
 
-    return (
-        <RoundedBtnWrapper>
-            <IconComponent size={16} weight="bold" />
-        </RoundedBtnWrapper>
-    );
+  return (
+    <RoundedBtnWrapper>
+      <IconComponent size={16} weight="bold" />
+    </RoundedBtnWrapper>
+  );
 }

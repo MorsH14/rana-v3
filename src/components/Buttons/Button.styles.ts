@@ -1,3 +1,4 @@
+import { COLORS } from "@/utils/colors.util";
 import styled from "@emotion/styled";
 
 
@@ -15,6 +16,9 @@ export const RoundedBtnWrapper = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  &:active{
+    background-color: ${COLORS.gray100};
   }
 `;
 export const Button = styled.button`

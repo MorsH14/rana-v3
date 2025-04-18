@@ -9,6 +9,7 @@ export const SortMainWrapper = styled.div`
   align-items: center;
   flex-wrap: wrap;
   overflow-x: scroll;
+  overflow-y: hidden;
   
   &::-webkit-scrollbar {
     display: none;
@@ -57,15 +58,22 @@ display: flex;
 justify-content: center;
 align-items: flex-start;
 margin: 0 40px;
+gap: 30px;
 
 @media screen and (max-width: 920px) {
   margin: 0;
+  gap: 0;
 }
 `
 
 export const JobListWrapper = styled.div`
     width: 100%;
     padding: 20px;
+    /* background-color: red; */
+
+    @media screen and (max-width: 920px) {
+    padding: 20px 0;
+}
 `
 export const HomeJobFilters = styled.div`
     /* display: flex;

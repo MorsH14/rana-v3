@@ -4,6 +4,20 @@ import styled from "@emotion/styled";
 import { COLORS } from "./colors.util";
 
 
+export const Font10016 = styled.span`
+  font-size: 16px;
+  line-height: 40px;
+`;
+export const Font50016 = styled.span`
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 40px;
+`;
+export const Font50020 = styled.span`
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 40px;
+`;
 export const MobileH3M = styled.span`
   font-weight: 700;
   font-size: 25px;
@@ -26,7 +40,6 @@ export const MobileH3SM = styled.span`
 export const MobileH4M = styled.span`
   font-size: 16px;
   line-height: 20px;
-  color: ${COLORS.gray100};
 `;
 export const MobileH4SM = styled.span`
   font-size: 13px;
@@ -54,4 +67,13 @@ export const SmallText = styled.span`
   @media screen and (max-width: 520px){
     font-size: 10px;
   }
+`;
+
+
+
+export const Font10016Gray100 = styled(Font10016)`
+  color: ${COLORS.gray100};
+`;
+export const MobileH4MGray100 = styled(MobileH4M)`
+  color: ${COLORS.gray100};
 `;

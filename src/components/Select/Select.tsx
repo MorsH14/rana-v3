@@ -1,5 +1,4 @@
-import { MenuItem, FormControl, SxProps } from "@mui/material";
-import { StyledSelect } from "./select.styles";
+import { MenuItem, FormControl, Select, SelectChangeEvent, SxProps } from "@mui/material";
 
 type SortSelectProps = {
   options: { value: string | number; label: string }[];
@@ -9,15 +8,19 @@ type SortSelectProps = {
 };
 
 const SortSelect: React.FC<SortSelectProps> = ({ options, selectedOption, onChange, sx }) => {
+  const handleChange = (event: SelectChangeEvent<string | number>) => {
+    onChange(event.target.value);
+  };
+
   return (
     <FormControl>
-      <StyledSelect value={selectedOption} onChange={(e) => onChange(e.target.value)} sx={sx}>
+      <Select value={selectedOption} onChange={handleChange} sx={sx}>
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
         ))}
-      </StyledSelect>
+      </Select>
     </FormControl>
   );
 };

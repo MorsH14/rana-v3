@@ -15,7 +15,7 @@ export const HiddenOnMobile = styled.div`
   }
 `;
 export const HiddenOnSSMobile = styled.div`
-  @media screen and (max-width: 526px) {
+  @media screen and (max-width: 568px) {
     display: none;
   }
 `;
