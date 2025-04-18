@@ -42,7 +42,6 @@ export const StyledLink = styled(Link)`
   color: ${COLORS.gray200};
   text-decoration: none;
   padding-bottom: 4px;
-  border-bottom:  2px solid ${COLORS.gray200};
   cursor: pointer;
   height: 100%;
   display: flex;
@@ -82,7 +81,6 @@ export const SortWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  /* margin: 0 10px; */
 `;
 
 

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Chip, Stack } from '@mui/material';
+import { Box, Chip, Stack } from '@mui/material';
 import {
   CardDetailsWrapper,
   JobCardWrapper,
@@ -9,15 +9,13 @@ import {
   JobChip,
   JobDetailsContainer,
   JobDetailsText,
-  CardName,
-  CardTitle,
   RadiusBtn
 } from './style';
 import Image from 'next/image';
 import CardBtn from '../Buttons/CardBtn';
 import { FlexBtw } from '@/styles/globals.styles';
 import { BookmarkSimple } from '@phosphor-icons/react/dist/ssr';
-import { MediumText, SmallText } from '@/utils/typography';
+import { Font50016, Mobile500RS16, MobileLightRS12, MobileRS500black200 } from '@/utils/typography';
 
 interface JobCardProps {
   company: string;
@@ -64,9 +62,12 @@ export default function JobCard({
             <BookmarkSimple />
           </RadiusBtn>
         </FlexBtw>
-        <CardName>{company}</CardName>
+
+        <Box m={'10px 0'}>
+        <Font50016>{company}</Font50016>
+        </Box>
         <JobWrapperContent>
-          <CardTitle>{role}</CardTitle>
+          <MobileRS500black200>{role}</MobileRS500black200>
           <JobLogoWrapper>
             <Image
               src={logo}
@@ -87,8 +88,8 @@ export default function JobCard({
       <JobDetailsContainer>
         <JobDetailsText>
           <Stack>
-            <MediumText>{salary}</MediumText>
-            <SmallText>{location}</SmallText>
+            <Mobile500RS16>{salary}</Mobile500RS16>
+            <MobileLightRS12>{location}</MobileLightRS12>
           </Stack>
           <CardBtn label="Details" />
         </JobDetailsText>

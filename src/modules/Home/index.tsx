@@ -2,7 +2,7 @@
 
 import { Box, Stack } from "@mui/material";
 import SelectProp from "./SelectProp";
-import { HomeJobWrapper, JobFiltersContainer, JobListWrapper, JobsHeaderWrapper, Numbutton } from "./home.styles";
+import { HomeJobHeaderWrapper, HomeJobWrapper, JobFiltersContainer, JobListWrapper, JobsHeaderWrapper, Numbutton } from "./home.styles";
 import { COLORS } from "@/utils/colors.util";
 import Search from "@/components/Inputs/Search";
 import { HiddenOnMobile, HiddenOnSSMobile } from "@/styles/globals.styles";
@@ -48,21 +48,16 @@ export default function Homepage() {
         <JobListWrapper>
           <JobsHeaderWrapper>
             <HiddenOnSSMobile>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '10px'
-              }}>
+              <HomeJobHeaderWrapper>
                 <MobileH3SM>Recommended Jobs</MobileH3SM>
                 <Numbutton>
                   <MobilePM>386</MobilePM>
                 </Numbutton>
-              </Box>
+              </HomeJobHeaderWrapper>
             </HiddenOnSSMobile>
             <SortWrapper>
               <MobilePM>Sort by:</MobilePM>
-              <ArrowsDownUp size={20} />
+              <ArrowsDownUp size={18} />
               <SortSelect options={options} selectedOption={sortOption} onChange={(value) => setSortOption(value as string)} />
             </SortWrapper>
           </JobsHeaderWrapper>

@@ -39,6 +39,10 @@ export const Hr = styled.div`
 width: 2px;
 height: 100%;
 background-color: ${COLORS.gray100};
+
+@media screen and (max-width: 920px) {
+    height: 70%;
+}
 `
 export const JobFiltersContainer = styled.div`
 display: grid;
@@ -47,7 +51,7 @@ padding: 20px 50px;
 background-color: ${COLORS.black100};
 
 @media screen and (max-width: 920px) {
-  padding: 20px;
+  padding: 0 20px;
   display: flex;
   justify-content: flex-start;
 }
@@ -57,29 +61,30 @@ export const HomeJobWrapper = styled.div`
 display: flex;
 justify-content: center;
 align-items: flex-start;
-margin: 0 40px;
 gap: 30px;
 
 @media screen and (max-width: 920px) {
-  margin: 0;
   gap: 0;
 }
+`
+export const HomeJobHeaderWrapper = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 10px;
+padding: 0 10px;
 `
 
 export const JobListWrapper = styled.div`
     width: 100%;
     padding: 20px;
-    /* background-color: red; */
 
     @media screen and (max-width: 920px) {
     padding: 20px 0;
 }
 `
 export const HomeJobFilters = styled.div`
-    /* display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    flex-direction: column;  */
+    margin: 50px 0 0 30px;
 `
 
 export const BoxFilter = styled.div`
@@ -87,7 +92,6 @@ export const BoxFilter = styled.div`
     height: 270px;
     background: black;
     color: white;
-    margin-top: 50px;
     border-radius: 30px;
     display: flex;
     justify-content: space-around;

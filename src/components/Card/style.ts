@@ -56,35 +56,6 @@ export const JobWrapperContent = styled.div`
     width: 100%;
 `;
 
-export const CardName = styled.div`
-    font-size: 12px;
-    font-weight: bold;
-    margin: 10px 0;
-
-    @media screen and (min-width: 681px) {
-        font-size: 14px;
-        margin-top: 15px;
-    }
-
-    @media screen and (min-width: 1139px) {
-        font-size: 16px;
-    }
-`;
-
-export const CardTitle = styled.div`
-    font-size: 13px;
-    font-weight: bold;
-    color: ${COLORS.black200};
-    width: 100px;
-
-    @media screen and (min-width: 681px) {
-        font-size: 22px;
-    }
-
-    @media screen and (min-width: 1139px) {
-        font-size: 22px;
-    }
-`;
 
 export const Price = styled.div`
     font-size: 12px;
@@ -146,7 +117,7 @@ export const ChipsWrapper = styled.div`
     justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
     margin: 15px 0;
 `;
 

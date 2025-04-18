@@ -63,22 +63,23 @@ const ProfilePage = () => {
             >
               <Image
                 src="/assets/images/logo.jpeg"
-                alt=""
+                alt="logo"
+                width={50}
+                height={50}
                 style={{
-                  width: "50px",
-                  height: "50px",
                   objectFit: "cover",
                   borderRadius: "50%",
                 }}
               />
+
             </Badge>
           </Stack>
 
-            <Font50020> Alade Olamide</Font50020>
+          <Font50020> Alade Olamide</Font50020>
 
           <Box alignItems={'center'}>
             <Font10016Gray100>
-              <WhatsappLogo size={16} /> <b/>
+              <WhatsappLogo size={16} /> <b />
               +2349038662876
             </Font10016Gray100>
           </Box>

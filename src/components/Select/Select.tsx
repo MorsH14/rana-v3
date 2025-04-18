@@ -14,7 +14,17 @@ const SortSelect: React.FC<SortSelectProps> = ({ options, selectedOption, onChan
 
   return (
     <FormControl>
-      <Select value={selectedOption} onChange={handleChange} sx={sx}>
+      <Select
+        value={selectedOption}
+        onChange={handleChange}
+        sx={{
+          border: 'none',
+          '& fieldset': {
+            border: 'none',
+          },
+          ...sx,
+        }}
+      >
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
