@@ -15,7 +15,7 @@ import Image from 'next/image';
 import CardBtn from '../Buttons/CardBtn';
 import { FlexBtw } from '@/styles/globals.styles';
 import { BookmarkSimple } from '@phosphor-icons/react/dist/ssr';
-import { Font50016, Mobile500RS16, MobileLightRS12, MobileRS500black200 } from '@/utils/typography';
+import { Font50016, FontRR500, Mobile500RS16, MobileLightRS12 } from '@/utils/typography';
 
 interface JobCardProps {
   company: string;
@@ -67,8 +67,8 @@ export default function JobCard({
         <Font50016>{company}</Font50016>
         </Box>
         <JobWrapperContent>
-         <Box width={'75%'}>
-         <MobileRS500black200>{role}</MobileRS500black200>
+         <Box width={'75%'} marginRight={'5px'}>
+         <FontRR500>{role}</FontRR500>
          </Box>
           <JobLogoWrapper>
             <Image

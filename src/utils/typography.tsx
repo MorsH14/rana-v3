@@ -120,3 +120,11 @@ export const MobilePM = styled.span`
     font-size: 12px;
   }
 `;
+
+export const FontRR500 = styled(MobileRS500black200)`
+  color: ${COLORS.black100};
+
+  @media screen and (max-width: 443px){
+    font-size: 12px;
+  }
+`;
