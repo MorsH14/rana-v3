@@ -63,7 +63,7 @@ justify-content: center;
 align-items: flex-start;
 gap: 30px;
 
-@media screen and (max-width: 920px) {
+@media screen and (max-width: 769px) {
   gap: 0;
 }
 `
@@ -79,7 +79,7 @@ export const JobListWrapper = styled.div`
     width: 100%;
     padding: 20px;
 
-    @media screen and (max-width: 920px) {
+    @media screen and (max-width: 769px) {
     padding: 20px 0;
 }
 `

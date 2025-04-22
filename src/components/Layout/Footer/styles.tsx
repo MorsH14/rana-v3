@@ -8,5 +8,8 @@ export const FooterWrapper = styled.div`
     height: 70px;
     position: fixed;
     bottom: 0;
-    z-index: 1000,
+    z-index: 1000;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 `

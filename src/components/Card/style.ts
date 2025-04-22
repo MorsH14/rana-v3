@@ -89,13 +89,14 @@ export const Location = styled.div`
 `;
 
 export const JobLogoWrapper = styled.div`
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    flex-wrap: nowrap;
 
     img {
         width: 100%;
@@ -103,9 +104,9 @@ export const JobLogoWrapper = styled.div`
         object-fit: cover;
     }
 
-    @media screen and (min-width: 737px) {
-        width: 50px; 
-        height: 50px;
+    @media screen and (max-width: 560px) {
+        width: 35px; 
+        height: 35px;
     }
 `;
 
@@ -165,3 +166,98 @@ export const RadiusBtn = styled.div`
         background-color: ${COLORS.gray300};
     }
 `;
+
+export const JobProfileContainer = styled.div`
+    margin: 50px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    width: 90%;
+    
+    @media screen and (max-width:790px){
+        width: 90%;
+    }
+`
+
+export const JobProfileHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 30px;
+`
+
+export const JobProfileContainerList = styled.div`
+    display: flex;
+    gap: 10px;
+    overflow-x: auto; /* Ensure auto-scrolling is enabled */
+    width: 100%;
+    width: 100%; /* Ensure there's enough content for scrolling */
+
+    &::-webkit-scrollbar {
+        display: none; /* Hides scrollbar for webkit-based browsers (Chrome, Safari) */
+    }
+
+    -ms-overflow-style: none;  /* Hide scrollbar for Internet Explorer and Edge */
+    scrollbar-width: none;  /* Hide scrollbar for Firefox */
+`
+
+export const JobProfileList = styled.div`
+    width: 330px;
+    height: 330px;
+    border-radius: 30px;
+    color: ${COLORS.white100};
+    padding: 20px;
+    margin: 10px 0;
+    flex-shrink: 0; /* Prevent shrinking */
+
+    @media screen and (max-width:790px){
+        width: 250px;
+    }
+`
+
+export const JobListHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+    flex-wrap: wrap;
+`
+
+export const JobLogo = styled.div`
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #615a5a45;
+`
+
+export const SkillSet = styled.div`
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    height: 50px ;
+    overflow: hidden;
+    margin-bottom: 10px;
+
+    @media screen and (max-width:790px){
+        height: 25px;
+        overflow: hidden;
+    }
+    
+`
+
+export const Skill = styled.div`
+    background: #615a5a45;
+    border-radius: 20px;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    white-space: nowrap; /* Prevent text from wrapping */
+    min-width: 60px; /* Ensure minimum width to avoid shrinking */
+`

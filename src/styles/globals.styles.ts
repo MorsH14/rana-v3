@@ -10,7 +10,7 @@ export const HiddenOnDesktop = styled.div`
   }
 `;
 export const HiddenOnMobile = styled.div`
-  @media screen and (max-width: 954px) {
+  @media screen and (max-width: 769px) {
     display: none;
   }
 `;

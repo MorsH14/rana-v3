@@ -63,11 +63,13 @@ export default function JobCard({
           </RadiusBtn>
         </FlexBtw>
 
-        <Box m={'10px 0'}>
+        <Box mt={'15px'}>
         <Font50016>{company}</Font50016>
         </Box>
         <JobWrapperContent>
-          <MobileRS500black200>{role}</MobileRS500black200>
+         <Box width={'75%'}>
+         <MobileRS500black200>{role}</MobileRS500black200>
+         </Box>
           <JobLogoWrapper>
             <Image
               src={logo}

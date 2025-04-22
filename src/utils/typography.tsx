@@ -6,16 +6,34 @@ import { COLORS } from "./colors.util";
 
 export const Font10016 = styled.span`
   font-size: 16px;
-  line-height: 40px;
 `;
 export const Font50016 = styled.span`
   font-weight: 500;
   font-size: 16px;
-  line-height: 10px;
 `;
 export const Font50020 = styled.span`
   font-weight: 500;
   font-size: 20px;
+  line-height: 40px;
+`;
+export const Font50030 = styled.span`
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 40px;
+`;
+export const Font70016 = styled.span`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 40px;
+`;
+export const Font70022 = styled.span`
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 40px;
+`;
+export const Font70032 = styled.span`
+  font-weight: 700;
+  font-size: 32px;
   line-height: 40px;
 `;
 export const MobileH3M = styled.span`
@@ -26,6 +44,7 @@ export const MobileH3M = styled.span`
   @media screen and (max-width: 1160px){
     font-size: 18px;
     line-height: 30px;
+   
   }
 `;
 export const MobileH3SM = styled.span`
@@ -57,6 +76,9 @@ export const MobileH4MGray100 = styled(MobileH4M)`
 `;
 export const MobileRS500black200 = styled.div`
     color: ${COLORS.black200};
+`;
+export const Font50016Blue100 = styled.div`
+    color: ${COLORS.blue100};
 `;
 
 

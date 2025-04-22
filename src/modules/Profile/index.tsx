@@ -1,46 +1,25 @@
 "use client";
 
-import React, { useMemo } from "react";
 import Link from "next/link";
-import { Badge, Box, Stack, Typography } from "@mui/material";
+import { Badge, Box, Stack } from "@mui/material";
 import { Check, Coins, Gear, WhatsappLogo } from '@phosphor-icons/react/dist/ssr';
-import { BookOpenText } from '@phosphor-icons/react/dist/ssr';
 import {
   ProfileHeaderContainer,
   ProfileHeader,
   ProfileHeaderTitle,
   ProfileHeaderBase,
   ProfileBotton,
-  JobProfileContainer,
-  JobProfileHeader,
-  JobProfileContainerList,
-  JobProfileList,
-  JobListHeader,
-  JobLogo,
-  SkillSet,
-  Skill,
-  ReviewsContainer,
-  ReactionsContainer,
-  ReactionContainer,
-  EmogyContainer,
-  MyEmogy,
-  ReviewsMainContainer,
-  MainReview,
-  ReviewAuthor,
-  ReactionImg,
-  TypographyComment,
   SettingsFlexContainer,
 } from "./styles";
-import { jobProfiles, reactionsData, reviewsData } from "./db";
-import ToggleSwitch from "@/components/Switch/switch";
-import { Font10016Gray100, Font50020 } from "@/utils/typography";
-import Image from "next/image";
+import { Font10016, Font10016Gray100, Font50020, Font70022 } from "@/utils/typography";
+// import Image from "next/image";
+import ProfileImageUploader from "@/components/Inputs/ProfileImageUploader";
+import { COLORS } from "@/utils/colors.util";
+import JobCardProfile from "@/components/Card/jobCardProfile";
+import Rewiews from "@/components/Reviews";
 
 const ProfilePage = () => {
-  const randomBgColorCombo = useMemo(
-    () => ["#e79c46bc", "#92e7acd8", "#ce93d3b0", "#8dd6ece1"],
-    []
-  );
+  
 
   return (
     <ProfileHeaderContainer>
@@ -55,13 +34,13 @@ const ProfilePage = () => {
                 "& .MuiBadge-badge": {
                   fontSize: "8px",
                   height: "12px",
-                  minWidth: "12px",
+                  width: "12px",
                   transform: "translate(-10%, 320%)",
                   background: "#4cabeb",
                 },
               }}
             >
-              <Image
+              {/* <Image
                 src="/assets/images/logo.jpeg"
                 alt="logo"
                 width={50}
@@ -70,8 +49,8 @@ const ProfilePage = () => {
                   objectFit: "cover",
                   borderRadius: "50%",
                 }}
-              />
-
+              /> */}
+              <ProfileImageUploader size={50} />
             </Badge>
           </Stack>
 
@@ -79,7 +58,7 @@ const ProfilePage = () => {
 
           <Box alignItems={'center'}>
             <Font10016Gray100>
-              <WhatsappLogo size={16} /> <b />
+              <WhatsappLogo size={18} color={COLORS.black200}/> <b />
               +2349038662876
             </Font10016Gray100>
           </Box>
@@ -102,119 +81,18 @@ const ProfilePage = () => {
 
         <ProfileHeaderBase>
           <Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', m: '10px 0' }}>
-            <Coins size={30} color="gold" weight="fill" />
+            <Coins size={30} color={COLORS.yellow100} weight="fill" />
           </Stack>
-          <Typography variant="h3" fontSize={22} fontWeight="bold">
+          <Font70022>
             100 COIN
-          </Typography>
-          <Typography variant="h6" fontSize={12} marginTop={1}>
-            Your coin reduces every time someone <br /> clicks to show contact details
-          </Typography>
+          </Font70022>
+          <Font10016>
+            Your coin reduces every time someone clicks to show contact details
+          </Font10016>
         </ProfileHeaderBase>
       </ProfileHeader>
-
-      {/* Job Profile Section */}
-      <JobProfileContainer>
-        <JobProfileHeader>
-          <Typography variant="h2" fontSize={30} fontWeight="bold">
-            Job Profile (2)
-          </Typography>
-          <Link href="/jobprofile">
-            <Typography variant="h2" fontSize={18} fontWeight="bold" color="#3a2df5b0">
-              + New
-            </Typography>
-          </Link>
-        </JobProfileHeader>
-
-        <JobProfileContainerList>
-          {jobProfiles.map((profile, index) => {
-            const bgColor = randomBgColorCombo[index % randomBgColorCombo.length];
-
-            return (
-              <JobProfileList key={index} style={{ backgroundColor: bgColor }}>
-                <JobListHeader>
-                  <JobLogo>
-                    <BookOpenText size={40} />
-                  </JobLogo>
-                  <ToggleSwitch />
-                </JobListHeader>
-
-                <Typography variant="h4" fontSize={18} fontWeight="bold" paddingBottom={1}>
-                  {profile.title}
-                </Typography>
-
-                <Typography variant="h6" fontSize={12} width={280} marginBottom={3} maxWidth={'90%'}>
-                  {profile.description}
-                </Typography>
-
-                <Typography variant="h2" fontSize={12} marginBottom={2}>
-                  Skill Set
-                </Typography>
-                <SkillSet>
-                  {profile.skills.map((skill, id) => (
-                    <Skill key={id}>{skill}</Skill>
-                  ))}
-                </SkillSet>
-              </JobProfileList>
-            );
-          })}
-        </JobProfileContainerList>
-      </JobProfileContainer>
-
-      {/* Reviews Section */}
-      <ReviewsContainer>
-        <Typography variant="h3" fontSize={32} fontWeight="bold">
-          Reviews
-        </Typography>
-
-        <ReactionsContainer>
-          <ReactionContainer>
-            <Typography variant="h3" fontSize={25} fontWeight="bold">
-              Reactions
-            </Typography>
-            <EmogyContainer>
-              {reactionsData.map((reaction, index) => (
-                <MyEmogy key={index}>
-                  {reaction.emoji} {reaction.count}
-                </MyEmogy>
-              ))}
-            </EmogyContainer>
-          </ReactionContainer>
-
-          <ReviewsMainContainer>
-            <Typography variant="h5" fontSize={30}>
-              Reviews ({reviewsData.length})
-            </Typography>
-            {reviewsData.map((review, index) => (
-              <MainReview key={index}>
-                <ReviewAuthor>
-                  <ReactionImg src={review.imgSrc} alt="Author" />
-                  <Typography variant="h5" fontSize={16} fontWeight="bold">
-                    {review.author}
-                  </Typography>
-                </ReviewAuthor>
-                <TypographyComment>
-                  <Typography
-                    variant="h6"
-                    fontSize={14}
-                    color="gray"
-                    marginTop={1}
-                    sx={{
-                      width: "90%",
-                      background: "whitesmoke",
-                      borderRadius: "20px",
-                      minHeight: "20px",
-                      padding: "10px",
-                    }}
-                  >
-                    {review.comment}
-                  </Typography>
-                </TypographyComment>
-              </MainReview>
-            ))}
-          </ReviewsMainContainer>
-        </ReactionsContainer>
-      </ReviewsContainer>
+      <JobCardProfile/>
+      <Rewiews/>
     </ProfileHeaderContainer>
   );
 };

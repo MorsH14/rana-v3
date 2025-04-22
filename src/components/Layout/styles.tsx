@@ -92,6 +92,13 @@ export const JobFilterMainContainer = styled.div`
   background: ${COLORS.black100};
   color: ${COLORS.white100};
 `;
+export const UploadImgWrapper = styled.input`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 0cap.5px solid ${COLORS.gray100};
+  cursor: pointer;
+`;
 
 export const PriceRangeText = styled.div`
   font-size: 16px;

@@ -90,7 +90,6 @@ export default function SelectProp() {
           onChange={(value) => setSelectedState(value as string)} // Ensure type is string
           sx={{ color: "white" }}
         />
-         <Hr/>
       </SortDesktopWrapper>
     </Stack>
     </SortMainWrapper>
