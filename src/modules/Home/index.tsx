@@ -13,6 +13,7 @@ import { SortWrapper } from "@/components/Layout/styles";
 import JobList from "@/components/Card/main";
 import { useState } from "react";
 import { MobileH3SM, MobilePM } from "@/utils/typography";
+import { jobData } from "@/db";
 
 const options = [
   { value: "recommended", label: "Recommended" },
@@ -22,8 +23,24 @@ const options = [
 ];
 
 
+
 export default function Homepage() {
   const [sortOption, setSortOption] = useState("recommended");
+
+  const [query, setQuery] = useState("");
+
+  // Filter jobs based on search query (case insensitive)
+  const filteredJobs = jobData.filter((job) =>
+  Object.values(job).some((value) => {
+    if (Array.isArray(value)) {
+      return value.some((item) =>
+        item.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    return value.toLowerCase().includes(query.toLowerCase());
+  })
+);
+
 
   return (
     <>
@@ -32,11 +49,9 @@ export default function Homepage() {
         <HiddenOnMobile>
           <Box p={'10px'} bgcolor={COLORS.black100}>
             <Search
-              value=''
-              onChange={(e) => {
-                console.log(e.target.value);
-              }}
               placeholder="Search for Jobs"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </Box>
         </HiddenOnMobile>
@@ -51,7 +66,7 @@ export default function Homepage() {
               <HomeJobHeaderWrapper>
                 <MobileH3SM>Recommended Jobs</MobileH3SM>
                 <Numbutton>
-                  <MobilePM>386</MobilePM>
+                  <MobilePM>{filteredJobs.length}</MobilePM>
                 </Numbutton>
               </HomeJobHeaderWrapper>
             </HiddenOnSSMobile>
@@ -61,7 +76,7 @@ export default function Homepage() {
               <SortSelect options={options} selectedOption={sortOption} onChange={(value) => setSortOption(value as string)} />
             </SortWrapper>
           </JobsHeaderWrapper>
-          <JobList />
+<JobList jobs={filteredJobs} query={query} />
         </JobListWrapper>
       </HomeJobWrapper>
     </>

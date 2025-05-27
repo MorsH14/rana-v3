@@ -12,8 +12,7 @@ import {
   SettingsFlexContainer,
 } from "./styles";
 import { Font10016, Font10016Gray100, Font50020, Font70022 } from "@/utils/typography";
-// import Image from "next/image";
-import ProfileImageUploader from "@/components/Inputs/ProfileImageUploader";
+import Image from "next/image";
 import { COLORS } from "@/utils/colors.util";
 import JobCardProfile from "@/components/Card/jobCardProfile";
 import Rewiews from "@/components/Reviews";
@@ -40,7 +39,7 @@ const ProfilePage = () => {
                 },
               }}
             >
-              {/* <Image
+              <Image
                 src="/assets/images/logo.jpeg"
                 alt="logo"
                 width={50}
@@ -49,8 +48,8 @@ const ProfilePage = () => {
                   objectFit: "cover",
                   borderRadius: "50%",
                 }}
-              /> */}
-              <ProfileImageUploader size={50} />
+              />
+              {/* <ProfileImageUploader size={50} /> */}
             </Badge>
           </Stack>
 

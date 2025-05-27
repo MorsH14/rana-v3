@@ -5,22 +5,37 @@ import { HiddenOnDesktop, HiddenOnMobile } from "@/styles/globals.styles";
 
 type Props = {
   value?: string;
+  placeholder?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 } & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
-export default function Search({ value, placeholder, ...props }: Props) {
+export default function Search({ value, placeholder, onChange, ...props }: Props) {
   return (
     <SearchWrapper>
       <HiddenOnDesktop>
-      <CaretLeft size={30} weight="bold" color="black" />
+        <CaretLeft size={30} weight="bold" color="black" />
       </HiddenOnDesktop>
-      <input {...props} value={value} placeholder={placeholder || "Search"} type="search" style={{ border: 'none', width: '100%', height: '100%', fontSize: '14px', padding: '0 10px',background: 'inherit'}}/>
+      <input
+        type="search"
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        {...props}
+        style={{
+          border: "none",
+          width: "100%",
+          height: "100%",
+          fontSize: "14px",
+          padding: "0 10px",
+          background: "inherit",
+        }}
+      />
       <HiddenOnDesktop>
-      <BookmarkSimple size={30} weight="bold" color="black"/>
+        <BookmarkSimple size={30} weight="bold" color="black" />
       </HiddenOnDesktop>
       <HiddenOnMobile>
-      <MagnifyingGlass  size={30} weight="bold" color="black"/>
+        <MagnifyingGlass size={30} weight="bold" color="black" />
       </HiddenOnMobile>
     </SearchWrapper>
   );
-};
-
+}

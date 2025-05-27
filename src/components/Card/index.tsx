@@ -25,6 +25,7 @@ interface JobCardProps {
   location: string;
   logo: string;
   chips: string[];
+  query?: string; // <-- Add this here
 }
 
 export default function JobCard({
@@ -34,7 +35,8 @@ export default function JobCard({
   salary,
   location,
   logo,
-  chips
+  chips,
+  query = '', // default empty string so it never breaks
 }: JobCardProps) {
   // Generate a random background color immediately during render
   const bgColor = useMemo(() => {
@@ -42,6 +44,34 @@ export default function JobCard({
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
   }, []);
+
+  function highlightMatch(text: string, query: string) {
+    if (!query) return text;
+
+    const regex = new RegExp(`(${query})`, 'ig');
+    const parts = text.split(regex);
+
+    return (
+      <>
+        {parts.map((part, index) =>
+          regex.test(part) ? (
+            <span
+              key={index}
+              style={{
+                backgroundColor: "#FFD54F",
+                padding: "0 2px",
+                borderRadius: "4px",
+              }}
+            >
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        )}
+      </>
+    );
+  }
 
   return (
     <JobCardWrapper>
@@ -64,12 +94,12 @@ export default function JobCard({
         </FlexBtw>
 
         <Box mt={'15px'}>
-        <Font50016>{company}</Font50016>
+          <Font50016>{highlightMatch(company, query)}</Font50016>
         </Box>
         <JobWrapperContent>
-         <Box width={'75%'} marginRight={'5px'}>
-         <FontRR500>{role}</FontRR500>
-         </Box>
+          <Box width={'75%'} marginRight={'5px'}>
+            <FontRR500>{highlightMatch(role, query)}</FontRR500>
+          </Box>
           <JobLogoWrapper>
             <Image
               src={logo}
@@ -82,7 +112,7 @@ export default function JobCard({
 
         <ChipsWrapper>
           {chips.map((chip, index) => (
-            <JobChip key={index}>{chip}</JobChip>
+            <JobChip key={index}>{highlightMatch(chip, query)}</JobChip>
           ))}
         </ChipsWrapper>
       </CardDetailsWrapper>
@@ -91,7 +121,7 @@ export default function JobCard({
         <JobDetailsText>
           <Stack>
             <Mobile500RS16>{salary}</Mobile500RS16>
-            <MobileLightRS12>{location}</MobileLightRS12>
+            <MobileLightRS12>{highlightMatch(location, query)}</MobileLightRS12>
           </Stack>
           <CardBtn label="Details" />
         </JobDetailsText>

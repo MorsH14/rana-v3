@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { JobListHeader, JobLogo, JobProfileContainer, JobProfileContainerList, JobProfileHeader, JobProfileList, Skill, SkillSet } from './style';
 import { Font10016, Font50016Blue100, Font70016, Font70022 } from '@/utils/typography';
 import { BookOpenText } from '@phosphor-icons/react/dist/ssr';
-import { jobProfiles } from '@/modules/Profile/db';
+import { jobProfiles } from '@/db';
 import ToggleSwitch from '../Switch/switch';
 import { Box } from '@mui/material';
 

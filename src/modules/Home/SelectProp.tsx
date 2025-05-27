@@ -5,31 +5,9 @@ import { useState } from "react";
 import { Stack } from "@mui/material";
 import Select from "@/components/Select/Select";
 import { DesktopNavIcon, Hr, SortDesktopWrapper, SortMainWrapper } from "./home.styles";
+import { options, amount, location, states } from "@/utils/constants";
 import { MapPin, Money } from "@phosphor-icons/react/dist/ssr";
 
-const options = [
-  { value: "designer", label: "Designer" },
-  { value: "graphics", label: "Graphics" },
-  { value: "website", label: "Website" },
-];
-
-const amount = [
-  { value: "price", label: "Price" }, // Ensure "Price" is a string
-  { value: 1000, label: "₦1,000" },
-  { value: 5000, label: "₦5,000" },
-  { value: 10000, label: "₦10,000" },
-];
-
-const location = [
-  { value: "lagos", label: "Lagos" },
-  { value: "abuja", label: "Abuja" },
-  { value: "port_harcourt", label: "Port Harcourt" },
-];
-const states = [
-  { value: "lagos", label: "Lagos" },
-  { value: "abuja", label: "Abuja" },
-  { value: "port_harcourt", label: "Port Harcourt" },
-];
 
 export default function SelectProp() {
   const [selectedCategory, setSelectedCategory] = useState<string>("designer");

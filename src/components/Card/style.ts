@@ -112,7 +112,7 @@ export const JobLogoWrapper = styled.div`
 
 export const ChipsWrapper = styled.div`
     width: 100%;
-    max-height: 50px;
+    max-height: 70px;
     overflow: hidden;
     display: flex;
     justify-content: flex-start;

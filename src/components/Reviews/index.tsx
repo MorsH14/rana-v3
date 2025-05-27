@@ -1,7 +1,7 @@
 import React from 'react'
 import { EmogyContainer, MainReview, MyEmogy, ReactionContainer, ReactionImg, ReactionsContainer, ReviewAuthor, ReviewsContainer, ReviewsMainContainer } from './reviews.styles'
 import { Box } from '@mui/material'
-import { reactionsData, reviewsData } from '@/modules/Profile/db'
+import { reactionsData, reviewsData } from '@/db'
 import { Font10016, Font50020, Font50030, Font70016, Font70032 } from '@/utils/typography'
 import { COLORS } from '@/utils/colors.util'
 
