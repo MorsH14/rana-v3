@@ -120,7 +120,7 @@ export default function JobCard({
       <JobDetailsContainer>
         <JobDetailsText>
           <Stack>
-            <Mobile500RS16>{salary}</Mobile500RS16>
+            <Mobile500RS16>{highlightMatch(salary, query)}</Mobile500RS16>
             <MobileLightRS12>{highlightMatch(location, query)}</MobileLightRS12>
           </Stack>
           <CardBtn label="Details" />

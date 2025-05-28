@@ -15,7 +15,7 @@ const Layout = ({ children }: ChildrenProps) => {
     children
   ) : (
     <LayoutWrapper style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header />
+      <Header/>
       <Box component="main" style={{ flexGrow: 1 }}>
         {children}
       </Box>

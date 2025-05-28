@@ -66,6 +66,13 @@ export const MobileH4SM = styled.span`
 `;
 
 
+export const MobileB1M = styled.span`
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0px;
+`;
+
 
 
 export const Font10016Gray100 = styled(Font10016)`
@@ -80,7 +87,9 @@ export const MobileRS500black200 = styled.div`
 export const Font50016Blue100 = styled.div`
     color: ${COLORS.blue100};
 `;
-
+export const MobileB1MGray700 = styled(MobileB1M)`
+  color: ${COLORS.gray100};
+`;
 
 
 export const MobileRS500 = styled.div`

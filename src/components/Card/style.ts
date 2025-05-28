@@ -261,3 +261,19 @@ export const Skill = styled.div`
     white-space: nowrap; /* Prevent text from wrapping */
     min-width: 60px; /* Ensure minimum width to avoid shrinking */
 `
+export const CreateItemWrapper = styled.div`
+  min-height: 387px;
+  width: 100%;
+  border-radius: 20px;
+  padding-top: 120px;
+  padding-right: 60px;
+  padding-bottom: 120px;
+  padding-left: 60px;
+  background-color: ${COLORS.gray200};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 22px;
+  text-align: center;
+`;

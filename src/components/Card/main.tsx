@@ -1,6 +1,8 @@
 import { jobData } from '@/db';
 import JobCard from '.';
 import { JobFilterWrapper } from './style';
+import NoListItemCard from './NoItemCard';
+import { Warehouse } from '@phosphor-icons/react/dist/ssr';
 
 interface JobListProps {
   jobs: typeof jobData;  // your job data type
@@ -15,7 +17,10 @@ export default function JobList({ jobs, query }: JobListProps) {
           <JobCard key={index} {...job} query={query} />
         ))
       ) : (
-        <p style={{ padding: "20px", color: "#666" }}>No jobs found.</p>
+        <NoListItemCard
+          Icon={Warehouse}
+          label="No job found"
+        />
       )}
     </JobFilterWrapper>
   );

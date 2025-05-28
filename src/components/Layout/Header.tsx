@@ -12,13 +12,12 @@ import {
 import { MapPin } from "@phosphor-icons/react/dist/ssr";
 import RoundedBtn from "../Buttons/RoundedBtn";
 import Badge from "../Badge/badge";
-import { HiddenOnDesktop, HiddenOnMobile } from "@/styles/globals.styles";
-import { Box } from "@mui/material";
-import Search from "../Inputs/Search";
-import { COLORS } from "@/utils/colors.util";
+import { HiddenOnMobile } from "@/styles/globals.styles";
 import { HeaderLink } from "@/utils/constants";
 
+
 export default function Header() {
+
 
   return (
     <>
@@ -39,7 +38,7 @@ export default function Header() {
             ))}
           </ATags>
           <HeaderLocation>
-          <MapPin size={16} weight="thin" /> Ilorin, Kwara State
+            <MapPin size={16} weight="thin" /> Ilorin, Kwara State
           </HeaderLocation>
           <NavImgSettings>
             <Link href="/profile">
@@ -52,18 +51,6 @@ export default function Header() {
           </NavImgSettings>
         </HeaderContainer>
       </HiddenOnMobile>
-
-      <HiddenOnDesktop>
-        <Box p={"10px"} bgcolor={COLORS.black100}>
-          <Search
-            value=""
-            onChange={(e) => {
-              console.log(e.target.value);
-            }}
-            placeholder="Search for Jobs"
-          />
-        </Box>
-      </HiddenOnDesktop>
     </>
   );
 }

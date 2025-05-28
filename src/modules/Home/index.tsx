@@ -5,7 +5,7 @@ import SelectProp from "./SelectProp";
 import { HomeJobHeaderWrapper, HomeJobWrapper, JobFiltersContainer, JobListWrapper, JobsHeaderWrapper, Numbutton } from "./home.styles";
 import { COLORS } from "@/utils/colors.util";
 import Search from "@/components/Inputs/Search";
-import { HiddenOnMobile, HiddenOnSSMobile } from "@/styles/globals.styles";
+import { HiddenOnDesktop, HiddenOnMobile, HiddenOnSSMobile } from "@/styles/globals.styles";
 import HomeJobFilter from "./JobFilter";
 import { ArrowsDownUp } from "@phosphor-icons/react/dist/ssr";
 import SortSelect from "@/components/Select/Select";
@@ -31,19 +31,29 @@ export default function Homepage() {
 
   // Filter jobs based on search query (case insensitive)
   const filteredJobs = jobData.filter((job) =>
-  Object.values(job).some((value) => {
-    if (Array.isArray(value)) {
-      return value.some((item) =>
-        item.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-    return value.toLowerCase().includes(query.toLowerCase());
-  })
-);
+    Object.values(job).some((value) => {
+      if (Array.isArray(value)) {
+        return value.some((item) =>
+          item.toLowerCase().includes(query.toLowerCase())
+        );
+      }
+      return value.toLowerCase().includes(query.toLowerCase());
+    })
+  );
 
 
   return (
     <>
+    
+        <HiddenOnDesktop>
+          <Box p={'10px'} bgcolor={COLORS.black100}>
+            <Search
+              placeholder="Search for Jobs"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </Box>
+        </HiddenOnDesktop>
       <JobFiltersContainer>
         <SelectProp />
         <HiddenOnMobile>
@@ -76,7 +86,7 @@ export default function Homepage() {
               <SortSelect options={options} selectedOption={sortOption} onChange={(value) => setSortOption(value as string)} />
             </SortWrapper>
           </JobsHeaderWrapper>
-<JobList jobs={filteredJobs} query={query} />
+          <JobList jobs={filteredJobs} query={query} />
         </JobListWrapper>
       </HomeJobWrapper>
     </>
