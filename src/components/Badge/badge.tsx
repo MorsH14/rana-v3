@@ -10,6 +10,7 @@ export default function Badge({ badgeContent = "", imageSrc }: BadgeProps) {
   return (
     <UserBadge
       color="secondary"
+      
       badgeContent={badgeContent}
       sx={{
         "& .MuiBadge-badge": {

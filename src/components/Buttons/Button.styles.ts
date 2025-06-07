@@ -1,7 +1,6 @@
 import { COLORS } from "@/utils/colors.util";
 import styled from "@emotion/styled";
 
-
 export const RoundedBtnWrapper = styled.div`
   width: 30px;
   height: 30px;
@@ -17,20 +16,32 @@ export const RoundedBtnWrapper = styled.div`
     height: 100%;
     object-fit: cover;
   }
-  &:active{
+  &:active {
     background-color: ${COLORS.gray100};
   }
 `;
 export const Button = styled.button`
-    background: white;
-    font-size: 10px;
-    font-weight: bold;
-    color: #464444;
-    border-radius: 20px;
-    border: none;
-    font-family: 'Sulphur Point';
+  background: white;
+  font-size: 10px;
+  font-weight: bold;
+  color: #464444;
+  border-radius: 20px;
+  border: none;
+  font-family: "Sulphur Point";
 
-    @media screen and (min-width: 681px) {
-        font-size: 14px;
-    }
-    `
+  @media screen and (min-width: 681px) {
+    font-size: 14px;
+  }
+`;
+export const IconButtonWrapper = styled.button`
+  width: 100%;
+  padding: 10px 0;
+  border-radius: 10px;
+  border: none;
+  background-color: ${COLORS.NeutralSolid25};
+  cursor: pointer;
+   display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+`;

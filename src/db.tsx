@@ -130,3 +130,18 @@ export const reactionsData = [
     chips: ["Part-Time", "Remote", "Security"],
   },
 ];
+
+export const savedFilters = [
+  {
+    title: 'Farming',
+    location: 'Allen avenue Ikeja, Lagos',
+    distance: 'Not available',
+    price: '₦5000 - ₦10,000',
+  },
+  {
+    title: 'Lesson teacher',
+    location: 'Allen avenue Ikeja, Lagos',
+    distance: 'Not available',
+    price: '₦5000 - ₦10,000',
+  },
+];

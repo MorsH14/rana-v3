@@ -42,7 +42,7 @@ export default function Header() {
           </HeaderLocation>
           <NavImgSettings>
             <Link href="/profile">
-              <Badge badgeContent={5} imageSrc="" />
+              <Badge badgeContent={5} imageSrc="/assets/images/logo.jpeg" />
             </Link>
             <Link href="/settings">
               <RoundedBtn icon="GearSix" />

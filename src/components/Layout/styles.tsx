@@ -11,7 +11,7 @@ export const HeaderContainer = styled.div`
   justify-content:  space-around;
   align-items: center;
   height: 80px;
-  position: sticky;
+  /* position: sticky; */
   top: 0;
   z-index: 20484;
   width: 100%;

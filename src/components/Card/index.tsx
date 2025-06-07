@@ -14,8 +14,13 @@ import {
 import Image from 'next/image';
 import CardBtn from '../Buttons/CardBtn';
 import { FlexBtw } from '@/styles/globals.styles';
-import { BookmarkSimple } from '@phosphor-icons/react/dist/ssr';
-import { Font50016, FontRR500, Mobile500RS16, MobileLightRS12 } from '@/utils/typography';
+import { BookmarkSimple } from '@phosphor-icons/react'; // ✅ Clean import
+import {
+  Font50016,
+  FontRR500,
+  Mobile500RS16,
+  MobileLightRS12
+} from '@/utils/typography';
 
 interface JobCardProps {
   company: string;
@@ -23,9 +28,9 @@ interface JobCardProps {
   date: string;
   salary: string;
   location: string;
-  logo: string;
+  logo: string; // make sure it’s a valid URL string
   chips: string[];
-  query?: string; // <-- Add this here
+  query?: string;
 }
 
 export default function JobCard({
@@ -36,19 +41,18 @@ export default function JobCard({
   location,
   logo,
   chips,
-  query = '', // default empty string so it never breaks
+  query = ''
 }: JobCardProps) {
-  // Generate a random background color immediately during render
   const bgColor = useMemo(() => {
     const colors = ['#e79c469d', '#92e7acb3', '#ce93d38d', '#8dd6ecb9', '#b597ebb8', '#c4e7469d'];
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
   }, []);
 
-  function highlightMatch(text: string, query: string) {
-    if (!query) return text;
+  function highlightMatch(text: string, keyword: string) {
+    if (!keyword) return text;
 
-    const regex = new RegExp(`(${query})`, 'ig');
+    const regex = new RegExp(`(${keyword})`, 'i');
     const parts = text.split(regex);
 
     return (
@@ -58,9 +62,9 @@ export default function JobCard({
             <span
               key={index}
               style={{
-                backgroundColor: "#FFD54F",
-                padding: "0 2px",
-                borderRadius: "4px",
+                backgroundColor: '#FFD54F',
+                padding: '0 2px',
+                borderRadius: '4px'
               }}
             >
               {part}
@@ -96,8 +100,9 @@ export default function JobCard({
         <Box mt={'15px'}>
           <Font50016>{highlightMatch(company, query)}</Font50016>
         </Box>
+
         <JobWrapperContent>
-          <Box width={'75%'} marginRight={'5px'}>
+          <Box width="75%" marginRight="5px">
             <FontRR500>{highlightMatch(role, query)}</FontRR500>
           </Box>
           <JobLogoWrapper>
@@ -106,6 +111,7 @@ export default function JobCard({
               alt={`${company} logo`}
               width={30}
               height={30}
+              style={{ objectFit: 'contain' }}
             />
           </JobLogoWrapper>
         </JobWrapperContent>
