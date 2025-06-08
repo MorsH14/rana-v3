@@ -16,25 +16,25 @@ function ProfilePage() {
     <FlexCenter>
       <ProfileWrapper>
         <FlexCenter>
-          <MainAvatar size={120} imageUrl={ProfileImage} name="Aemy Sharp"/>
-         <Box display={'flex'} mt={'12px'}>
-          <WebHeadingH4Gray900>Ayodele Oluwaseyi </WebHeadingH4Gray900>
-          <VerifiedWrapper>
-            <CheckCircle color='white' size={20}/>
+          <MainAvatar size={120} imageUrl={ProfileImage.src} name="Aemy Sharp" />
+          <Box display={'flex'} mt={'12px'}>
+            <WebHeadingH4Gray900>Ayodele Oluwaseyi </WebHeadingH4Gray900>
+            <VerifiedWrapper>
+              <CheckCircle color='white' size={20} />
             </VerifiedWrapper>
-         </Box>
-         <Box my={'6px'}>
-          <WebCaption1MSolid300>Ayodelewaseyi@gmail.com</WebCaption1MSolid300>
-         </Box>
-         <WebCaption1MSolid300>08047748383</WebCaption1MSolid300>
-         <Box mt={'12px'}>
-          <DrawerBasic label={<ATagUnderline>View details</ATagUnderline>}>
-          <ProfileEdit/>
-          </DrawerBasic>
-          
-         </Box>
-         <JobListTable />
-         <SavedFilterDropdown />
+          </Box>
+          <Box my={'6px'}>
+            <WebCaption1MSolid300>Ayodelewaseyi@gmail.com</WebCaption1MSolid300>
+          </Box>
+          <WebCaption1MSolid300>08047748383</WebCaption1MSolid300>
+          <Box mt={'12px'}>
+            <DrawerBasic label={<ATagUnderline>View details</ATagUnderline>}>
+              <ProfileEdit />
+            </DrawerBasic>
+
+          </Box>
+          <JobListTable />
+          <SavedFilterDropdown />
         </FlexCenter>
       </ProfileWrapper>
     </FlexCenter>

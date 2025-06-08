@@ -9,11 +9,10 @@ import {
 } from '@mui/material';
 import { ArrowsDownUp, PencilSimple, Trash } from '@phosphor-icons/react/dist/ssr';
 import { AccordionWrapper, DetailsWrapper, EditWrapper } from './styles';
-import { MoobileBody21SMBlue50, MoobileBody21SMRed500, MoobileBodyUnderline, TextWeb28Gray900, WebBody2B, WebBody2M, WebCC2Gray300, WebCC2Gray700 } from '@/utils/typography';
+import { MoobileBody21SMBlue50, MoobileBody21SMRed500, MoobileBodyUnderline, WebBody2B, WebBody2M, WebCC2Gray300, WebCC2Gray700 } from '@/utils/typography';
 import { COLORS } from '@/utils/colors.util';
 import IconButton from '@/components/Buttons/Button';
 import DrawerBasic from '@/components/Drawer/Drawer';
-import ProfileEdit from './ProfileEdit';
 import SavedJobEdit from './SavedJobEdit';
 
 export default function SavedFilterAccordion() {
