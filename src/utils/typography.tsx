@@ -17,7 +17,6 @@ font-weight: 400;
 font-size: 28px;
 line-height: 100%;
 letter-spacing: -2%;
-
 `;
 
 
@@ -195,6 +194,9 @@ export const WebCaption1MBlue500 = styled(WebCaption1M)`
 `;
 export const TextWeb28Gray900 = styled(TextWeb28)`
   color: ${COLORS.gray900};
+`;
+export const WebCaption1MBlueNormal = styled(WebCaption1M)`
+  color: ${COLORS.blueNormal};
 `;
 
 

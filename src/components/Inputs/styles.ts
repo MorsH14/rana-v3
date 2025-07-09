@@ -13,3 +13,6 @@ export const SearchWrapper = styled.div`
   border-radius: 5px;
   padding: 10px;
 `
+export const NameInputWrapper = styled.div`
+  gap: 10px;
+`

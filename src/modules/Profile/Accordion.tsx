@@ -79,7 +79,7 @@ export default function SavedFilterAccordion() {
           ))}
 
           <Box display="flex" justifyContent="space-between" mt={'24px'}>
-            <DrawerBasic label='Edit'>
+            <DrawerBasic headerText='Saved Filters' label='Edit'>
               <SavedJobEdit />
             </DrawerBasic>
             <MoobileBodyUnderline>

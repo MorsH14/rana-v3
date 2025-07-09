@@ -35,3 +35,10 @@ export const EditWrapper = styled.div`
   grid-template-columns: 50% 50%;
   gap: 10px;
 `;
+export const DrawerProfileWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 23px;
+  margin-bottom: 23px;
+`;

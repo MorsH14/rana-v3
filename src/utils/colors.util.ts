@@ -8,6 +8,7 @@ export const COLORS = {
   gray900: "#0D0D12",
   yellow100: "#fdd41eca",
   blue100: "#3a2df5b0",
+  blueNormal: "#476EFB",
   NeutralSolid0: "#F8F9FB",
   NeutralSolid25: "#F6F8FA",
   NeutralSolid50: "#ECEFF3",

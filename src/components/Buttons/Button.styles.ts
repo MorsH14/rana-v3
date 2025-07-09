@@ -1,3 +1,5 @@
+"use client"
+
 import { COLORS } from "@/utils/colors.util";
 import styled from "@emotion/styled";
 
@@ -44,4 +46,15 @@ export const IconButtonWrapper = styled.button`
   justify-content: center;
   align-items: center;
   gap: 4px;
+`;
+export const PillWrapper = styled.button`
+  width: 76px;
+  padding: 5px  10px;
+  border-radius: 100px;
+  border: none;
+  background-color: ${COLORS.NeutralSolid25};
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

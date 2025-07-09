@@ -28,7 +28,7 @@ function ProfilePage() {
           </Box>
           <WebCaption1MSolid300>08047748383</WebCaption1MSolid300>
           <Box mt={'12px'}>
-            <DrawerBasic label={<ATagUnderline>View details</ATagUnderline>}>
+            <DrawerBasic label={<ATagUnderline>View details</ATagUnderline>} headerText='Profile'>
               <ProfileEdit />
             </DrawerBasic>
 
