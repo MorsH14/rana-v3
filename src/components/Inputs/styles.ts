@@ -15,4 +15,5 @@ export const SearchWrapper = styled.div`
 `
 export const NameInputWrapper = styled.div`
   gap: 10px;
+  margin-bottom: 20px;
 `

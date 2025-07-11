@@ -31,7 +31,6 @@ function ProfilePage() {
             <DrawerBasic label={<ATagUnderline>View details</ATagUnderline>} headerText='Profile'>
               <ProfileEdit />
             </DrawerBasic>
-
           </Box>
           <JobListTable />
           <SavedFilterDropdown />
