@@ -24,6 +24,7 @@ interface FooterLinkProps {
 
     // FILTER DROP DOWN
   export const options = [
+    { value: "job", label: "Job" },
     { value: "designer", label: "Designer" },
     { value: "graphics", label: "Graphics" },
     { value: "website", label: "Website" },
@@ -37,13 +38,14 @@ interface FooterLinkProps {
   ];
   
   export const location = [
+    { value: "state", label: "State" },
     { value: "lagos", label: "Lagos" },
     { value: "abuja", label: "Abuja" },
     { value: "port_harcourt", label: "Port Harcourt" },
   ];
-  export const states = [
-    { value: "lagos", label: "Lagos" },
-    { value: "abuja", label: "Abuja" },
-    { value: "port_harcourt", label: "Port Harcourt" },
-  ];
+  // export const states = [
+  //   { value: "lagos", label: "Lagos" },
+  //   { value: "abuja", label: "Abuja" },
+  //   { value: "port_harcourt", label: "Port Harcourt" },
+  // ];
   

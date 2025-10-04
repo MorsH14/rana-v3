@@ -1,11 +1,22 @@
-"use client"
+"use client";
 
 import { Box, Stack } from "@mui/material";
 import SelectProp from "./SelectProp";
-import { HomeJobHeaderWrapper, HomeJobWrapper, JobFiltersContainer, JobListWrapper, JobsHeaderWrapper, Numbutton } from "./home.styles";
+import {
+  HomeJobHeaderWrapper,
+  HomeJobWrapper,
+  JobFiltersContainer,
+  JobListWrapper,
+  JobsHeaderWrapper,
+  Numbutton,
+} from "./home.styles";
 import { COLORS } from "@/utils/colors.util";
 import Search from "@/components/Inputs/Search";
-import { HiddenOnDesktop, HiddenOnMobile, HiddenOnSSMobile } from "@/styles/globals.styles";
+import {
+  HiddenOnDesktop,
+  HiddenOnMobile,
+  HiddenOnSSMobile,
+} from "@/styles/globals.styles";
 import HomeJobFilter from "./JobFilter";
 import { ArrowsDownUp } from "@phosphor-icons/react/dist/ssr";
 import SortSelect from "@/components/Select/Select";
@@ -22,42 +33,88 @@ const options = [
   { value: "highest", label: "Highest price" },
 ];
 
-
-
 export default function Homepage() {
   const [sortOption, setSortOption] = useState("recommended");
-
   const [query, setQuery] = useState("");
 
-  // Filter jobs based on search query (case insensitive)
-  const filteredJobs = jobData.filter((job) =>
-    Object.values(job).some((value) => {
-      if (Array.isArray(value)) {
-        return value.some((item) =>
-          item.toLowerCase().includes(query.toLowerCase())
-        );
-      }
-      return value.toLowerCase().includes(query.toLowerCase());
-    })
-  );
+  // dropdown states
+  const [selectedCategory, setSelectedCategory] = useState("job");
+  const [selectedPrice, setSelectedPrice] = useState<string | number>("price");
+  const [selectedLocation, setSelectedLocation] = useState("state");
 
+  // filtering
+  const filteredJobs = jobData
+    .filter((job) => {
+      // search filter
+      const matchesSearch = Object.values(job).some((value) => {
+        if (Array.isArray(value)) {
+          return value.some((item) =>
+            item.toLowerCase().includes(query.toLowerCase())
+          );
+        }
+        return value.toString().toLowerCase().includes(query.toLowerCase());
+      });
+
+      // category filter (using 'role' instead of 'category')
+      const matchesCategory =
+        selectedCategory === "job" ||
+        (job.role &&
+          job.role.toLowerCase() === selectedCategory.toLowerCase());
+
+      // price filter
+      const matchesPrice =
+        selectedPrice === "price" ||
+        (job.salary && Number(job.salary) <= Number(selectedPrice));
+
+      // location filter
+      const matchesLocation =
+        selectedLocation === "state" ||
+        (job.location &&
+          job.location.toLowerCase() === selectedLocation.toLowerCase());
+
+      return matchesSearch && matchesCategory && matchesPrice && matchesLocation;
+    })
+    // sorting
+    .sort((a, b) => {
+      if (sortOption === "newest") {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }
+      if (sortOption === "lowest") {
+        return Number(a.salary) - Number(b.salary);
+      }
+      if (sortOption === "highest") {
+        return Number(b.salary) - Number(a.salary);
+      }
+      return 0; // recommended → no special sort
+    });
 
   return (
     <>
-    
-        <HiddenOnDesktop>
-          <Box p={'10px'} bgcolor={COLORS.black100}>
-            <Search
-              placeholder="Search for Jobs"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </Box>
-        </HiddenOnDesktop>
+      {/* Mobile search */}
+      <HiddenOnDesktop>
+        <Box p={"10px"} bgcolor={COLORS.black100}>
+          <Search
+            placeholder="Search for Jobs"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </Box>
+      </HiddenOnDesktop>
+
+      {/* Filters */}
       <JobFiltersContainer>
-        <SelectProp />
+        <SelectProp
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+        />
+
+        {/* Desktop search */}
         <HiddenOnMobile>
-          <Box p={'10px'} bgcolor={COLORS.black100}>
+          <Box p={"10px"} bgcolor={COLORS.black100}>
             <Search
               placeholder="Search for Jobs"
               value={query}
@@ -66,8 +123,10 @@ export default function Homepage() {
           </Box>
         </HiddenOnMobile>
       </JobFiltersContainer>
-      <HomeJobWrapper >
-        <Stack position='sticky' top={0}>
+
+      {/* Jobs */}
+      <HomeJobWrapper>
+        <Stack position="sticky" top={0}>
           <HomeJobFilter />
         </Stack>
         <JobListWrapper>
@@ -80,15 +139,23 @@ export default function Homepage() {
                 </Numbutton>
               </HomeJobHeaderWrapper>
             </HiddenOnSSMobile>
+
+            {/* Sort dropdown */}
             <SortWrapper>
               <MobilePM>Sort by:</MobilePM>
               <ArrowsDownUp size={18} />
-              <SortSelect options={options} selectedOption={sortOption} onChange={(value) => setSortOption(value as string)} />
+              <SortSelect
+                options={options}
+                selectedOption={sortOption}
+                onChange={(value) => setSortOption(value as string)}
+              />
             </SortWrapper>
           </JobsHeaderWrapper>
+
+          {/* Job List */}
           <JobList jobs={filteredJobs} query={query} />
         </JobListWrapper>
       </HomeJobWrapper>
     </>
-  )
+  );
 }

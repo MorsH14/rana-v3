@@ -29,7 +29,6 @@ export default function HomeJobFilter() {
             <CheckBoxText label="Internship" />
             <CheckBoxText label=" Project Work" />
             <CheckBoxText label=" Volunteering" />
-            <CheckBoxText label=" Project Work" />
           </ul>
 
           <MobileH4M>Employment Type</MobileH4M>
