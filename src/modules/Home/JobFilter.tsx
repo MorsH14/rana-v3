@@ -1,15 +1,16 @@
 import React from 'react'
-import { HButton, BoxFilter, FilterContain, HomeJobFilters, HomeMainJobFilter, List } from './home.styles'
+import { HButton, BoxFilter, FilterContain, HomeJobFilters, HomeMainJobFilter } from './home.styles'
 import { CaretLeft } from '@phosphor-icons/react/dist/ssr'
 import { HiddenOnMobile } from '@/styles/globals.styles'
 import { MobileH3M, MobileH4M, MobileH4SM } from '@/utils/typography'
+import CheckBoxText from '@/components/Buttons/CheckBoxText'
 
 export default function HomeJobFilter() {
   return (
     <HiddenOnMobile>
       <HomeJobFilters>
         <BoxFilter>
-          <MobileH3M>Get Your best profession with Luckyjob</MobileH3M>
+          <MobileH3M>Get Your best profession with Ranajob</MobileH3M>
           <HButton>Learn more</HButton>
         </BoxFilter>
         <HomeMainJobFilter>
@@ -23,51 +24,21 @@ export default function HomeJobFilter() {
           <ul style={{
             marginBottom: "20px",
           }}>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM>Full time</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Part time</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Internship</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Project Work</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Volunteering</MobileH4SM>
-            </List>
+            <CheckBoxText label="Full Time" />
+            <CheckBoxText label="Part time" />
+            <CheckBoxText label="Internship" />
+            <CheckBoxText label=" Project Work" />
+            <CheckBoxText label=" Volunteering" />
+            <CheckBoxText label=" Project Work" />
           </ul>
 
           <MobileH4M>Employment Type</MobileH4M>
             <br />
           <ul>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Full day</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Flexible schedule</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Shift Work</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Distant Work</MobileH4SM>
-            </List>
-            <List>
-              <input type="checkbox" /> 
-              <MobileH4SM> Shift method</MobileH4SM>
-            </List>
+            <CheckBoxText label="Full day" />
+            <CheckBoxText label="Flexible schedule" />
+            <CheckBoxText label="Shift method" />
+            <CheckBoxText label="Distant Work" />
           </ul>
         </HomeMainJobFilter>
       </HomeJobFilters>

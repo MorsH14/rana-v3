@@ -139,15 +139,6 @@ export const HButton = styled.div`
         font-size: 12px;
     }
 `
-export const List = styled.li`
-    font-size: 14px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Sulphur Point';
-    margin-bottom: 10px;
-`
 export const FilterContain = styled.div`
     display: flex;
     justify-content: space-between;
