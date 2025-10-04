@@ -2,7 +2,7 @@ import React from 'react'
 import { HButton, BoxFilter, FilterContain, HomeJobFilters, HomeMainJobFilter } from './home.styles'
 import { CaretLeft } from '@phosphor-icons/react/dist/ssr'
 import { HiddenOnMobile } from '@/styles/globals.styles'
-import { MobileH3M, MobileH4M, MobileH4SM } from '@/utils/typography'
+import { MobileH3M, MobileH4M } from '@/utils/typography'
 import CheckBoxText from '@/components/Buttons/CheckBoxText'
 
 export default function HomeJobFilter() {
