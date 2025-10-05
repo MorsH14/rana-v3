@@ -1,4 +1,6 @@
+import { initialUserData } from "@/db";
 import { Badge as UserBadge } from "@mui/material";
+import { User } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
 
 interface BadgeProps {
@@ -23,7 +25,8 @@ export default function Badge({ badgeContent = "", imageSrc }: BadgeProps) {
         },
       }}
     >
-      <Image src={imageSrc} alt="user image" width={35} height={35} style={{ borderRadius: "50%", border: '.5px solid gray' }} />
+      {initialUserData.profileImage ? <Image src={imageSrc} alt="user image" width={35} height={35} style={{ borderRadius: "50%", border: '.5px solid gray' }} /> : 
+     <User size={35} color="gray" /> }
     </UserBadge>
   );
 }
