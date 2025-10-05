@@ -4,22 +4,36 @@ import { usePathname } from "next/navigation";
 import { noLayoutRoutes } from "@/utils/routes.util";
 import { LayoutWrapper } from "@/styles/globals.styles";
 import Header from "./Header";
-import { ChildrenProps } from "@/utils/global.types.utils";
 import Footer from "./Footer/footer";
 import { Box } from "@mui/material";
 
-const Layout = ({ children }: ChildrenProps) => {
+interface UserProfile {
+  name: string;
+  location: string;
+  profileImage: string;
+  notifications: number;
+  role?: string;
+}
+
+interface LayoutProps {
+  children: React.ReactNode;
+  user: UserProfile;
+}
+
+const Layout = ({ children, user }: LayoutProps) => {
   const pathname = usePathname();
 
   return noLayoutRoutes.includes(pathname) ? (
-    children
+    <>{children}</>
   ) : (
-    <LayoutWrapper style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header/>
+    <LayoutWrapper
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
+      <Header user={user} />
       <Box component="main" style={{ flexGrow: 1 }}>
         {children}
       </Box>
-        <Footer />
+      <Footer />
     </LayoutWrapper>
   );
 };

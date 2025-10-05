@@ -1,19 +1,97 @@
+"use client";
+
+import React, { useState } from "react";
 import ProfilePictureEdit from "./ProfilePictureEdit";
 import TextField from "@/components/Inputs/TextField";
+import { Box, Button } from "@mui/material";
+import { User } from "@phosphor-icons/react/dist/ssr";
 
+interface User {
+  name: string;
+  email: string;
+  phone: string;
+  profileImage: string;
+  verified: boolean;
+  location: string;
+  role: string;
+  notifications: number;
+}
 
-export default function ProfileEdit() {
+interface ProfileEditProps {
+  user: User;
+  setUser: (user: User) => void;
+}
+
+export default function ProfileEdit({ user, setUser }: ProfileEditProps) {
+  const [localUser, setLocalUser] = useState<User>({ ...user });
+
+  const handleChange = (field: keyof User, value: string | boolean) => {
+    setLocalUser((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = () => {
+    setUser(localUser);
+  };
+
   return (
-    <>
-    <ProfilePictureEdit/>
-    <TextField label="Name" placeholder="Type Name"/>
-    <TextField label="Number" placeholder="Type Number"/>
-    <TextField label="Email" placeholder="Type Email"/>
-    <TextField label="Address" placeholder="Type Address"/>
-    <TextField label="No of job posted" placeholder="12"/>
-    <TextField label="Gender" placeholder="eg male or female"/>
-    <TextField label="Date of Birth" placeholder="dd/mm/yy"/>
-    </>
+    <Box display="flex" flexDirection="column" gap={2}>
+      {/* Profile picture edit */}
+      {localUser.profileImage ? (
+        <ProfilePictureEdit
+          imageUrl={localUser.profileImage}
+          onChange={(url: string) => handleChange("profileImage", url)}
+        />
+      ) : (
+        <User size={120} />
+      )}
+
+      {/* Text fields */}
+      <TextField
+        label="Name"
+        placeholder="Type Name"
+        value={localUser.name}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("name", e.target.value)}
+      />
+      <TextField
+        label="Phone"
+        placeholder="Type Number"
+        value={localUser.phone}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("phone", e.target.value)}
+      />
+      <TextField
+        label="Email"
+        placeholder="Type Email"
+        value={localUser.email}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("email", e.target.value)}
+      />
+      <TextField
+        label="Location"
+        placeholder="Type Location"
+        value={localUser.location}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("location", e.target.value)}
+      />
+      <TextField
+        label="Role"
+        placeholder="Type Role"
+        value={localUser.role}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("role", e.target.value)}
+      />
+
+      {/* Verified checkbox */}
+      <Box display="flex" alignItems="center">
+        <label htmlFor="verified-checkbox" style={{ marginRight: 8 }}>Verified</label>
+        <input
+          id="verified-checkbox"
+          type="checkbox"
+          checked={localUser.verified}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("verified", e.target.checked)}
+        />
+      </Box>
+
+      {/* Save button */}
+      <Button variant="contained" color="primary" onClick={handleSave}>
+        Save Changes
+      </Button>
+    </Box>
   );
 }
- 

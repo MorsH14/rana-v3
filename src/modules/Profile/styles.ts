@@ -10,10 +10,10 @@ export const ProfileWrapper = styled.div`
   margin: 48px 0;
 `;
 export const VerifiedWrapper = styled.div`
-  width: 24px;
-  height: 24px;
+  width: 15px;
+  height: 15px;
   border-radius: 100px;
-  background-color: ${COLORS.Green100};
+  background-color: ${COLORS.Blue500};
   display: flex;
   justify-content: center;
   align-items: center;
