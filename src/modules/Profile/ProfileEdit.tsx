@@ -45,6 +45,25 @@ export default function ProfileEdit({ user, setUser }: ProfileEditProps) {
         <User size={120} />
       )}
 
+      <Button variant="outlined" component="label">
+        Upload New Picture
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                handleChange("profileImage", reader.result as string);
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+      </Button>
+
       {/* Text fields */}
       <TextField
         label="Name"

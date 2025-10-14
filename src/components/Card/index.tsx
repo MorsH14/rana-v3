@@ -93,7 +93,7 @@ export default function JobCard({
             />
           </Stack>
           <RadiusBtn>
-            <BookmarkSimple />
+            <BookmarkSimple onClick={() => console.log('Bookmark clicked')} />
           </RadiusBtn>
         </FlexBtw>
 

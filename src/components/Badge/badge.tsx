@@ -1,18 +1,17 @@
-import { initialUserData } from "@/db";
+"use client";
+
 import { Badge as UserBadge } from "@mui/material";
-import { User } from "@phosphor-icons/react/dist/ssr";
-import Image from "next/image";
+import React from "react";
 
 interface BadgeProps {
-  badgeContent?: number | string; // Badge can accept a number or string
-  imageSrc: string; // Pass image source as a prop
+  badgeContent?: number | string; // Badge number or text
+  children: React.ReactNode; // ✅ Icon element (e.g. <RoundedBtn icon="Bell" />)
 }
 
-export default function Badge({ badgeContent = "", imageSrc }: BadgeProps) {
+export default function Badge({ badgeContent = "", children }: BadgeProps) {
   return (
     <UserBadge
       color="secondary"
-      
       badgeContent={badgeContent}
       sx={{
         "& .MuiBadge-badge": {
@@ -20,13 +19,12 @@ export default function Badge({ badgeContent = "", imageSrc }: BadgeProps) {
           height: "12px",
           minWidth: "12px",
           padding: "4px",
-          transform: "translate(20%, -25%)",
+          transform: "translate(25%, -25%)",
           background: "#4cabeb",
         },
       }}
     >
-      {initialUserData.profileImage ? <Image src={imageSrc} alt="user image" width={35} height={35} style={{ borderRadius: "50%", border: '.5px solid gray' }} /> : 
-     <User size={35} color="gray" /> }
+      {children}
     </UserBadge>
   );
 }
