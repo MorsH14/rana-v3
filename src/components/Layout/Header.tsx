@@ -54,8 +54,16 @@ export default function Header({ user }: HeaderProps) {
         <NavImgSettings>
           {/* User Avatar Badge */}
           <Link href="/profile">
-            {user.profileImage ? (<img src={user.profileImage} alt="User Avatar" />)
-            :<User size={35} color="gray" />}
+            {user.profileImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.profileImage}
+                alt="User Avatar"
+                style={{ width: "35px", height: "35px", borderRadius: "50%", objectFit: "cover" }}
+              />
+            ) : (
+              <User size={35} color="gray" />
+            )}
           </Link>
 
           {/* Settings Button */}

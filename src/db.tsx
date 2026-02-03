@@ -37,12 +37,12 @@ export const reviewsData = [
   },
   {
     author: 'John Doe',
-    comment: 'A very professional team. I am happy with the service. lorem10 am happy with the service. lorem10am happy with the service. lorem10am happy with the service. lorem10am happy with the service. lorem10am happy with the service. lorem10am happy with the service. lorem10am happy with the service. lorem10am happy with the service. lorem10',
+    comment: 'A very professional team. I found my dream job within a week of using Rana. Highly recommended!',
     imgSrc: './assets/li.png'
   },
   {
     author: 'Jane Smith',
-    comment: 'The experience was excellent. Will use their services again.',
+    comment: 'The experience was excellent. The platform is easy to use and the job listings are very relevant.',
     imgSrc: './assets/xx.png'
   }
 ];
@@ -51,7 +51,7 @@ export const jobData = [
   {
     company: "Amazon",
     role: "Senior UX/UI Designer",
-    date: "20th May 2023",
+    date: "20th May 2024",
     salary: "$120/hr",
     location: "California, CA",
     logo: "/assets/images/logo.jpeg",
@@ -60,7 +60,7 @@ export const jobData = [
   {
     company: "Google",
     role: "Software Engineer",
-    date: "15th June 2023",
+    date: "15th June 2024",
     salary: "$150/hr",
     location: "New York, NY",
     logo: "/assets/images/logo.jpeg",
@@ -69,7 +69,7 @@ export const jobData = [
   {
     company: "Microsoft",
     role: "Data Scientist",
-    date: "10th July 2023",
+    date: "10th July 2024",
     salary: "$130/hr",
     location: "Seattle, WA",
     logo: "/assets/images/logo.jpeg",
@@ -78,7 +78,7 @@ export const jobData = [
   {
     company: "Meta",
     role: "Front-End Developer",
-    date: "5th August 2023",
+    date: "5th August 2024",
     salary: "$110/hr",
     location: "Austin, TX",
     logo: "/assets/images/logo.jpeg",
@@ -87,47 +87,47 @@ export const jobData = [
   {
     company: "Tesla",
     role: "Cybersecurity Analyst",
-    date: "30th April 2023",
+    date: "30th April 2024",
     salary: "$140/hr",
     location: "Palo Alto, CA",
     logo: "/assets/images/logo.jpeg",
     chips: ["Part-Time", "Remote", "Security"],
   },
   {
-    company: "Meta",
-    role: "Front-End Developer",
-    date: "5th August 2023",
-    salary: "$110/hr",
-    location: "Austin, TX",
+    company: "Netflix",
+    role: "DevOps Engineer",
+    date: "12th August 2024",
+    salary: "$145/hr",
+    location: "Los Gatos, CA",
     logo: "/assets/images/logo.jpeg",
-    chips: ["Contract", "On-site", "React"],
+    chips: ["Full-Time", "Remote", "DevOps"],
   },
   {
-    company: "Tesla",
-    role: "Cybersecurity Analyst",
-    date: "30th April 2023",
-    salary: "$140/hr",
-    location: "Palo Alto, CA",
+    company: "Apple",
+    role: "iOS Developer",
+    date: "22nd August 2024",
+    salary: "$135/hr",
+    location: "Cupertino, CA",
     logo: "/assets/images/logo.jpeg",
-    chips: ["Part-Time", "Remote", "Security"],
+    chips: ["Contract", "On-site", "Swift"],
   },
   {
-    company: "Meta",
-    role: "Front-End Developer",
-    date: "5th August 2023",
-    salary: "$110/hr",
-    location: "Austin, TX",
+    company: "Spotify",
+    role: "Product Manager",
+    date: "5th September 2024",
+    salary: "$125/hr",
+    location: "New York, NY",
     logo: "/assets/images/logo.jpeg",
-    chips: ["Contract", "On-site", "React"],
+    chips: ["Full-Time", "Hybrid", "Product"],
   },
   {
-    company: "Tesla",
-    role: "Cybersecurity Analyst",
-    date: "30th April 2023",
-    salary: "$140/hr",
-    location: "Palo Alto, CA",
+    company: "Airbnb",
+    role: "Full Stack Developer",
+    date: "10th September 2024",
+    salary: "$130/hr",
+    location: "San Francisco, CA",
     logo: "/assets/images/logo.jpeg",
-    chips: ["Part-Time", "Remote", "Security"],
+    chips: ["Full-Time", "Remote", "JavaScript"],
   },
 ];
 
@@ -146,6 +146,41 @@ export const savedFilters = [
   },
 ];
 
+export const notificationsData = [
+  {
+    id: 1,
+    title: "Application Viewed",
+    message: "Your application for Senior UX/UI Designer at Amazon was viewed.",
+    time: "2 hours ago",
+    read: false,
+    type: "application"
+  },
+  {
+    id: 2,
+    title: "New Job Alert",
+    message: "A new job matching your profile 'Software Engineer' is available at Google.",
+    time: "5 hours ago",
+    read: false,
+    type: "job"
+  },
+  {
+    id: 3,
+    title: "Profile Update",
+    message: "Your profile is 80% complete. Add your resume to reach 100%.",
+    time: "1 day ago",
+    read: true,
+    type: "system"
+  },
+  {
+    id: 4,
+    title: "Interview Request",
+    message: "Microsoft has requested an interview for Data Scientist role.",
+    time: "2 days ago",
+    read: true,
+    type: "interview"
+  }
+];
+
 export const initialUserData = {
   name: "Ayodele Oluwaseyi",
   location: "Ilorin, Kwara State",
@@ -155,4 +190,7 @@ export const initialUserData = {
   email: "ayodelewaseyi@gmail.com",
   phone: "08047748383",
   verified: true,
+  verifiedDate: new Date().toISOString(),
+  jobsPosted: 12,
+  coinsLeft: 300,
 };
