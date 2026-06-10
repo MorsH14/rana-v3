@@ -38,7 +38,7 @@ export default function Homepage() {
   const [query, setQuery] = useState("");
 
   // dropdown states
-  const [selectedCategory, setSelectedCategory] = useState("job");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedPrice, setSelectedPrice] = useState<string | number>("price");
   const [selectedLocation, setSelectedLocation] = useState("state");
 
@@ -47,6 +47,7 @@ export default function Homepage() {
     .filter((job) => {
       // search filter
       const matchesSearch = Object.values(job).some((value) => {
+        if (typeof value === "number") return false;
         if (Array.isArray(value)) {
           return value.some((item) =>
             item.toLowerCase().includes(query.toLowerCase())
@@ -55,22 +56,17 @@ export default function Homepage() {
         return value.toString().toLowerCase().includes(query.toLowerCase());
       });
 
-      // category filter (using 'role' instead of 'category')
+      // category filter
       const matchesCategory =
-        selectedCategory === "job" ||
-        (job.role &&
-          job.role.toLowerCase() === selectedCategory.toLowerCase());
+        selectedCategory === "all" || job.category === selectedCategory;
 
-      // price filter
+      // price filter — uses salaryValue (numeric)
       const matchesPrice =
-        selectedPrice === "price" ||
-        (job.salary && Number(job.salary) <= Number(selectedPrice));
+        selectedPrice === "price" || job.salaryValue <= Number(selectedPrice);
 
       // location filter
       const matchesLocation =
-        selectedLocation === "state" ||
-        (job.location &&
-          job.location.toLowerCase() === selectedLocation.toLowerCase());
+        selectedLocation === "state" || job.location === selectedLocation;
 
       return matchesSearch && matchesCategory && matchesPrice && matchesLocation;
     })
@@ -80,12 +76,12 @@ export default function Homepage() {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       }
       if (sortOption === "lowest") {
-        return Number(a.salary) - Number(b.salary);
+        return a.salaryValue - b.salaryValue;
       }
       if (sortOption === "highest") {
-        return Number(b.salary) - Number(a.salary);
+        return b.salaryValue - a.salaryValue;
       }
-      return 0; // recommended → no special sort
+      return 0;
     });
 
   return (

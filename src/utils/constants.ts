@@ -22,24 +22,29 @@ interface FooterLinkProps {
 
     // FILTER DROP DOWN
   export const options = [
-    { value: "job", label: "Job" },
-    { value: "designer", label: "Designer" },
-    { value: "graphics", label: "Graphics" },
-    { value: "website", label: "Website" },
+    { value: "all", label: "All Categories" },
+    { value: "education", label: "Education" },
+    { value: "tech", label: "Tech & Digital" },
+    { value: "home-services", label: "Home Services" },
+    { value: "fashion", label: "Fashion & Beauty" },
+    { value: "food-events", label: "Food & Events" },
+    { value: "transport", label: "Transport" },
   ];
-  
+
   export const amount = [
-    { value: "price", label: "Price" }, // Ensure "Price" is a string
-    { value: 1000, label: "₦1,000" },
-    { value: 5000, label: "₦5,000" },
-    { value: 10000, label: "₦10,000" },
+    { value: "price", label: "All Prices" },
+    { value: 5000, label: "Under ₦5,000" },
+    { value: 10000, label: "Under ₦10,000" },
+    { value: 20000, label: "Under ₦20,000" },
+    { value: 50000, label: "Under ₦50,000" },
   ];
-  
+
   export const location = [
-    { value: "state", label: "State" },
-    { value: "lagos", label: "Lagos" },
-    { value: "abuja", label: "Abuja" },
-    { value: "port_harcourt", label: "Port Harcourt" },
+    { value: "state", label: "All States" },
+    { value: "Lagos", label: "Lagos" },
+    { value: "Abuja", label: "Abuja" },
+    { value: "Port Harcourt", label: "Port Harcourt" },
+    { value: "Ibadan", label: "Ibadan" },
   ];
   // export const states = [
   //   { value: "lagos", label: "Lagos" },

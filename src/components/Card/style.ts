@@ -15,27 +15,26 @@ export const JobFilterWrapper = styled.div`
 
 export const JobCardWrapper = styled.div`
     width: 100%;
-    height: 280px;
+    height: 305px;
     border: 0.5px solid #49444439;
     border-radius: 20px;
     padding: 10px;
     flex-wrap: wrap;
 
     @media screen and (min-width: 400px) {
-        width: calc(50% - 16px); 
+        width: calc(50% - 16px);
     }
 
     @media screen and (min-width: 350px) and (max-width: 420px) {
-        width: calc(50% - 10px); 
-        /* width: 100px; */
+        width: calc(50% - 10px);
     }
     @media screen and (min-width: 770px) {
-        height: 330px;
+        height: 355px;
     }
 
     @media screen and (min-width: 1139px)  {
-        width: calc(33.33% - 16px); 
-        height: 330px;
+        width: calc(33.33% - 16px);
+        height: 355px;
     }
 `;
 

@@ -14,7 +14,7 @@ import {
 import Image from 'next/image';
 import CardBtn from '../Buttons/CardBtn';
 import { FlexBtw } from '@/styles/globals.styles';
-import { BookmarkSimple } from '@phosphor-icons/react'; // ✅ Clean import
+import { BookmarkSimple } from '@phosphor-icons/react';
 import {
   Font50016,
   FontRR500,
@@ -22,9 +22,12 @@ import {
   MobileLightRS12
 } from '@/utils/typography';
 import { useRouter } from 'next/navigation';
+import StarRating from '../StarRating';
+import { useSavedJobs } from '@/utils/hooks/useSavedJobs';
+import { COLORS } from '@/utils/colors.util';
 
 interface JobCardProps {
-  id: string;
+  id: number | string;
   company: string;
   role: string;
   date: string;
@@ -32,6 +35,8 @@ interface JobCardProps {
   location: string;
   logo: string;
   chips: string[];
+  rating?: number;
+  reviewCount?: number;
   query?: string;
 }
 
@@ -44,6 +49,8 @@ export default function JobCard({
   location,
   logo,
   chips,
+  rating,
+  reviewCount,
   query = ''
 }: JobCardProps) {
   const bgColor = useMemo(() => {
@@ -81,10 +88,12 @@ export default function JobCard({
   }
 
   const router = useRouter();
+  const { isSaved, toggle } = useSavedJobs();
+  const saved = isSaved(Number(id));
 
-const handleDetailsClick = () => {
-  router.push(`/job/${id}?bg=${encodeURIComponent(bgColor)}`);
-};
+  const handleDetailsClick = () => {
+    router.push(`/job/${id}`);
+  };
 
 
   return (
@@ -102,8 +111,14 @@ const handleDetailsClick = () => {
               }}
             />
           </Stack>
-          <RadiusBtn>
-            <BookmarkSimple onClick={() => console.log('Bookmark clicked')} />
+          <RadiusBtn
+            onClick={() => toggle(Number(id))}
+            style={{ background: saved ? COLORS.blueNormal : COLORS.white100 }}
+          >
+            <BookmarkSimple
+              weight={saved ? "fill" : "regular"}
+              color={saved ? COLORS.white100 : COLORS.black100}
+            />
           </RadiusBtn>
         </FlexBtw>
 
@@ -138,6 +153,9 @@ const handleDetailsClick = () => {
           <Stack>
             <Mobile500RS16>{highlightMatch(salary, query)}</Mobile500RS16>
             <MobileLightRS12>{highlightMatch(location, query)}</MobileLightRS12>
+            {rating !== undefined && (
+              <StarRating rating={rating} reviewCount={reviewCount} size={10} />
+            )}
           </Stack>
           <CardBtn label="Details" onClick={handleDetailsClick} />
         </JobDetailsText>

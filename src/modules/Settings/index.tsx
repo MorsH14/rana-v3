@@ -64,11 +64,11 @@ export default function Settings() {
           <LockKey size={24} color={COLORS.blueNormal} /> Privacy & Security
         </Typography>
         <List>
-          <ListItem button>
+          <ListItem sx={{ cursor: 'pointer' }}>
             <ListItemText primary="Privacy Policy" />
           </ListItem>
           <Divider component="li" />
-          <ListItem button>
+          <ListItem sx={{ cursor: 'pointer' }}>
             <ListItemText primary="Terms of Service" />
           </ListItem>
         </List>
@@ -76,14 +76,14 @@ export default function Settings() {
 
       <Box sx={{ bgcolor: COLORS.white100, borderRadius: '16px', p: 3, mb: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
         <List>
-          <ListItem button>
+          <ListItem sx={{ cursor: 'pointer' }}>
             <ListItemIcon>
               <Question size={24} />
             </ListItemIcon>
             <ListItemText primary="Help & Support" />
           </ListItem>
           <Divider component="li" />
-          <ListItem button sx={{ color: COLORS.Red500 }}>
+          <ListItem sx={{ cursor: 'pointer', color: COLORS.Red500 }}>
             <ListItemIcon>
               <SignOut size={24} color={COLORS.Red500} />
             </ListItemIcon>

@@ -15,6 +15,9 @@ interface User {
   location: string;
   role: string;
   notifications: number;
+  verifiedDate: string;
+  jobsPosted: number;
+  coinsLeft: number;
 }
 
 interface ProfileEditProps {

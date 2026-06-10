@@ -81,9 +81,11 @@ export default function Header({ user }: HeaderProps) {
           </Link>
 
           {/* Notifications */}
-          <Badge badgeContent={user.notifications}>
-            <RoundedBtn icon="Bell" />
-          </Badge>
+          <Link href="/notification">
+            <Badge badgeContent={user.notifications}>
+              <RoundedBtn icon="Bell" />
+            </Badge>
+          </Link>
 
         </NavImgSettings>
       </HeaderContainer>
