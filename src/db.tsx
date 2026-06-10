@@ -1,6 +1,3 @@
-import { COLORS } from "@/utils/colors.util";
-import { SmileyAngry } from "@phosphor-icons/react";
-import { Smiley, SmileySad } from "@phosphor-icons/react/dist/ssr";
 
 export const jobProfiles = [
   {
@@ -24,9 +21,9 @@ export const jobProfiles = [
 
 
 export const reactionsData = [
-  { emoji: <Smiley size={30} weight="fill" color={COLORS.yellow100} />, count: 8 },
-  { emoji: <SmileySad size={30} color={COLORS.yellow100} weight="fill" />, count: 1 },
-  { emoji: <SmileyAngry size={30} weight="fill" color={COLORS.yellow100} />, count: 1 }
+  { emoji: "😊", count: 8 },
+  { emoji: "😢", count: 1 },
+  { emoji: "😠", count: 1 },
 ];
 
 export const reviewsData = [

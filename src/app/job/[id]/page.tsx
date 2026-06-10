@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, use } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Chip,
@@ -16,6 +16,7 @@ import { jobData } from "@/db";
 import { COLORS } from "@/utils/colors.util";
 import StarRating from "@/components/StarRating";
 import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
+import { useParams } from "next/navigation";
 import {
   Font50030,
   Font50020,
@@ -26,12 +27,9 @@ import {
 import CardBtn from "@/components/Buttons/CardBtn";
 import { useRouter } from "next/navigation";
 
-interface JobDetailsPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function JobDetailsPage({ params }: JobDetailsPageProps) {
-  const { id } = use(params);
+export default function JobDetailsPage() {
+  const params = useParams();
+  const id = params.id as string;
   const router = useRouter();
 
   const { isSaved, toggle } = useSavedJobs();
