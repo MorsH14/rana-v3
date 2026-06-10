@@ -204,32 +204,32 @@ export const savedFilters = [
 export const notificationsData = [
   {
     id: 1,
-    title: "Application Viewed",
-    message: "Your application for Senior UX/UI Designer at Amazon was viewed.",
+    title: "New Application",
+    message: "Someone applied for your UX/UI Designer listing. Review their profile and respond.",
     time: "2 hours ago",
     read: false,
     type: "application"
   },
   {
     id: 2,
-    title: "New Job Alert",
-    message: "A new job matching your profile 'Software Engineer' is available at Google.",
+    title: "New Job Match",
+    message: "A new UX/UI Design gig matching your skills is available in Lagos. ₦80,000/project.",
     time: "5 hours ago",
     read: false,
     type: "job"
   },
   {
     id: 3,
-    title: "Profile Update",
-    message: "Your profile is 80% complete. Add your resume to reach 100%.",
+    title: "Profile Tip",
+    message: "Add a portfolio photo to your profile. Workers with photos get 3x more enquiries.",
     time: "1 day ago",
     read: true,
     type: "system"
   },
   {
     id: 4,
-    title: "Interview Request",
-    message: "Microsoft has requested an interview for Data Scientist role.",
+    title: "Review Received",
+    message: "Mama Tee Catering left you a 5-star review: 'Very professional and creative work!'",
     time: "2 days ago",
     read: true,
     type: "interview"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, use } from "react";
 import {
   Box,
   Chip,
@@ -27,11 +27,11 @@ import CardBtn from "@/components/Buttons/CardBtn";
 import { useRouter } from "next/navigation";
 
 interface JobDetailsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function JobDetailsPage({ params }: JobDetailsPageProps) {
-  const { id } = params;
+  const { id } = use(params);
   const router = useRouter();
 
   const { isSaved, toggle } = useSavedJobs();

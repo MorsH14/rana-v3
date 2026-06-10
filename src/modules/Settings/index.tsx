@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Box, Typography, Stack, Switch, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Divider, Button } from '@mui/material';
+import { Box, Typography, Switch, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Divider, Button } from '@mui/material';
 import { Bell, LockKey, Question, SignOut, UserCircle } from '@phosphor-icons/react';
 import { COLORS } from '@/utils/colors.util';
 

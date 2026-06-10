@@ -40,7 +40,9 @@ interface StyledLinkProp {
   isActive: boolean;
 }
 
-export const StyledLink = styled(Link)<StyledLinkProp>`
+export const StyledLink = styled(Link, {
+  shouldForwardProp: (prop) => prop !== "isActive",
+})<StyledLinkProp>`
   font-size: 14px;
   font-weight: 600;
   color: ${COLORS.gray200};

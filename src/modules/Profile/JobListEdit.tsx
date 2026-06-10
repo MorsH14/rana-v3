@@ -31,25 +31,25 @@ export default function JobListEdit({ filter, onSave }: JobListEditProps) {
         label="Job Title"
         placeholder="e.g. Designer"
         value={localFilter.title}
-        onChange={(e: any) => handleChange("title", e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("title", e.target.value)}
       />
       <TextField
         label="Location"
         placeholder="e.g. Lagos"
         value={localFilter.location}
-        onChange={(e: any) => handleChange("location", e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("location", e.target.value)}
       />
       <TextField
         label="Distance"
         placeholder="e.g. 10km"
         value={localFilter.distance}
-        onChange={(e: any) => handleChange("distance", e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("distance", e.target.value)}
       />
       <TextField
         label="Price Range"
         placeholder="e.g. $100-$200"
         value={localFilter.price}
-        onChange={(e: any) => handleChange("price", e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("price", e.target.value)}
       />
 
       <Button

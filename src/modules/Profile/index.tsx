@@ -3,16 +3,18 @@ import React, { useState } from "react";
 import { FlexCenter } from "@/styles/globals.styles";
 import { ProfileWrapper, VerifiedWrapper } from "./styles";
 import MainAvatar from "@/components/Avatar/Avatar";
-import { WebCaption1MSolid300, WebHeadingH4Gray900 } from "@/utils/typography";
+import { WebCaption1MSolid300, WebHeadingH4Gray900, WebCC2Gray300 } from "@/utils/typography";
 import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { Box } from "@mui/material";
 import JobListTable from "@/components/Tables";
 import SavedFilterDropdown from "./Accordion";
+import SavedJobs from "./SavedJobs";
 import DrawerBasic from "@/components/Drawer/Drawer";
 import ProfileEdit from "./ProfileEdit";
 import { initialUserData, savedFilters } from "@/db";
 import IconButton from "@/components/Buttons/Button";
-import { Gear, Pen, WhatsappLogo } from "@phosphor-icons/react";
+import { Gear, MapPin, Pen, WhatsappLogo } from "@phosphor-icons/react";
+import Link from "next/link";
 
 function useUseStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -48,7 +50,7 @@ export default function ProfilePage() {
   const [user, setUser] = useUseStorage("rana-user-profile", initialUserData);
   const [filters, setFilters] = useUseStorage("rana-saved-filters", savedFilters);
 
-  const handleUpdateFilter = (index: number, updatedFilter: any) => {
+  const handleUpdateFilter = (index: number, updatedFilter: { title: string; location: string; distance: string; price: string }) => {
     const newFilters = [...filters];
     newFilters[index] = updatedFilter;
     setFilters(newFilters);
@@ -64,7 +66,9 @@ export default function ProfilePage() {
       <ProfileWrapper>
         <FlexCenter>
           <MainAvatar size={120} imageUrl={user.profileImage} name={user.name} />
-          <Box display={"flex"} mt={"12px"} justifyContent={'center'} alignItems={'center'} gap={'5px'}>
+
+          {/* Name + verified badge */}
+          <Box display="flex" mt="12px" justifyContent="center" alignItems="center" gap="5px">
             <WebHeadingH4Gray900>{user.name}</WebHeadingH4Gray900>
             {user.verified && (
               <VerifiedWrapper>
@@ -73,22 +77,41 @@ export default function ProfilePage() {
             )}
           </Box>
 
-          <Box mt={"6px"} display={'flex'} justifyContent={'center'} alignItems={'center'} gap={'5px'}>
-            <WhatsappLogo/>
+          {/* Role */}
+          {user.role && (
+            <Box mt="4px" textAlign="center">
+              <WebCaption1MSolid300>{user.role}</WebCaption1MSolid300>
+            </Box>
+          )}
+
+          {/* Location */}
+          {user.location && (
+            <Box mt="4px" display="flex" justifyContent="center" alignItems="center" gap="4px">
+              <MapPin size={13} color="#A4ABB8" />
+              <WebCC2Gray300>{user.location}</WebCC2Gray300>
+            </Box>
+          )}
+
+          {/* Phone */}
+          <Box mt="8px" display="flex" justifyContent="center" alignItems="center" gap="5px">
+            <WhatsappLogo color="#25D366" />
             <WebCaption1MSolid300>{user.phone}</WebCaption1MSolid300>
           </Box>
-          <Box mt={"12px"} display={'flex'} justifyContent={'center'} alignItems={'center'} gap={'20px'}>
 
-            <IconButton icon={<Gear/>} children="Settings"/>
-            
-            <DrawerBasic
-              label={<IconButton icon={<Pen/>} children="Edit"/>}
-            >
+          {/* Actions */}
+          <Box mt="16px" display="flex" justifyContent="center" alignItems="center" gap="20px">
+            <Link href="/settings" style={{ textDecoration: "none", color: "inherit" }}>
+              <IconButton icon={<Gear />}>Settings</IconButton>
+            </Link>
+            <DrawerBasic label={<IconButton icon={<Pen />}>Edit</IconButton>}>
               <ProfileEdit user={user} setUser={setUser} />
             </DrawerBasic>
           </Box>
 
           <JobListTable jobsPosted={user.jobsPosted} coinsLeft={user.coinsLeft} />
+
+          <SavedJobs />
+
           <SavedFilterDropdown
             filters={filters}
             onUpdate={handleUpdateFilter}

@@ -1,5 +1,4 @@
 "use client";
-import { useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -107,7 +106,7 @@ export default function SavedFilterAccordion({ filters, onUpdate, onDelete }: Sa
           <Box display="flex" justifyContent="flex-end" mt={'24px'}>
             {/* Future: Add "Clear All" or "Add New" functionality here */}
             {safeFilters.length > 0 && (
-              <MoobileBodyUnderline onClick={() => { safeFilters.forEach((_, i) => onDelete(0)); }}>
+              <MoobileBodyUnderline onClick={() => { safeFilters.forEach(() => onDelete(0)); }}>
                 Clear all
               </MoobileBodyUnderline>
             )}
