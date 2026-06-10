@@ -14,6 +14,7 @@ import RoundedBtn from "../Buttons/RoundedBtn";
 import Badge from "../Badge/badge";
 import { HiddenOnMobile } from "@/styles/globals.styles";
 import { HeaderLink } from "@/utils/constants";
+import { usePathname } from "next/navigation";
 
 interface UserProfile {
   name: string;
@@ -28,18 +29,25 @@ interface HeaderProps {
 }
 
 export default function Header({ user }: HeaderProps) {
+  const pathname = usePathname();
+
   return (
     <HiddenOnMobile>
       <HeaderContainer>
+        
         {/* Logo */}
         <Link href="/">
-          <Logo>Rana</Logo>
+          <Logo>Errando</Logo>
         </Link>
 
         {/* Navigation Links */}
         <ATags>
           {HeaderLink.map((item, index) => (
-            <StyledLink key={index} href={item.route}>
+            <StyledLink
+              key={index}
+              href={item.route}
+              isActive={pathname === item.route}
+            >
               {item.label}
             </StyledLink>
           ))}
@@ -52,21 +60,26 @@ export default function Header({ user }: HeaderProps) {
 
         {/* User and Actions */}
         <NavImgSettings>
-          {/* User Avatar Badge */}
+          
+          {/* Avatar */}
           <Link href="/profile">
-            {user.profileImage ? (<img src={user.profileImage} alt="User Avatar" />)
-            :<User size={35} color="gray" />}
+            {user.profileImage ? (
+              <img src={user.profileImage} alt="User Avatar" />
+            ) : (
+              <User size={35} color="gray" />
+            )}
           </Link>
 
-          {/* Settings Button */}
+          {/* Settings */}
           <Link href="/settings">
             <RoundedBtn icon="GearSix" />
           </Link>
 
-          {/* Notification Bell wrapped inside Badge */}
+          {/* Notifications */}
           <Badge badgeContent={user.notifications}>
             <RoundedBtn icon="Bell" />
           </Badge>
+
         </NavImgSettings>
       </HeaderContainer>
     </HiddenOnMobile>

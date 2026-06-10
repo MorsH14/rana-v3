@@ -21,19 +21,22 @@ import {
   Mobile500RS16,
   MobileLightRS12
 } from '@/utils/typography';
+import { useRouter } from 'next/navigation';
 
 interface JobCardProps {
+  id: string;
   company: string;
   role: string;
   date: string;
   salary: string;
   location: string;
-  logo: string; // make sure it’s a valid URL string
+  logo: string;
   chips: string[];
   query?: string;
 }
 
 export default function JobCard({
+  id,
   company,
   role,
   date,
@@ -76,6 +79,13 @@ export default function JobCard({
       </>
     );
   }
+
+  const router = useRouter();
+
+const handleDetailsClick = () => {
+  router.push(`/job/${id}?bg=${encodeURIComponent(bgColor)}`);
+};
+
 
   return (
     <JobCardWrapper>
@@ -129,7 +139,7 @@ export default function JobCard({
             <Mobile500RS16>{highlightMatch(salary, query)}</Mobile500RS16>
             <MobileLightRS12>{highlightMatch(location, query)}</MobileLightRS12>
           </Stack>
-          <CardBtn label="Details" />
+          <CardBtn label="Details" onClick={handleDetailsClick} />
         </JobDetailsText>
       </JobDetailsContainer>
     </JobCardWrapper>

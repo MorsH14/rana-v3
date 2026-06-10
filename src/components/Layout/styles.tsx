@@ -32,11 +32,15 @@ export const Logo = styled.div`
 
 export const ATags = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 40px;
   height: 100%;
 `;
 
-export const StyledLink = styled(Link)`
+interface StyledLinkProp {
+  isActive: boolean;
+}
+
+export const StyledLink = styled(Link)<StyledLinkProp>`
   font-size: 14px;
   font-weight: 600;
   color: ${COLORS.gray200};
@@ -47,7 +51,10 @@ export const StyledLink = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  border-bottom: ${({isActive}) => (isActive ? `2px solid ${COLORS.NeutralSolid0}` : 0)};
 `;
+
 export const HeaderLocation = styled.div`
   font-size: 13px;
   display: flex;

@@ -9,6 +9,7 @@ export const JobInfoWrapper = styled.div`
   border-radius: 12px;
   border: 1.5px solid ${COLORS.NeutralSolid50};
   margin: 48px auto;
+  margin-bottom: 10px;
   box-sizing: border-box;
 `;
 export const JobWrapper = styled.div`
@@ -38,5 +39,10 @@ export const RowDivider = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${COLORS.NeutralSolid50};
+`;
+export const CoinBottons = styled.div`
+  cursor: pointer;
+  color: ${COLORS.Blue500};
+  font-size: 16px;  
 `;
 

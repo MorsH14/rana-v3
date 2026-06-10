@@ -1,8 +1,9 @@
-import { JobInfoWrapper, JobWrapper, JobLeft, JobRight, RowDivider } from './styles.tables';
+import { JobInfoWrapper, JobWrapper, JobLeft, JobRight, RowDivider, CoinBottons } from './styles.tables';
 import { WebBody2MSolidGray400, WebHeadingH4Gray900 } from '@/utils/typography';
 
 export default function JobListTable() {
     return (
+        <>
         <JobInfoWrapper>
             <JobWrapper>
                 <JobLeft>
@@ -24,5 +25,7 @@ export default function JobListTable() {
                 </JobRight>
             </JobWrapper>
         </JobInfoWrapper>
+        <CoinBottons>Buy coins</CoinBottons>
+        </>
     );
 }

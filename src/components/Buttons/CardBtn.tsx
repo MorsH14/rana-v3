@@ -18,8 +18,9 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 type CardBtnProps = {
   label: string;
+  onClick?: () => void;
 };
 
-export default function CardBtn({ label }: CardBtnProps) {
-  return <StyledButton>{label}</StyledButton>;
+export default function CardBtn({ label, onClick }: CardBtnProps) {
+  return <StyledButton onClick={onClick}>{label}</StyledButton>;
 }

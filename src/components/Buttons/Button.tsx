@@ -3,6 +3,7 @@ import { IconButtonWrapper, PillWrapper } from "./Button.styles";
 type IconButtonProps = {
   children: React.ReactNode;
   icon: React.ReactNode;
+  onClick?: () => void;
 };
 type PillProps = {
   children: React.ReactNode;

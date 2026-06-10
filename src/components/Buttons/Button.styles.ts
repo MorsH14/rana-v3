@@ -37,10 +37,12 @@ export const Button = styled.button`
 `;
 export const IconButtonWrapper = styled.button`
   width: 100%;
-  padding: 10px 0;
-  border-radius: 10px;
+  min-width: 100px;
+  padding: 10px;
+  border-radius: 100px;
   border: none;
   background-color: ${COLORS.NeutralSolid25};
+  font-weight: 500;
   cursor: pointer;
    display: flex;
   justify-content: center;

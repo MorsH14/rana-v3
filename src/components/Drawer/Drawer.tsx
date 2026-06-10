@@ -9,7 +9,7 @@ import { X } from "@phosphor-icons/react/dist/ssr";
 interface DrawerProps {
   children: React.ReactNode;
   label: React.ReactNode;
-  headerText: string;
+  headerText?: string;
 }
 
 export default function DrawerBasic({ children, label, headerText }: DrawerProps) {

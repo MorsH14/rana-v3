@@ -4,10 +4,8 @@ interface HeaderLinkProps {
   }
   
 export const HeaderLink: HeaderLinkProps[] = [
-    {label: "Find job", route: "/find-jobs" },
+    {label: "Find job", route: "/" },
     {label: "Messages", route: "/Messages" },
-    {label: "Hiring", route: "/Hiring" },
-    {label: "FAQ", route: "/FAQ" },
 ]
 
 interface FooterLinkProps {

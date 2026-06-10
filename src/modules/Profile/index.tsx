@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FlexCenter, ATagUnderline } from "@/styles/globals.styles";
+import { FlexCenter } from "@/styles/globals.styles";
 import { ProfileWrapper, VerifiedWrapper } from "./styles";
 import MainAvatar from "@/components/Avatar/Avatar";
 import { WebCaption1MSolid300, WebHeadingH4Gray900 } from "@/utils/typography";
@@ -11,6 +11,8 @@ import SavedFilterDropdown from "./Accordion";
 import DrawerBasic from "@/components/Drawer/Drawer";
 import ProfileEdit from "./ProfileEdit";
 import { initialUserData } from "@/db";
+import IconButton from "@/components/Buttons/Button";
+import { Gear, Pen, WhatsappLogo } from "@phosphor-icons/react";
 
 
 export default function ProfilePage() {
@@ -21,7 +23,7 @@ export default function ProfilePage() {
       <ProfileWrapper>
         <FlexCenter>
           <MainAvatar size={120} imageUrl={user.profileImage} name={user.name} />
-          <Box display={"flex"} mt={"12px"}>
+          <Box display={"flex"} mt={"12px"} justifyContent={'center'} alignItems={'center'} gap={'5px'}>
             <WebHeadingH4Gray900>{user.name}</WebHeadingH4Gray900>
             {user.verified && (
               <VerifiedWrapper>
@@ -30,23 +32,23 @@ export default function ProfilePage() {
             )}
           </Box>
 
-          <Box my={"6px"}>
-            <WebCaption1MSolid300>{user.email}</WebCaption1MSolid300>
+          <Box mt={"6px"} display={'flex'} justifyContent={'center'} alignItems={'center'} gap={'5px'}>
+            <WhatsappLogo/>
+            <WebCaption1MSolid300>{user.phone}</WebCaption1MSolid300>
           </Box>
+          <Box mt={"12px"} display={'flex'} justifyContent={'center'} alignItems={'center'} gap={'20px'}>
 
-          <WebCaption1MSolid300>{user.phone}</WebCaption1MSolid300>
-
-          <Box mt={"12px"}>
+            <IconButton icon={<Gear/>} children="Settings"/>
+            
             <DrawerBasic
-              label={<ATagUnderline>View details</ATagUnderline>}
-              headerText="Profile"
+              label={<IconButton icon={<Pen/>} children="Edit"/>}
             >
               <ProfileEdit user={user} setUser={setUser} />
             </DrawerBasic>
           </Box>
 
           <JobListTable />
-          <SavedFilterDropdown />
+          {/* <SavedFilterDropdown /> */}
         </FlexCenter>
       </ProfileWrapper>
     </FlexCenter>
