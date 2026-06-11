@@ -15,7 +15,7 @@
     "@mui/joy": "^5.0.0-beta.52",
     "@mui/material": "^6.4.12",
     "@phosphor-icons/react": "^2.1.7",
-    "next": "15.2.3",
+    "next": "^16.2.9",
     "phosphor-icons": "^1.4.2",
     "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
