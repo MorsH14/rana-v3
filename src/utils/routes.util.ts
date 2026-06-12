@@ -1,1 +1,1 @@
-export const noLayoutRoutes = ["/signin"];
+export const noLayoutRoutes = ["/signin", "/signup", "/onboarding"];
