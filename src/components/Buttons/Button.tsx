@@ -12,9 +12,9 @@ type PillProps = {
 };
 
 
-export default function IconButton({ children, icon }: IconButtonProps) {
+export default function IconButton({ children, icon, onClick }: IconButtonProps) {
   return (
-    <IconButtonWrapper>
+    <IconButtonWrapper onClick={onClick}>
       {icon}
       {children}
     </IconButtonWrapper>

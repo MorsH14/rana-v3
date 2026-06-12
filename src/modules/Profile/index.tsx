@@ -13,8 +13,9 @@ import DrawerBasic from "@/components/Drawer/Drawer";
 import ProfileEdit from "./ProfileEdit";
 import { initialUserData, savedFilters } from "@/db";
 import IconButton from "@/components/Buttons/Button";
-import { Gear, MapPin, Pen, WhatsappLogo } from "@phosphor-icons/react";
+import { Gear, MapPin, Pen, SignOut, WhatsappLogo } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function useUseStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -49,6 +50,13 @@ function useUseStorage<T>(key: string, initialValue: T) {
 export default function ProfilePage() {
   const [user, setUser] = useUseStorage("rana-user-profile", initialUserData);
   const [filters, setFilters] = useUseStorage("rana-saved-filters", savedFilters);
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    document.cookie = "rana-session=; path=/; max-age=0";
+    localStorage.removeItem("rana-auth");
+    router.push("/signin");
+  };
 
   const handleUpdateFilter = (index: number, updatedFilter: { title: string; location: string; distance: string; price: string }) => {
     const newFilters = [...filters];
@@ -110,6 +118,7 @@ export default function ProfilePage() {
             <DrawerBasic label={<IconButton icon={<Pen />}>Edit</IconButton>}>
               <ProfileEdit user={user} setUser={setUser} />
             </DrawerBasic>
+            <IconButton icon={<SignOut />} onClick={handleSignOut}>Sign out</IconButton>
           </Box>
 
           <JobListTable jobsPosted={user.jobsPosted} coinsLeft={user.coinsLeft} />
