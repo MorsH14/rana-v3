@@ -36,11 +36,10 @@ export default function DrawerBasic({ children, label, headerText }: DrawerProps
           {label}
         </WebCaption1MBlue500>
       </Box>
-      <Drawer  anchor="right" open={open} onClose={toggleDrawer(false)}>
+      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <Box
           role="presentation"
-          sx={{ minWidth: 471, p: '48px' }}
-          // onKeyDown={toggleDrawer(false)}
+          sx={{ width: { xs: '100vw', sm: 471 }, p: { xs: '24px', sm: '48px' } }}
         >
           <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%" mb={'20px'}>
                 <TextWeb28Gray900>{headerText}</TextWeb28Gray900>

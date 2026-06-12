@@ -11,7 +11,7 @@ export const HeaderContainer = styled.div`
   justify-content:  space-around;
   align-items: center;
   height: 80px;
-  /* position: sticky; */
+  position: sticky;
   top: 0;
   z-index: 20484;
   width: 100%;
@@ -105,7 +105,7 @@ export const UploadImgWrapper = styled.input`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  border: 0cap.5px solid ${COLORS.gray100};
+  border: 0.5px solid ${COLORS.gray100};
   cursor: pointer;
 `;
 

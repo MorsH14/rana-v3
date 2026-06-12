@@ -61,6 +61,10 @@ export default function ProfilePage() {
     setFilters(newFilters);
   };
 
+  const handleClearAllFilters = () => {
+    setFilters([]);
+  };
+
   return (
     <FlexCenter>
       <ProfileWrapper>
@@ -116,6 +120,7 @@ export default function ProfilePage() {
             filters={filters}
             onUpdate={handleUpdateFilter}
             onDelete={handleDeleteFilter}
+            onClearAll={handleClearAllFilters}
           />
         </FlexCenter>
       </ProfileWrapper>

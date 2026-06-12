@@ -5,6 +5,7 @@ import Select from "@/components/Select/Select";
 import { DesktopNavIcon, Hr, SortDesktopWrapper, SortMainWrapper } from "./home.styles";
 import { options, amount, location } from "@/utils/constants";
 import { MapPin, Money, Suitcase } from "@phosphor-icons/react/dist/ssr";
+import { HiddenOnMobile } from "@/styles/globals.styles";
 
 interface SelectPropProps {
   selectedCategory: string;
@@ -25,40 +26,50 @@ export default function SelectProp({
 }: SelectPropProps) {
   return (
     <SortMainWrapper>
-      <Stack gap={"50px"} flexDirection={"row"}>
+      <Stack gap={{ xs: "4px", md: "50px" }} flexDirection={"row"}>
         {/* Category Select */}
         <SortDesktopWrapper>
-          <DesktopNavIcon>
-            <Suitcase size={18} weight="bold" color="#f5f5f5eb" />
-          </DesktopNavIcon>
+          <HiddenOnMobile>
+            <DesktopNavIcon>
+              <Suitcase size={18} weight="bold" color="#f5f5f5eb" />
+            </DesktopNavIcon>
+          </HiddenOnMobile>
           <Select
             options={options}
             selectedOption={selectedCategory}
             onChange={(value) => setSelectedCategory(value as string)}
             sx={{ color: "white" }}
           />
-          <Hr />
+          <HiddenOnMobile>
+            <Hr />
+          </HiddenOnMobile>
         </SortDesktopWrapper>
 
         {/* Price Select */}
         <SortDesktopWrapper>
-          <DesktopNavIcon>
-            <Money size={18} weight="bold" color="#f5f5f5eb" />
-          </DesktopNavIcon>
+          <HiddenOnMobile>
+            <DesktopNavIcon>
+              <Money size={18} weight="bold" color="#f5f5f5eb" />
+            </DesktopNavIcon>
+          </HiddenOnMobile>
           <Select
             options={amount}
             selectedOption={selectedPrice}
             onChange={(value) => setSelectedPrice(value)}
             sx={{ color: "white" }}
           />
-          <Hr />
+          <HiddenOnMobile>
+            <Hr />
+          </HiddenOnMobile>
         </SortDesktopWrapper>
 
         {/* Location Select */}
         <SortDesktopWrapper>
-          <DesktopNavIcon>
-            <MapPin size={18} weight="bold" color="#f5f5f5eb" />
-          </DesktopNavIcon>
+          <HiddenOnMobile>
+            <DesktopNavIcon>
+              <MapPin size={18} weight="bold" color="#f5f5f5eb" />
+            </DesktopNavIcon>
+          </HiddenOnMobile>
           <Select
             options={location}
             selectedOption={selectedLocation}

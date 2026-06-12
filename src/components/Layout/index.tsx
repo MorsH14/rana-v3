@@ -30,7 +30,7 @@ const Layout = ({ children, user }: LayoutProps) => {
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
       <Header user={user} />
-      <Box component="main" style={{ flexGrow: 1 }}>
+      <Box component="main" style={{ flexGrow: 1 }} sx={{ '@media screen and (max-width: 769px)': { paddingBottom: '60px' } }}>
         {children}
       </Box>
       <Footer />

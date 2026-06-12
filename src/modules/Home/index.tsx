@@ -122,7 +122,7 @@ export default function Homepage() {
 
       {/* Jobs */}
       <HomeJobWrapper>
-        <Stack position="sticky" top={0}>
+        <Stack position="sticky" top={80}>
           <HomeJobFilter />
         </Stack>
         <JobListWrapper>

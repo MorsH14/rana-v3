@@ -55,9 +55,9 @@ export default function JobCard({
 }: JobCardProps) {
   const bgColor = useMemo(() => {
     const colors = ['#e79c469d', '#92e7acb3', '#ce93d38d', '#8dd6ecb9', '#b597ebb8', '#c4e7469d'];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
-  }, []);
+    const seed = typeof id === 'number' ? id : id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return colors[seed % colors.length];
+  }, [id]);
 
   function highlightMatch(text: string, keyword: string) {
     if (!keyword) return text;

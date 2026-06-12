@@ -37,7 +37,7 @@ export default function Header({ user }: HeaderProps) {
         
         {/* Logo */}
         <Link href="/">
-          <Logo>Errando</Logo>
+          <Logo>Ranajob</Logo>
         </Link>
 
         {/* Navigation Links */}

@@ -24,9 +24,10 @@ interface SavedFilterAccordionProps {
   filters: FilterItem[];
   onUpdate: (index: number, updatedFilter: FilterItem) => void;
   onDelete: (index: number) => void;
+  onClearAll: () => void;
 }
 
-export default function SavedFilterAccordion({ filters, onUpdate, onDelete }: SavedFilterAccordionProps) {
+export default function SavedFilterAccordion({ filters, onUpdate, onDelete, onClearAll }: SavedFilterAccordionProps) {
   // If filters is undefined/null (initial load), default to empty array
   const safeFilters = filters || [];
 
@@ -106,7 +107,7 @@ export default function SavedFilterAccordion({ filters, onUpdate, onDelete }: Sa
           <Box display="flex" justifyContent="flex-end" mt={'24px'}>
             {/* Future: Add "Clear All" or "Add New" functionality here */}
             {safeFilters.length > 0 && (
-              <MoobileBodyUnderline onClick={() => { safeFilters.forEach(() => onDelete(0)); }}>
+              <MoobileBodyUnderline onClick={onClearAll}>
                 Clear all
               </MoobileBodyUnderline>
             )}
