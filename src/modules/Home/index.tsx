@@ -25,6 +25,7 @@ import JobList from "@/components/Card/main";
 import { useState } from "react";
 import { MobileH3SM, MobilePM } from "@/utils/typography";
 import { jobData } from "@/db";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 
 const options = [
   { value: "recommended", label: "Recommended" },
@@ -42,8 +43,11 @@ export default function Homepage() {
   const [selectedPrice, setSelectedPrice] = useState<string | number>("price");
   const [selectedLocation, setSelectedLocation] = useState("state");
 
+  const [postedJobs] = useLocalStorage<typeof jobData>("rana-posted-jobs", []);
+  const allJobs = [...postedJobs, ...jobData];
+
   // filtering
-  const filteredJobs = jobData
+  const filteredJobs = allJobs
     .filter((job) => {
       // search filter
       const matchesSearch = Object.values(job).some((value) => {
