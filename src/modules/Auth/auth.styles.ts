@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 export const AuthPageWrapper = styled.div`
   min-height: 100vh;
   display: flex;
+  align-items: stretch;
 `;
 
 export const AuthBrandPanel = styled.div`
@@ -49,6 +50,12 @@ export const AuthFormPanel = styled.div`
   align-items: center;
   padding: 48px 24px;
   background: white;
+  min-height: 100vh;
+
+  @media screen and (max-width: 768px) {
+    min-height: 100svh;
+    justify-content: center;
+  }
 `;
 
 export const AuthFormCard = styled.div`
@@ -108,6 +115,37 @@ export const PhonePrefix = styled.div`
   white-space: nowrap;
   background: ${COLORS.NeutralSolid0};
   user-select: none;
+`;
+
+export const NigeriaFlag = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 14px;
+  width: 20px;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  &::before,
+  &::after {
+    content: "";
+    display: block;
+    width: 33%;
+    height: 100%;
+    background: #008751;
+  }
+
+  &::before { width: 33%; }
+  &::after  { width: 33%; }
+
+  /* white centre stripe */
+  background: linear-gradient(
+    to right,
+    #008751 0% 33%,
+    white 33% 67%,
+    #008751 67% 100%
+  );
 `;
 
 export const PhoneInput = styled.input`

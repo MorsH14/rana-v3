@@ -133,15 +133,20 @@ text-align: center;
 export const MoobileBodyUnderline = styled.span`
 font-family: Inter;
 font-weight: 500;
-font-size: 14px;
+font-size: 13px;
 line-height: 150%;
 letter-spacing: 0px;
 text-align: center;
-text-decoration: underline;
-text-decoration-style: solid;
-text-decoration-offset: 0%;
-text-decoration-thickness: 0%;
+color: #808897;
+text-decoration: none;
 cursor: pointer;
+padding: 4px 8px;
+border-radius: 6px;
+transition: color 0.15s, background 0.15s;
+&:hover {
+  color: #F76241;
+  background: #fff1f0;
+}
 `;
 
 

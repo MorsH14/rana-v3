@@ -119,13 +119,15 @@ export const RowLabel = styled.div`
   font-family: Inter, sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: ${COLORS.NeutralSolidGray900};
+  color: ${COLORS.NeutralSolidGray900} !important;
+  -webkit-text-fill-color: ${COLORS.NeutralSolidGray900};
 `;
 
 export const RowSub = styled.div`
   font-family: Inter, sans-serif;
   font-size: 12px;
-  color: ${COLORS.SolidGray400};
+  color: ${COLORS.SolidGray400} !important;
+  -webkit-text-fill-color: ${COLORS.SolidGray400};
 `;
 
 export const RowValue = styled.div`

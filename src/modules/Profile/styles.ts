@@ -8,6 +8,11 @@ export const ProfileWrapper = styled.div`
   max-width: 480px;
   min-height: 533px;
   margin: 48px 0;
+  padding: 0 16px;
+
+  @media screen and (max-width: 768px) {
+    margin: 24px 0;
+  }
 `;
 export const VerifiedWrapper = styled.div`
   width: 15px;

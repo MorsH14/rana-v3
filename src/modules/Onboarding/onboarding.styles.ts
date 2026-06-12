@@ -8,7 +8,13 @@ export const OnboardingWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 36px 24px 80px;
+
+  @media screen and (max-width: 768px) {
+    justify-content: flex-start;
+    padding-top: 32px;
+  }
 `;
 
 export const OnboardingHeader = styled.div`

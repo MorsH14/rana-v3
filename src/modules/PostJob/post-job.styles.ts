@@ -10,9 +10,10 @@ export const PostJobWrapper = styled.div`
   flex-direction: column;
   background: white;
   padding: 0 24px 40px;
-  max-width: 520px;
+  max-width: 540px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 export const PostJobHeader = styled.div`

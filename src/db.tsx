@@ -233,6 +233,79 @@ export const notificationsData = [
   }
 ];
 
+export type ChatMessage = {
+  id: string;
+  senderId: "me" | string;
+  text: string;
+  time: string;
+};
+
+export type Conversation = {
+  id: string;
+  name: string;
+  initials: string;
+  avatarColor: string;
+  jobTitle: string;
+  lastMessage: string;
+  lastTime: string;
+  unread: number;
+  messages: ChatMessage[];
+};
+
+export const messagesData: Conversation[] = [
+  {
+    id: "conv-1",
+    name: "Chidi Okafor",
+    initials: "CO",
+    avatarColor: "#8dd6ecb9",
+    jobTitle: "Lesson Teacher (Maths & English)",
+    lastMessage: "Yes, I'm available every Saturday from 10am",
+    lastTime: "10:42 AM",
+    unread: 2,
+    messages: [
+      { id: "m1", senderId: "me", text: "Hi Chidi, I saw your listing for Maths & English lessons. My son is in Primary 5 and needs help.", time: "Yesterday, 4:10 PM" },
+      { id: "m2", senderId: "chidi", text: "Hello! Yes, I can definitely help him. I specialise in Primary 3–6. What days work best for you?", time: "Yesterday, 4:35 PM" },
+      { id: "m3", senderId: "me", text: "We're flexible — weekends are best. What's your rate per session?", time: "Yesterday, 5:01 PM" },
+      { id: "m4", senderId: "chidi", text: "₦7,500 per session (2 hours). I bring all study materials too. I can start this Saturday if you'd like.", time: "10:30 AM" },
+      { id: "m5", senderId: "chidi", text: "Yes, I'm available every Saturday from 10am", time: "10:42 AM" },
+    ],
+  },
+  {
+    id: "conv-2",
+    name: "Mama Tee Catering",
+    initials: "MT",
+    avatarColor: "#92e7acb3",
+    jobTitle: "Caterer & Event Chef",
+    lastMessage: "Great! I'll send the full menu options today.",
+    lastTime: "Yesterday",
+    unread: 0,
+    messages: [
+      { id: "m1", senderId: "me", text: "Hello Mama Tee, I need catering for a birthday party of about 50 guests next month. Do you have availability?", time: "Mon, 2:15 PM" },
+      { id: "m2", senderId: "mama", text: "Good afternoon! Yes, we have that date free. What type of food are you thinking? Nigerian, continental, or a mix?", time: "Mon, 3:00 PM" },
+      { id: "m3", senderId: "me", text: "Mostly Nigerian — Jollof rice, small chops, pepper soup. Maybe some fried chicken too.", time: "Mon, 3:22 PM" },
+      { id: "m4", senderId: "mama", text: "Perfect, that's our speciality! For 50 guests our quote would be around ₦180,000 all-inclusive. That covers food, serving staff, and setup.", time: "Mon, 4:05 PM" },
+      { id: "m5", senderId: "me", text: "That sounds reasonable. Can I get a full breakdown?", time: "Yesterday, 9:00 AM" },
+      { id: "m6", senderId: "mama", text: "Great! I'll send the full menu options today.", time: "Yesterday, 9:30 AM" },
+    ],
+  },
+  {
+    id: "conv-3",
+    name: "Fatima Bello Designs",
+    initials: "FB",
+    avatarColor: "#ce93d38d",
+    jobTitle: "Professional Tailor & Fashion Designer",
+    lastMessage: "Please send me your measurements via WhatsApp.",
+    lastTime: "Tuesday",
+    unread: 0,
+    messages: [
+      { id: "m1", senderId: "me", text: "Hi Fatima, I need an aso-ebi outfit sewn for a wedding in 3 weeks. Can you handle it in time?", time: "Tue, 11:00 AM" },
+      { id: "m2", senderId: "fatima", text: "Yes! 3 weeks is fine. Do you have the fabric already or do you need me to source it?", time: "Tue, 11:45 AM" },
+      { id: "m3", senderId: "me", text: "I have the fabric. It's a peach lace material, about 5 yards.", time: "Tue, 12:10 PM" },
+      { id: "m4", senderId: "fatima", text: "That's enough for a classic gown with head tie. My price for that style is ₦22,000. Please send me your measurements via WhatsApp.", time: "Tue, 1:00 PM" },
+    ],
+  },
+];
+
 export const initialUserData = {
   name: "Ayodele Oluwaseyi",
   location: "Ilorin, Kwara State",
@@ -242,7 +315,7 @@ export const initialUserData = {
   email: "ayodelewaseyi@gmail.com",
   phone: "08047748383",
   verified: true,
-  verifiedDate: new Date().toISOString(),
+  verifiedDate: "2025-01-01T00:00:00.000Z",
   jobsPosted: 12,
   coinsLeft: 300,
 };

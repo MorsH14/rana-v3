@@ -29,6 +29,7 @@ import {
   AuthInputGroup,
   AuthInputLabel,
   AuthInput,
+  NigeriaFlag,
 } from "./auth.styles";
 import { initialUserData } from "@/db";
 
@@ -137,7 +138,7 @@ export default function SignUp() {
               <AuthSubtitle>Enter your WhatsApp number to get started</AuthSubtitle>
 
               <PhoneInputWrapper>
-                <PhonePrefix>🇳🇬 +234</PhonePrefix>
+                <PhonePrefix><NigeriaFlag /> +234</PhonePrefix>
                 <PhoneInput
                   type="tel"
                   placeholder="8012345678"

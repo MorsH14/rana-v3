@@ -65,7 +65,7 @@ export default function JobDetailsPage() {
   };
 
   return (
-    <Box sx={{ maxWidth: 760, mx: "auto", px: { xs: 2, md: 4 }, py: 4 }}>
+    <Box sx={{ maxWidth: 760, mx: "auto", px: { xs: 2, md: 4 }, py: 4, pb: { xs: 10, md: 4 } }}>
 
       {/* Back */}
       <Box

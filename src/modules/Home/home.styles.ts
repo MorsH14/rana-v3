@@ -89,54 +89,61 @@ export const HomeJobFilters = styled.div`
 
 export const BoxFilter = styled.div`
     width: 230px;
-    height: 270px;
-    background: black;
+    background: ${COLORS.NeutralSolidGray900};
     color: white;
-    border-radius: 30px;
+    border-radius: 20px;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     flex-direction: column;
-    padding: 30px;
+    gap: 12px;
+    padding: 24px 20px;
 
     @media screen and (max-width: 1158px) {
-        width: 160px; 
-        font-size: 18px;
+        width: 160px;
+        padding: 16px 14px;
     }
-    `
+`
 export const HomeMainJobFilter = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
     width: 260px;
-    margin-top: 50px;
-    font-family: 'Sulphur Point';
-    border-right: 2px solid #49444439;
+    margin-top: 28px;
+    font-family: Inter, sans-serif;
+    border-right: 1px solid ${COLORS.NeutralSolid50};
     padding-right: 10px;
 
     @media screen and (min-width: 769px) and (max-width: 920px) {
-        width: 120px; 
+        width: 120px;
     }
     @media screen and (min-width: 920px) and (max-width: 1320px) {
-        width: 180px; 
+        width: 180px;
     }
 `
 export const HButton = styled.div`
-    padding: 10px;
-    background: #8edbfa;
-    color: #000000e2;
-    border-radius: 20px;
+    padding: 9px 16px;
+    background: white;
+    color: ${COLORS.NeutralSolidGray900};
+    border-radius: 99px;
     font-weight: 600;
-    font-size: 16px;
-    width: 100%;
-    display: flex;
+    font-size: 13px;
+    font-family: Inter, sans-serif;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    transition: opacity 0.15s;
+    align-self: flex-start;
+
+    &:hover {
+        opacity: 0.85;
+    }
 
     @media screen and (max-width: 1158px) {
-        font-size: 12px;
+        font-size: 11px;
+        padding: 7px 12px;
     }
 `
 export const FilterContain = styled.div`

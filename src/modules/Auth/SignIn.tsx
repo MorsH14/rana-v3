@@ -26,6 +26,7 @@ import {
   OTPWrapper,
   OTPBox,
   ResendText,
+  NigeriaFlag,
 } from "./auth.styles";
 
 export default function SignIn() {
@@ -100,7 +101,7 @@ export default function SignIn() {
               <AuthSubtitle>Enter your phone number to sign in</AuthSubtitle>
 
               <PhoneInputWrapper>
-                <PhonePrefix>🇳🇬 +234</PhonePrefix>
+                <PhonePrefix><NigeriaFlag /> +234</PhonePrefix>
                 <PhoneInput
                   type="tel"
                   placeholder="8012345678"
