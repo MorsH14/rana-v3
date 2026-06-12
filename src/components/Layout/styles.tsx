@@ -101,6 +101,27 @@ export const JobFilterMainContainer = styled.div`
   background: ${COLORS.black100};
   color: ${COLORS.white100};
 `;
+export const AvatarCircle = styled.div<{ bg: string }>`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: ${({ bg }) => bg};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
 export const UploadImgWrapper = styled.input`
   width: 30px;
   height: 30px;

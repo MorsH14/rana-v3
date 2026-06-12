@@ -1,11 +1,9 @@
 "use client";
 
-import { Stack } from "@mui/material";
-import Select from "@/components/Select/Select";
-import { DesktopNavIcon, Hr, SortDesktopWrapper, SortMainWrapper } from "./home.styles";
-import { options, amount, location } from "@/utils/constants";
+import { CaretDown } from "@phosphor-icons/react/dist/ssr";
 import { MapPin, Money, Suitcase } from "@phosphor-icons/react/dist/ssr";
-import { HiddenOnMobile } from "@/styles/globals.styles";
+import { FilterPillsBar, FilterPill } from "./home.styles";
+import { options, amount, location } from "@/utils/constants";
 
 interface SelectPropProps {
   selectedCategory: string;
@@ -16,6 +14,11 @@ interface SelectPropProps {
   setSelectedLocation: (value: string) => void;
 }
 
+const getLabel = (
+  opts: { value: string | number; label: string }[],
+  val: string | number
+) => opts.find((o) => o.value === val)?.label ?? "";
+
 export default function SelectProp({
   selectedCategory,
   setSelectedCategory,
@@ -24,60 +27,65 @@ export default function SelectProp({
   selectedLocation,
   setSelectedLocation,
 }: SelectPropProps) {
+  const categoryActive = selectedCategory !== "all";
+  const priceActive = selectedPrice !== "price";
+  const locationActive = selectedLocation !== "state";
+
   return (
-    <SortMainWrapper>
-      <Stack gap={{ xs: "4px", md: "50px" }} flexDirection={"row"}>
-        {/* Category Select */}
-        <SortDesktopWrapper>
-          <HiddenOnMobile>
-            <DesktopNavIcon>
-              <Suitcase size={18} weight="bold" color="#f5f5f5eb" />
-            </DesktopNavIcon>
-          </HiddenOnMobile>
-          <Select
-            options={options}
-            selectedOption={selectedCategory}
-            onChange={(value) => setSelectedCategory(value as string)}
-            sx={{ color: "white" }}
-          />
-          <HiddenOnMobile>
-            <Hr />
-          </HiddenOnMobile>
-        </SortDesktopWrapper>
+    <FilterPillsBar>
+      {/* Category */}
+      <FilterPill active={categoryActive}>
+        <Suitcase size={14} weight="bold" />
+        <span>{getLabel(options, selectedCategory)}</span>
+        <CaretDown size={11} weight="bold" style={{ opacity: 0.7 }} />
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          {options.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </FilterPill>
 
-        {/* Price Select */}
-        <SortDesktopWrapper>
-          <HiddenOnMobile>
-            <DesktopNavIcon>
-              <Money size={18} weight="bold" color="#f5f5f5eb" />
-            </DesktopNavIcon>
-          </HiddenOnMobile>
-          <Select
-            options={amount}
-            selectedOption={selectedPrice}
-            onChange={(value) => setSelectedPrice(value)}
-            sx={{ color: "white" }}
-          />
-          <HiddenOnMobile>
-            <Hr />
-          </HiddenOnMobile>
-        </SortDesktopWrapper>
+      {/* Price */}
+      <FilterPill active={priceActive}>
+        <Money size={14} weight="bold" />
+        <span>{getLabel(amount, selectedPrice)}</span>
+        <CaretDown size={11} weight="bold" style={{ opacity: 0.7 }} />
+        <select
+          value={selectedPrice}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSelectedPrice(val === "price" ? "price" : Number(val));
+          }}
+        >
+          {amount.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </FilterPill>
 
-        {/* Location Select */}
-        <SortDesktopWrapper>
-          <HiddenOnMobile>
-            <DesktopNavIcon>
-              <MapPin size={18} weight="bold" color="#f5f5f5eb" />
-            </DesktopNavIcon>
-          </HiddenOnMobile>
-          <Select
-            options={location}
-            selectedOption={selectedLocation}
-            onChange={(value) => setSelectedLocation(value as string)}
-            sx={{ color: "white" }}
-          />
-        </SortDesktopWrapper>
-      </Stack>
-    </SortMainWrapper>
+      {/* Location */}
+      <FilterPill active={locationActive}>
+        <MapPin size={14} weight="bold" />
+        <span>{getLabel(location, selectedLocation)}</span>
+        <CaretDown size={11} weight="bold" style={{ opacity: 0.7 }} />
+        <select
+          value={selectedLocation}
+          onChange={(e) => setSelectedLocation(e.target.value)}
+        >
+          {location.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </FilterPill>
+    </FilterPillsBar>
   );
 }

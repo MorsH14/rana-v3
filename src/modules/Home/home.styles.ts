@@ -25,25 +25,55 @@ export const SortDesktopWrapper = styled.div`
   justify-content: space-around;
   align-items: center;
 `;
-export const DesktopNavIcon = styled.div`
-width: 35px;
-height: 35px;
-border-radius: 50%;
-background: transparent;
-border: .5px solid ${COLORS.gray100};
-display: flex;
-justify-content: center;
-align-items: center;
-`
-export const Hr = styled.div`
-width: 2px;
-height: 100%;
-background-color: ${COLORS.gray100};
+export const FilterPillsBar = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 
-@media screen and (max-width: 920px) {
-    height: 70%;
-}
-`
+  &::-webkit-scrollbar { display: none; }
+  scrollbar-width: none;
+`;
+
+export const FilterPill = styled.label<{ active?: boolean }>`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px 0 11px;
+  border-radius: 99px;
+  border: 1.5px solid ${({ active }) =>
+    active ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.18)"};
+  background: ${({ active }) =>
+    active ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)"};
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: ${({ active }) => (active ? 600 : 500)};
+  color: ${({ active }) => (active ? "white" : "rgba(255,255,255,0.65)")};
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.1);
+    color: white;
+  }
+
+  select {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+  }
+`;
 export const JobFiltersContainer = styled.div`
 display: grid;
 grid-template-columns: 70% 30%;

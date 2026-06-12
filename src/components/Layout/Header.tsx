@@ -8,8 +8,15 @@ import {
   NavImgSettings,
   HeaderLocation,
   StyledLink,
+  AvatarCircle,
 } from "./styles";
-import { MapPin, User } from "@phosphor-icons/react/dist/ssr";
+import { MapPin } from "@phosphor-icons/react/dist/ssr";
+
+const AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#e11d48"];
+const getAvatarColor = (name: string) =>
+  AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
+const getInitials = (name: string) =>
+  name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 import RoundedBtn from "../Buttons/RoundedBtn";
 import Badge from "../Badge/badge";
 import { HiddenOnMobile } from "@/styles/globals.styles";
@@ -62,16 +69,18 @@ export default function Header({ user }: HeaderProps) {
         <NavImgSettings>
           
           {/* Avatar */}
-          <Link href="/profile">
+          <Link href="/profile" style={{ textDecoration: "none" }}>
             {user.profileImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.profileImage}
                 alt="User Avatar"
-                style={{ width: "35px", height: "35px", borderRadius: "50%", objectFit: "cover" }}
+                style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.2)" }}
               />
             ) : (
-              <User size={35} color="gray" />
+              <AvatarCircle bg={getAvatarColor(user.name)}>
+                {getInitials(user.name)}
+              </AvatarCircle>
             )}
           </Link>
 
