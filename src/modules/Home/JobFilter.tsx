@@ -5,7 +5,22 @@ import { HiddenOnMobile } from '@/styles/globals.styles'
 import { MobileH4M } from '@/utils/typography'
 import CheckBoxText from '@/components/Buttons/CheckBoxText'
 
-export default function HomeJobFilter() {
+const SCHEDULE_OPTIONS = ["Full Time", "Part time", "Internship", "Project Work", "Volunteering"];
+const EMPLOYMENT_OPTIONS = ["Full day", "Flexible schedule", "Shift method", "Distant Work"];
+
+interface HomeJobFilterProps {
+  selectedSchedules: string[];
+  onScheduleToggle: (label: string) => void;
+  selectedEmploymentTypes: string[];
+  onEmploymentToggle: (label: string) => void;
+}
+
+export default function HomeJobFilter({
+  selectedSchedules,
+  onScheduleToggle,
+  selectedEmploymentTypes,
+  onEmploymentToggle,
+}: HomeJobFilterProps) {
   return (
     <HiddenOnMobile>
       <HomeJobFilters>
@@ -26,24 +41,29 @@ export default function HomeJobFilter() {
           </FilterContain>
 
           <MobileH4M>Working Schedule</MobileH4M>
-            <br />
-          <ul style={{
-            marginBottom: "20px",
-          }}>
-            <CheckBoxText label="Full Time" />
-            <CheckBoxText label="Part time" />
-            <CheckBoxText label="Internship" />
-            <CheckBoxText label=" Project Work" />
-            <CheckBoxText label=" Volunteering" />
+          <br />
+          <ul style={{ marginBottom: "20px" }}>
+            {SCHEDULE_OPTIONS.map((label) => (
+              <CheckBoxText
+                key={label}
+                label={label}
+                checked={selectedSchedules.includes(label)}
+                onChange={onScheduleToggle}
+              />
+            ))}
           </ul>
 
           <MobileH4M>Employment Type</MobileH4M>
-            <br />
+          <br />
           <ul>
-            <CheckBoxText label="Full day" />
-            <CheckBoxText label="Flexible schedule" />
-            <CheckBoxText label="Shift method" />
-            <CheckBoxText label="Distant Work" />
+            {EMPLOYMENT_OPTIONS.map((label) => (
+              <CheckBoxText
+                key={label}
+                label={label}
+                checked={selectedEmploymentTypes.includes(label)}
+                onChange={onEmploymentToggle}
+              />
+            ))}
           </ul>
         </HomeMainJobFilter>
       </HomeJobFilters>

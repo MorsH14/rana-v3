@@ -2,22 +2,21 @@
 
 import { MobileH4SM } from "@/utils/typography";
 import { List, StyledCheckbox } from "./Button.styles";
-import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 
 interface CheckBoxTextProps {
-    label: string; // ✅ make required
+    label: string;
+    checked: boolean;
+    onChange: (label: string) => void;
 }
 
-export default function CheckBoxText({ label }: CheckBoxTextProps) {
-    const [checked, setChecked] = useLocalStorage<boolean>(`checkbox-${label}`, false);
-
+export default function CheckBoxText({ label, checked, onChange }: CheckBoxTextProps) {
     return (
         <List>
             <StyledCheckbox
                 id={`checkbox-${label}`}
                 type="checkbox"
                 checked={checked}
-                onChange={() => setChecked(!checked)}
+                onChange={() => onChange(label)}
             />
             <label htmlFor={`checkbox-${label}`}>
                 <MobileH4SM>{label}</MobileH4SM>

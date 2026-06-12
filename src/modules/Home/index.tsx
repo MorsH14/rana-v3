@@ -43,6 +43,20 @@ export default function Homepage() {
   const [selectedPrice, setSelectedPrice] = useState<string | number>("price");
   const [selectedLocation, setSelectedLocation] = useState("state");
 
+  // sidebar checkbox states
+  const [selectedSchedules, setSelectedSchedules] = useState<string[]>([]);
+  const [selectedEmploymentTypes, setSelectedEmploymentTypes] = useState<string[]>([]);
+
+  const toggleSchedule = (label: string) =>
+    setSelectedSchedules((prev) =>
+      prev.includes(label) ? prev.filter((s) => s !== label) : [...prev, label]
+    );
+
+  const toggleEmployment = (label: string) =>
+    setSelectedEmploymentTypes((prev) =>
+      prev.includes(label) ? prev.filter((s) => s !== label) : [...prev, label]
+    );
+
   const [postedJobs] = useLocalStorage<typeof jobData>("rana-posted-jobs", []);
   const allJobs = [...postedJobs, ...jobData];
 
@@ -72,7 +86,35 @@ export default function Homepage() {
       const matchesLocation =
         selectedLocation === "state" || job.location === selectedLocation;
 
-      return matchesSearch && matchesCategory && matchesPrice && matchesLocation;
+      // working schedule filter (OR within group)
+      const matchesSchedule =
+        selectedSchedules.length === 0 ||
+        selectedSchedules.some((schedule) => {
+          if (schedule === "Full Time") return job.salary.includes("/month");
+          if (schedule === "Part time")
+            return (
+              job.salary.includes("/session") ||
+              job.salary.includes("/hour") ||
+              job.salary.includes("/occasion")
+            );
+          if (schedule === "Project Work") return job.salary.includes("/project");
+          return false;
+        });
+
+      // employment type filter (OR within group)
+      const matchesEmployment =
+        selectedEmploymentTypes.length === 0 ||
+        selectedEmploymentTypes.some((type) => {
+          if (type === "Full day")
+            return job.salary.includes("/day") || job.chips.includes("On-site");
+          if (type === "Distant Work")
+            return job.chips.includes("Remote") || job.chips.includes("Online");
+          if (type === "Flexible schedule")
+            return job.chips.some((c) => c.toLowerCase().includes("flexible"));
+          return false;
+        });
+
+      return matchesSearch && matchesCategory && matchesPrice && matchesLocation && matchesSchedule && matchesEmployment;
     })
     // sorting
     .sort((a, b) => {
@@ -127,7 +169,12 @@ export default function Homepage() {
       {/* Jobs */}
       <HomeJobWrapper>
         <Stack position="sticky" top={80}>
-          <HomeJobFilter />
+          <HomeJobFilter
+            selectedSchedules={selectedSchedules}
+            onScheduleToggle={toggleSchedule}
+            selectedEmploymentTypes={selectedEmploymentTypes}
+            onEmploymentToggle={toggleEmployment}
+          />
         </Stack>
         <JobListWrapper>
           <JobsHeaderWrapper>
