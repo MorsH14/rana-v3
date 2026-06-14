@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Chip,
@@ -39,6 +39,25 @@ export default function JobDetailsPage() {
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
 
   const job = jobData.find((j) => j.id.toString() === id);
+
+  const bgColor = useMemo(() => {
+    const colors = ["#e79c469d", "#92e7acb3", "#ce93d38d", "#8dd6ecb9", "#b597ebb8", "#c4e7469d"];
+    const seed = typeof job?.id === "number"
+      ? job.id
+      : (job?.id ?? "").split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return colors[seed % colors.length];
+  }, [job?.id]);
+
+  const initials = useMemo(() => {
+    if (!job) return "";
+    return job.company
+      .split(" ")
+      .filter((w) => w.length > 0)
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  }, [job?.company]);
 
   if (!job) {
     return (
@@ -81,39 +100,66 @@ export default function JobDetailsPage() {
         sx={{
           borderRadius: "20px",
           p: { xs: 3, md: 4 },
-          background: "linear-gradient(135deg, #e79c469d 0%, #b597ebb8 100%)",
+          background: bgColor,
           mb: 3,
+          position: "relative",
         }}
       >
-        <Font50030>{job.role}</Font50030>
-        <Box mt={1} display="flex" alignItems="center" gap={1}>
-          <Briefcase size={16} />
-          <Font50016>{job.company}</Font50016>
-        </Box>
-        <Box mt={0.5} display="flex" alignItems="center" gap={1}>
-          <MapPin size={16} />
-          <MobileLightRS12>{job.location}</MobileLightRS12>
+        {/* Company initials avatar — top right */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: { xs: 20, md: 28 },
+            right: { xs: 20, md: 28 },
+            width: { xs: 52, md: 64 },
+            height: { xs: 52, md: 64 },
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.82)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "Inter, sans-serif",
+            fontSize: { xs: 16, md: 20 },
+            fontWeight: 700,
+            color: "rgba(0,0,0,0.7)",
+            letterSpacing: "-0.5px",
+            flexShrink: 0,
+          }}
+        >
+          {initials}
         </Box>
 
-        {job.rating !== undefined && (
-          <Box mt={1.5}>
-            <StarRating rating={job.rating} reviewCount={job.reviewCount} size={16} />
+        <Box pr={{ xs: "68px", md: "84px" }}>
+          <Font50030>{job.role}</Font50030>
+          <Box mt={1} display="flex" alignItems="center" gap={1}>
+            <Briefcase size={16} />
+            <Font50016>{job.company}</Font50016>
           </Box>
-        )}
+          <Box mt={0.5} display="flex" alignItems="center" gap={1}>
+            <MapPin size={16} />
+            <MobileLightRS12>{job.location}</MobileLightRS12>
+          </Box>
 
-        <Stack direction="row" spacing={1} flexWrap="wrap" mt={2}>
-          {job.chips?.map((chip) => (
-            <Chip
-              key={chip}
-              label={chip}
-              sx={{
-                fontSize: "11px",
-                bgcolor: "rgba(255,255,255,0.7)",
-                fontWeight: 500,
-              }}
-            />
-          ))}
-        </Stack>
+          {job.rating !== undefined && (
+            <Box mt={1.5}>
+              <StarRating rating={job.rating} reviewCount={job.reviewCount} size={16} />
+            </Box>
+          )}
+
+          <Stack direction="row" spacing={1} flexWrap="wrap" mt={2}>
+            {job.chips?.map((chip) => (
+              <Chip
+                key={chip}
+                label={chip}
+                sx={{
+                  fontSize: "11px",
+                  bgcolor: "rgba(255,255,255,0.7)",
+                  fontWeight: 500,
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
       </Box>
 
       {/* Salary */}
