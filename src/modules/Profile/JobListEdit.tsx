@@ -2,7 +2,27 @@
 
 import React, { useState } from "react";
 import TextField from "@/components/Inputs/TextField";
-import { Button, Stack } from "@mui/material";
+import styled from "@emotion/styled";
+import { COLORS } from "@/utils/colors.util";
+import { Stack } from "@mui/material";
+
+const SaveBtn = styled.button`
+  width: 100%;
+  height: 50px;
+  background: ${COLORS.NeutralSolidGray900};
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
 
 interface FilterItem {
   title: string;
@@ -26,7 +46,7 @@ export default function JobListEdit({ filter, onSave }: JobListEditProps) {
   };
 
   return (
-    <Stack spacing={2} sx={{ p: 2 }}>
+    <Stack spacing={2} sx={{ p: 0 }}>
       <TextField
         label="Job Title"
         placeholder="e.g. Designer"
@@ -47,18 +67,14 @@ export default function JobListEdit({ filter, onSave }: JobListEditProps) {
       />
       <TextField
         label="Price Range"
-        placeholder="e.g. $100-$200"
+        placeholder="e.g. ₦10,000 – ₦50,000"
         value={localFilter.price}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("price", e.target.value)}
       />
 
-      <Button
-        variant="contained"
-        onClick={() => onSave && onSave(localFilter)}
-        fullWidth
-      >
-        Save Filter
-      </Button>
+      <SaveBtn type="button" onClick={() => onSave && onSave(localFilter)}>
+        Save filter
+      </SaveBtn>
     </Stack>
   );
 }

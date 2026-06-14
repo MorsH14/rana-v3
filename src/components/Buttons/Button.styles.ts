@@ -29,7 +29,7 @@ export const Button = styled.button`
   color: #464444;
   border-radius: 20px;
   border: none;
-  font-family: "Sulphur Point";
+  font-family: Inter, sans-serif;
 
   @media screen and (min-width: 681px) {
     font-size: 14px;
@@ -79,7 +79,7 @@ export const List = styled.li`
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
-    font-family: 'Sulphur Point';
+    font-family: Inter, sans-serif;
     margin-bottom: 10px;
     cursor: pointer;
 `
