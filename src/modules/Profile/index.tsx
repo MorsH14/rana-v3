@@ -1,55 +1,57 @@
 "use client";
-import React, { useState } from "react";
-import { FlexCenter } from "@/styles/globals.styles";
-import { ProfileWrapper, VerifiedWrapper } from "./styles";
-import MainAvatar from "@/components/Avatar/Avatar";
-import { WebCaption1MSolid300, WebHeadingH4Gray900, WebCC2Gray300 } from "@/utils/typography";
-import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
-import { Box } from "@mui/material";
-import JobListTable from "@/components/Tables";
+import React, { useMemo } from "react";
+import {
+  ProfileWrapper,
+  ProfileHeroBanner,
+  ProfileAvatarWrap,
+  ProfileAvatarInner,
+  ProfileInfo,
+  ProfileNameRow,
+  ProfileName,
+  ProfileMeta,
+  ProfileActions,
+  ProfileActionBtn,
+  StatsRow,
+  StatCard,
+  StatIconBox,
+  StatValue,
+  StatLabel,
+  BuyCoinBtn,
+  SectionLabel,
+  VerifiedWrapper,
+} from "./styles";
+import {
+  CheckCircle,
+  Gear,
+  Pen,
+  SignOut,
+  MapPin,
+  WhatsappLogo,
+  Briefcase,
+  Wallet,
+  Plus,
+} from "@phosphor-icons/react/dist/ssr";
 import SavedFilterDropdown from "./Accordion";
 import SavedJobs from "./SavedJobs";
 import DrawerBasic from "@/components/Drawer/Drawer";
 import ProfileEdit from "./ProfileEdit";
 import { initialUserData, savedFilters } from "@/db";
-import IconButton from "@/components/Buttons/Button";
-import { Gear, MapPin, Pen, SignOut, WhatsappLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 
-function useUseStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === "undefined") {
-      return initialValue;
-    }
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.log(error);
-      return initialValue;
-    }
-  });
-
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return [storedValue, setValue] as const;
-}
+const AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#e11d48"];
+const HERO_GRADIENTS = [
+  "linear-gradient(135deg, #ede9fe, #e0e7ff)",
+  "linear-gradient(135deg, #dbeafe, #e0f2fe)",
+  "linear-gradient(135deg, #d1fae5, #dcfce7)",
+  "linear-gradient(135deg, #fef3c7, #fde8a8)",
+  "linear-gradient(135deg, #fee2e2, #fecaca)",
+];
 
 export default function ProfilePage() {
-  const [user, setUser] = useUseStorage("rana-user-profile", initialUserData);
-  const [filters, setFilters] = useUseStorage("rana-saved-filters", savedFilters);
+  const [user, setUser] = useLocalStorage("rana-user-profile", initialUserData);
+  const [filters, setFilters] = useLocalStorage("rana-saved-filters", savedFilters);
   const router = useRouter();
 
   const handleSignOut = () => {
@@ -58,81 +60,140 @@ export default function ProfilePage() {
     router.push("/signin");
   };
 
-  const handleUpdateFilter = (index: number, updatedFilter: { title: string; location: string; distance: string; price: string }) => {
+  const handleUpdateFilter = (
+    index: number,
+    updatedFilter: { title: string; location: string; distance: string; price: string }
+  ) => {
     const newFilters = [...filters];
     newFilters[index] = updatedFilter;
     setFilters(newFilters);
   };
 
   const handleDeleteFilter = (index: number) => {
-    const newFilters = filters.filter((_, i) => i !== index);
-    setFilters(newFilters);
+    setFilters(filters.filter((_, i) => i !== index));
   };
 
   const handleClearAllFilters = () => {
     setFilters([]);
   };
 
+  const initials = useMemo(
+    () =>
+      user.name
+        .split(" ")
+        .filter((w) => w.length > 0)
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+    [user.name]
+  );
+
+  const colorIdx = user.name.charCodeAt(0) % AVATAR_COLORS.length;
+  const avatarColor = AVATAR_COLORS[colorIdx];
+  const heroGradient = HERO_GRADIENTS[colorIdx];
+
   return (
-    <FlexCenter>
-      <ProfileWrapper>
-        <FlexCenter>
-          <MainAvatar size={120} imageUrl={user.profileImage} name={user.name} />
+    <ProfileWrapper>
+      {/* Hero banner with overlapping avatar */}
+      <ProfileHeroBanner bg={heroGradient}>
+        <ProfileAvatarWrap>
+          <ProfileAvatarInner bg={avatarColor}>{initials}</ProfileAvatarInner>
+        </ProfileAvatarWrap>
+      </ProfileHeroBanner>
 
-          {/* Name + verified badge */}
-          <Box display="flex" mt="12px" justifyContent="center" alignItems="center" gap="5px">
-            <WebHeadingH4Gray900>{user.name}</WebHeadingH4Gray900>
-            {user.verified && (
-              <VerifiedWrapper>
-                <CheckCircle color="white" size={20} />
-              </VerifiedWrapper>
-            )}
-          </Box>
-
-          {/* Role */}
-          {user.role && (
-            <Box mt="4px" textAlign="center">
-              <WebCaption1MSolid300>{user.role}</WebCaption1MSolid300>
-            </Box>
+      {/* Name, role, location, phone */}
+      <ProfileInfo>
+        <ProfileNameRow>
+          <ProfileName>{user.name}</ProfileName>
+          {user.verified && (
+            <VerifiedWrapper>
+              <CheckCircle color="white" size={12} />
+            </VerifiedWrapper>
           )}
+        </ProfileNameRow>
 
-          {/* Location */}
-          {user.location && (
-            <Box mt="4px" display="flex" justifyContent="center" alignItems="center" gap="4px">
-              <MapPin size={13} color="#A4ABB8" />
-              <WebCC2Gray300>{user.location}</WebCC2Gray300>
-            </Box>
-          )}
+        {user.role && <ProfileMeta>{user.role}</ProfileMeta>}
 
-          {/* Phone */}
-          <Box mt="8px" display="flex" justifyContent="center" alignItems="center" gap="5px">
-            <WhatsappLogo color="#25D366" />
-            <WebCaption1MSolid300>{user.phone}</WebCaption1MSolid300>
-          </Box>
+        {user.location && (
+          <ProfileMeta>
+            <MapPin size={12} />
+            {user.location}
+          </ProfileMeta>
+        )}
 
-          {/* Actions */}
-          <Box mt="16px" display="flex" justifyContent="center" alignItems="center" gap="20px">
-            <Link href="/settings" style={{ textDecoration: "none", color: "inherit" }}>
-              <IconButton icon={<Gear />}>Settings</IconButton>
-            </Link>
-            <DrawerBasic label={<IconButton icon={<Pen />}>Edit</IconButton>}>
-              <ProfileEdit user={user} setUser={setUser} />
-            </DrawerBasic>
-            <IconButton icon={<SignOut />} onClick={handleSignOut}>Sign out</IconButton>
-          </Box>
+        <ProfileMeta>
+          <WhatsappLogo size={13} color="#25D366" />
+          {user.phone}
+        </ProfileMeta>
+      </ProfileInfo>
 
-          <JobListTable jobsPosted={user.jobsPosted} coinsLeft={user.coinsLeft} />
+      {/* Action buttons */}
+      <ProfileActions>
+        <Link href="/settings" style={{ textDecoration: "none" }}>
+          <ProfileActionBtn variant="outline">
+            <Gear size={14} />
+            Settings
+          </ProfileActionBtn>
+        </Link>
 
-          <SavedJobs />
+        <DrawerBasic
+          label={
+            <ProfileActionBtn variant="primary">
+              <Pen size={14} />
+              Edit profile
+            </ProfileActionBtn>
+          }
+        >
+          <ProfileEdit user={user} setUser={setUser} />
+        </DrawerBasic>
 
-          <SavedFilterDropdown
-            filters={filters}
-            onUpdate={handleUpdateFilter}
-            onDelete={handleDeleteFilter}
-            onClearAll={handleClearAllFilters}
-          />
-        </FlexCenter>
-      </ProfileWrapper>
-    </FlexCenter>
+        <ProfileActionBtn variant="danger" onClick={handleSignOut}>
+          <SignOut size={14} />
+          Sign out
+        </ProfileActionBtn>
+      </ProfileActions>
+
+      {/* Stats cards */}
+      <StatsRow>
+        <StatCard>
+          <StatIconBox bg="rgba(71, 110, 251, 0.1)">
+            <Briefcase size={18} color="#476EFB" weight="fill" />
+          </StatIconBox>
+          <div>
+            <StatValue>{user.jobsPosted ?? 0}</StatValue>
+            <StatLabel>Jobs Posted</StatLabel>
+          </div>
+        </StatCard>
+
+        <StatCard>
+          <StatIconBox bg="rgba(245, 158, 11, 0.12)">
+            <Wallet size={18} color="#f59e0b" weight="fill" />
+          </StatIconBox>
+          <div>
+            <StatValue>{user.coinsLeft ?? 0}</StatValue>
+            <StatLabel>Coins Left</StatLabel>
+          </div>
+        </StatCard>
+      </StatsRow>
+
+      <BuyCoinBtn>
+        <Plus size={14} />
+        Buy coins
+      </BuyCoinBtn>
+
+      {/* Saved Jobs */}
+      <SectionLabel>Saved Jobs</SectionLabel>
+      <SavedJobs />
+
+      {/* Saved Filters */}
+      <SectionLabel>Saved Filters</SectionLabel>
+      <SavedFilterDropdown
+        filters={filters}
+        onUpdate={handleUpdateFilter}
+        onDelete={handleDeleteFilter}
+        onClearAll={handleClearAllFilters}
+      />
+    </ProfileWrapper>
   );
 }

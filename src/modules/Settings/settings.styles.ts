@@ -15,18 +15,35 @@ export const SettingsPageTitle = styled.h1`
   font-size: 22px;
   font-weight: 700;
   color: ${COLORS.NeutralSolidGray900};
-  margin: 0 0 28px;
+  margin: 0 0 24px;
 `;
 
+/* ─── profile summary card ─── */
 export const ProfileSummary = styled.div`
   display: flex;
   align-items: center;
   gap: 14px;
-  background: ${COLORS.NeutralSolid25};
-  border: 1px solid ${COLORS.NeutralSolid50};
-  border-radius: 14px;
+  background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+  border: 1px solid #e0e7ff;
+  border-radius: 16px;
   padding: 16px;
   margin-bottom: 28px;
+`;
+
+export const SettingsAvatarCircle = styled.div<{ bg: string }>`
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: ${({ bg }) => bg};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Inter, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
 `;
 
 export const ProfileSummaryInfo = styled.div`
@@ -55,17 +72,17 @@ export const EditProfileBtn = styled.button`
   font-family: Inter, sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: ${COLORS.NeutralSolidGray900};
-  background: white;
-  border: 1.5px solid ${COLORS.NeutralSolid50};
-  border-radius: 8px;
-  padding: 7px 14px;
+  color: #476efb;
+  background: rgba(71, 110, 251, 0.08);
+  border: 1.5px solid rgba(71, 110, 251, 0.2);
+  border-radius: 99px;
+  padding: 7px 16px;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s;
 
   &:hover {
-    background: ${COLORS.NeutralSolid50};
+    background: rgba(71, 110, 251, 0.14);
   }
 `;
 
@@ -82,6 +99,9 @@ export const SectionTitle = styled.div`
   color: ${COLORS.SolidGray300};
   margin-bottom: 8px;
   padding: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 `;
 
 export const Card = styled.div`
@@ -105,7 +125,8 @@ export const SettingRow = styled.div<{ clickable?: boolean }>`
   }
 
   &:hover {
-    background: ${({ clickable }) => (clickable ? COLORS.NeutralSolid25 : "transparent")};
+    background: ${({ clickable }) =>
+      clickable ? COLORS.NeutralSolid25 : "transparent"};
   }
 `;
 
@@ -136,13 +157,14 @@ export const RowValue = styled.div`
   color: ${COLORS.SolidGray400};
 `;
 
-/* Toggle switch */
+/* ─── toggle switch — active color: indigo ─── */
 export const ToggleLabel = styled.label`
   position: relative;
   display: inline-block;
   width: 44px;
   height: 26px;
   cursor: pointer;
+  flex-shrink: 0;
 `;
 
 export const ToggleInput = styled.input`
@@ -152,7 +174,7 @@ export const ToggleInput = styled.input`
   position: absolute;
 
   &:checked + span {
-    background: ${COLORS.NeutralSolidGray900};
+    background: #6366f1;
   }
   &:checked + span::before {
     transform: translateX(18px);
@@ -176,49 +198,57 @@ export const ToggleSlider = styled.span`
     background: white;
     border-radius: 50%;
     transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 `;
 
-/* Category chips */
+/* ─── category chips — selected: indigo ─── */
 export const ChipsRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px 16px 16px;
+  padding: 4px 16px 16px;
 `;
 
 export const PrefChip = styled.button<{ selected: boolean }>`
   padding: 7px 14px;
   border-radius: 99px;
   border: 1.5px solid
-    ${({ selected }) => (selected ? COLORS.NeutralSolidGray900 : COLORS.NeutralSolid50)};
-  background: ${({ selected }) => (selected ? COLORS.NeutralSolidGray900 : "white")};
-  color: ${({ selected }) => (selected ? "white" : COLORS.SolidGray700)};
+    ${({ selected }) => (selected ? "#6366f1" : COLORS.NeutralSolid50)};
+  background: ${({ selected }) =>
+    selected ? "rgba(99, 102, 241, 0.08)" : "white"};
+  color: ${({ selected }) => (selected ? "#6366f1" : COLORS.SolidGray700)};
   font-family: Inter, sans-serif;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: ${({ selected }) => (selected ? 600 : 500)};
   cursor: pointer;
   transition: all 0.15s;
 `;
 
+/* ─── save button — compact, not full-width ─── */
 export const SaveBtn = styled.button`
-  width: 100%;
-  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 20px;
   background: ${COLORS.NeutralSolidGray900};
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 99px;
   font-family: Inter, sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
   transition: opacity 0.15s;
 
   &:disabled {
     opacity: 0.35;
     cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
   }
 `;
 

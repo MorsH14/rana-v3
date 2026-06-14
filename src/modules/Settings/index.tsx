@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CaretRight } from "@phosphor-icons/react/dist/ssr";
+import {
+  Bell,
+  Briefcase,
+  CaretRight,
+  SignOut,
+  User,
+} from "@phosphor-icons/react/dist/ssr";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { initialUserData } from "@/db";
-import MainAvatar from "@/components/Avatar/Avatar";
 import DrawerBasic from "@/components/Drawer/Drawer";
 import ProfileEdit from "@/modules/Profile/ProfileEdit";
 import { FlexCenter } from "@/styles/globals.styles";
@@ -13,6 +18,7 @@ import {
   SettingsWrapper,
   SettingsPageTitle,
   ProfileSummary,
+  SettingsAvatarCircle,
   ProfileSummaryInfo,
   ProfileSummaryName,
   ProfileSummaryRole,
@@ -35,6 +41,8 @@ import {
   DangerRow,
   DangerLabel,
 } from "./settings.styles";
+
+const AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#e11d48"];
 
 const CATEGORIES = [
   { value: "education", label: "📚 Education" },
@@ -100,6 +108,20 @@ export default function SettingsPage() {
     router.push("/signin");
   };
 
+  const initials = useMemo(
+    () =>
+      user.name
+        .split(" ")
+        .filter((w) => w.length > 0)
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+    [user.name]
+  );
+
+  const avatarColor = AVATAR_COLORS[user.name.charCodeAt(0) % AVATAR_COLORS.length];
+
   return (
     <FlexCenter>
       <SettingsWrapper>
@@ -107,7 +129,7 @@ export default function SettingsPage() {
 
         {/* ── Profile Summary ── */}
         <ProfileSummary>
-          <MainAvatar size={52} imageUrl={user.profileImage} name={user.name} />
+          <SettingsAvatarCircle bg={avatarColor}>{initials}</SettingsAvatarCircle>
           <ProfileSummaryInfo>
             <ProfileSummaryName>{user.name}</ProfileSummaryName>
             <ProfileSummaryRole>{user.role || user.phone}</ProfileSummaryRole>
@@ -119,12 +141,15 @@ export default function SettingsPage() {
 
         {/* ── Account ── */}
         <Section>
-          <SectionTitle>Account</SectionTitle>
+          <SectionTitle>
+            <User size={12} />
+            Account
+          </SectionTitle>
           <Card>
             <SettingRow>
               <RowLeft>
                 <RowLabel>Phone number</RowLabel>
-                <RowSub>Used for sign in & WhatsApp contact</RowSub>
+                <RowSub>Used for sign in &amp; WhatsApp contact</RowSub>
               </RowLeft>
               <RowValue>{user.phone}</RowValue>
             </SettingRow>
@@ -145,7 +170,10 @@ export default function SettingsPage() {
 
         {/* ── Notifications ── */}
         <Section>
-          <SectionTitle>Notifications</SectionTitle>
+          <SectionTitle>
+            <Bell size={12} />
+            Notifications
+          </SectionTitle>
           <Card>
             {(
               [
@@ -191,7 +219,10 @@ export default function SettingsPage() {
 
         {/* ── Preferences ── */}
         <Section>
-          <SectionTitle>Job preferences</SectionTitle>
+          <SectionTitle>
+            <Briefcase size={12} />
+            Job preferences
+          </SectionTitle>
           <Card>
             <SettingRow>
               <RowLeft>
@@ -249,7 +280,7 @@ export default function SettingsPage() {
             </SettingRow>
           </Card>
 
-          <div style={{ padding: "10px 0 0", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ padding: "12px 0 0", display: "flex", alignItems: "center", gap: 12 }}>
             <SaveBtn onClick={savePrefs}>Save preferences</SaveBtn>
             {prefSaved && <SavedBadge>✓ Saved</SavedBadge>}
           </div>
@@ -257,7 +288,10 @@ export default function SettingsPage() {
 
         {/* ── Danger zone ── */}
         <Section>
-          <SectionTitle>Account actions</SectionTitle>
+          <SectionTitle>
+            <SignOut size={12} />
+            Account actions
+          </SectionTitle>
           <Card>
             <DangerRow onClick={handleSignOut}>
               <DangerLabel>Sign out</DangerLabel>
