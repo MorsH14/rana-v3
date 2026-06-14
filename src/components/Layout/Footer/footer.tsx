@@ -8,9 +8,32 @@ import { IconProps } from "@phosphor-icons/react";
 import { Box } from "@mui/material";
 import { Font50016 } from "@/utils/typography";
 import { usePathname } from "next/navigation";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { initialUserData } from "@/db";
+import styled from "@emotion/styled";
+
+const NavBadge = styled.div`
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 99px;
+  background: #4cabeb;
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid black;
+`;
 
 export default function Footer() {
   const pathname = usePathname();
+  const [user] = useLocalStorage("rana-user-profile", initialUserData);
 
   return (
     <HiddenOnDesktop>
@@ -21,6 +44,7 @@ export default function Footer() {
               ? (PhosphorIcons[item.icon as keyof typeof PhosphorIcons] as React.FC<IconProps>)
               : null;
           const isActive = pathname === item.route;
+          const showBadge = item.route === "/notification" && user.notifications > 0;
 
           return (
             <Link href={item.route} key={index} style={{ textDecoration: "none" }}>
@@ -31,9 +55,16 @@ export default function Footer() {
                 flexDirection="column"
                 sx={{ opacity: isActive ? 1 : 0.45, transition: "opacity 0.15s" }}
               >
-                {IconComponent && (
-                  <IconComponent size={22} weight={isActive ? "fill" : "regular"} />
-                )}
+                <Box position="relative" display="inline-flex">
+                  {IconComponent && (
+                    <IconComponent size={22} weight={isActive ? "fill" : "regular"} />
+                  )}
+                  {showBadge && (
+                    <NavBadge>
+                      {user.notifications > 9 ? "9+" : user.notifications}
+                    </NavBadge>
+                  )}
+                </Box>
                 <Font50016 style={{ fontSize: 10, marginTop: 2 }}>{item.label}</Font50016>
               </Box>
             </Link>

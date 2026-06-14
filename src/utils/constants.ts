@@ -18,8 +18,9 @@ interface FooterLinkProps {
   export const FooterLink: FooterLinkProps[] = [
     { label: "Home", route: "/", icon: "House" },
     { label: "Post", route: "/post-job", icon: "PlusCircle" },
-    { label: "Messages", route: "/Messages", icon: "Chat" },
-    { label: "Profile", route: "/profile", icon: "Briefcase" },
+    { label: "Messages", route: "/Messages", icon: "ChatCircle" },
+    { label: "Alerts", route: "/notification", icon: "Bell" },
+    { label: "Profile", route: "/profile", icon: "UserCircle" },
   ];
 
     // FILTER DROP DOWN

@@ -6,8 +6,8 @@ import { COLORS } from "@/utils/colors.util";
 export const NotificationsWrapper = styled.div`
   width: 100%;
   max-width: 600px;
-  margin: 48px auto;
-  padding: 0 16px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
 `;
 
 export const NotificationsHeader = styled.div`
@@ -20,7 +20,7 @@ export const NotificationsHeader = styled.div`
 export const NotificationsTitle = styled.h1`
   font-family: Inter, sans-serif;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: ${COLORS.NeutralSolidGray900};
   margin: 0;
 `;
@@ -45,25 +45,31 @@ export const MarkAllRead = styled.button`
 export const NotificationList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 `;
 
 export const NotificationItem = styled.div<{ unread?: boolean }>`
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 16px;
-  background: ${({ unread }) => (unread ? COLORS.NeutralSolid25 : COLORS.white100)};
-  border-radius: 12px;
+  flex-direction: column;
+  background: ${({ unread }) => (unread ? "#f8f9ff" : COLORS.white100)};
+  border-radius: 14px;
   border: 1px solid ${COLORS.NeutralSolid50};
-  border-left: ${({ unread }) => (unread ? `3px solid ${COLORS.Blue500}` : `1px solid ${COLORS.NeutralSolid50}`)};
+  border-left: ${({ unread }) =>
+    unread ? `3px solid ${COLORS.Blue500}` : `1px solid ${COLORS.NeutralSolid50}`};
   cursor: pointer;
-  transition: box-shadow 0.15s, transform 0.15s;
+  transition: box-shadow 0.15s;
+  overflow: hidden;
 
   &:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   }
+`;
+
+export const NotificationTop = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
 `;
 
 export const IconCircle = styled.div<{ bg: string }>`
@@ -95,9 +101,6 @@ export const NotificationItemTitle = styled.span<{ unread?: boolean }>`
   font-size: 14px;
   font-weight: ${({ unread }) => (unread ? 600 : 500)};
   color: ${COLORS.NeutralSolidGray900};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export const NotificationTime = styled.span`
@@ -108,12 +111,16 @@ export const NotificationTime = styled.span`
   flex-shrink: 0;
 `;
 
-export const NotificationMessage = styled.p`
+export const NotificationMessage = styled.p<{ expanded?: boolean }>`
   font-family: Inter, sans-serif;
   font-size: 13px;
   color: ${COLORS.SolidGray400};
-  line-height: 1.5;
+  line-height: 1.55;
   margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${({ expanded }) => (expanded ? "unset" : 2)};
+  overflow: ${({ expanded }) => (expanded ? "visible" : "hidden")};
 `;
 
 export const UnreadDot = styled.div`
@@ -122,25 +129,69 @@ export const UnreadDot = styled.div`
   border-radius: 50%;
   background: ${COLORS.Blue500};
   flex-shrink: 0;
-  margin-top: 6px;
+  margin-top: 4px;
+`;
+
+export const ExpandedArea = styled.div`
+  padding: 0 16px 14px 68px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+export const ActionBtn = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 16px;
+  background: ${COLORS.NeutralSolidGray900};
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 99px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
+export const DismissBtn = styled.button`
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: ${COLORS.SolidGray300};
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: ${COLORS.SolidGray400};
+  }
 `;
 
 export const EmptyState = styled.div`
   text-align: center;
-  padding: 64px 24px;
-  color: ${COLORS.SolidGray400};
+  padding: 80px 24px;
 
   p {
     font-family: Inter, sans-serif;
     font-size: 14px;
     margin-top: 12px;
+    color: ${COLORS.SolidGray400};
   }
 `;
 
 export const SectionLabel = styled.div`
   font-family: Inter, sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: ${COLORS.SolidGray300};

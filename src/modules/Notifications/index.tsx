@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Briefcase, Star, User, Info } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
+import { Bell, Briefcase, Star, Info, ArrowRight, X } from "@phosphor-icons/react/dist/ssr";
 import { notificationsData } from "@/db";
 import { COLORS } from "@/utils/colors.util";
 import { FlexCenter } from "@/styles/globals.styles";
@@ -12,6 +13,7 @@ import {
   MarkAllRead,
   NotificationList,
   NotificationItem,
+  NotificationTop,
   IconCircle,
   NotificationBody,
   NotificationTitleRow,
@@ -19,28 +21,42 @@ import {
   NotificationTime,
   NotificationMessage,
   UnreadDot,
+  ExpandedArea,
+  ActionBtn,
+  DismissBtn,
   EmptyState,
   SectionLabel,
 } from "./notifications.styles";
 
 type Notification = (typeof notificationsData)[number] & { read: boolean };
 
-const TYPE_CONFIG: Record<string, { icon: React.ReactNode; bg: string }> = {
+const TYPE_CONFIG: Record<
+  string,
+  { icon: React.ReactNode; bg: string; actionLabel: string; actionHref: string }
+> = {
   application: {
     icon: <Briefcase size={18} color={COLORS.white100} weight="fill" />,
     bg: COLORS.Blue500,
+    actionLabel: "Open Messages",
+    actionHref: "/Messages",
   },
   job: {
     icon: <Bell size={18} color={COLORS.white100} weight="fill" />,
     bg: COLORS.Green100,
+    actionLabel: "Browse listings",
+    actionHref: "/",
   },
   interview: {
     icon: <Star size={18} color={COLORS.white100} weight="fill" />,
     bg: "#F59E0B",
+    actionLabel: "View profile",
+    actionHref: "/profile",
   },
   system: {
     icon: <Info size={18} color={COLORS.white100} weight="fill" />,
     bg: COLORS.SolidGray400,
+    actionLabel: "Update profile",
+    actionHref: "/profile",
   },
 };
 
@@ -52,17 +68,26 @@ export default function NotificationsPage() {
   const [items, setItems] = useState<Notification[]>(
     notificationsData.map((n) => ({ ...n }))
   );
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const unreadItems = items.filter((n) => !n.read);
   const readItems = items.filter((n) => n.read);
   const hasUnread = unreadItems.length > 0;
 
-  const markRead = (id: number) => {
+  const handleTap = (id: number) => {
     setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  const dismiss = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    setItems((prev) => prev.filter((n) => n.id !== id));
+    if (expandedId === id) setExpandedId(null);
   };
 
   const markAllRead = () => {
     setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+    setExpandedId(null);
   };
 
   if (items.length === 0) {
@@ -79,6 +104,40 @@ export default function NotificationsPage() {
     );
   }
 
+  const renderItem = (n: Notification) => {
+    const { icon, bg, actionLabel, actionHref } = getConfig(n.type);
+    const isExpanded = expandedId === n.id;
+
+    return (
+      <NotificationItem key={n.id} unread={!n.read} onClick={() => handleTap(n.id)}>
+        <NotificationTop>
+          <IconCircle bg={bg}>{icon}</IconCircle>
+          <NotificationBody>
+            <NotificationTitleRow>
+              <NotificationItemTitle unread={!n.read}>{n.title}</NotificationItemTitle>
+              <NotificationTime>{n.time}</NotificationTime>
+            </NotificationTitleRow>
+            <NotificationMessage expanded={isExpanded}>{n.message}</NotificationMessage>
+          </NotificationBody>
+          {!n.read && <UnreadDot />}
+        </NotificationTop>
+
+        {isExpanded && (
+          <ExpandedArea onClick={(e) => e.stopPropagation()}>
+            <Link href={actionHref} passHref legacyBehavior>
+              <ActionBtn>
+                {actionLabel} <ArrowRight size={12} weight="bold" />
+              </ActionBtn>
+            </Link>
+            <DismissBtn onClick={(e) => dismiss(e, n.id)}>
+              <X size={11} style={{ verticalAlign: "middle" }} /> Dismiss
+            </DismissBtn>
+          </ExpandedArea>
+        )}
+      </NotificationItem>
+    );
+  };
+
   return (
     <FlexCenter>
       <NotificationsWrapper>
@@ -92,47 +151,14 @@ export default function NotificationsPage() {
         {hasUnread && (
           <>
             <SectionLabel>New · {unreadItems.length}</SectionLabel>
-            <NotificationList>
-              {unreadItems.map((n) => {
-                const { icon, bg } = getConfig(n.type);
-                return (
-                  <NotificationItem key={n.id} unread onClick={() => markRead(n.id)}>
-                    <IconCircle bg={bg}>{icon}</IconCircle>
-                    <NotificationBody>
-                      <NotificationTitleRow>
-                        <NotificationItemTitle unread>{n.title}</NotificationItemTitle>
-                        <NotificationTime>{n.time}</NotificationTime>
-                      </NotificationTitleRow>
-                      <NotificationMessage>{n.message}</NotificationMessage>
-                    </NotificationBody>
-                    <UnreadDot />
-                  </NotificationItem>
-                );
-              })}
-            </NotificationList>
+            <NotificationList>{unreadItems.map(renderItem)}</NotificationList>
           </>
         )}
 
         {readItems.length > 0 && (
           <>
             <SectionLabel>{hasUnread ? "Earlier" : "All notifications"}</SectionLabel>
-            <NotificationList>
-              {readItems.map((n) => {
-                const { icon, bg } = getConfig(n.type);
-                return (
-                  <NotificationItem key={n.id} onClick={() => markRead(n.id)}>
-                    <IconCircle bg={bg}>{icon}</IconCircle>
-                    <NotificationBody>
-                      <NotificationTitleRow>
-                        <NotificationItemTitle>{n.title}</NotificationItemTitle>
-                        <NotificationTime>{n.time}</NotificationTime>
-                      </NotificationTitleRow>
-                      <NotificationMessage>{n.message}</NotificationMessage>
-                    </NotificationBody>
-                  </NotificationItem>
-                );
-              })}
-            </NotificationList>
+            <NotificationList>{readItems.map(renderItem)}</NotificationList>
           </>
         )}
       </NotificationsWrapper>
