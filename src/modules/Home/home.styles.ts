@@ -28,64 +28,26 @@ export const SortDesktopWrapper = styled.div`
 export const FilterPillsBar = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: nowrap;
   overflow-x: auto;
 
   &::-webkit-scrollbar { display: none; }
   scrollbar-width: none;
 `;
-
-export const FilterPill = styled.label<{ active?: boolean }>`
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 13px 0 11px;
-  border-radius: 99px;
-  border: 1.5px solid ${({ active }) =>
-    active ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.18)"};
-  background: ${({ active }) =>
-    active ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)"};
-  font-family: Inter, sans-serif;
-  font-size: 13px;
-  font-weight: ${({ active }) => (active ? 600 : 500)};
-  color: ${({ active }) => (active ? "white" : "rgba(255,255,255,0.65)")};
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, color 0.15s;
-  white-space: nowrap;
-  user-select: none;
-  flex-shrink: 0;
-
-  &:hover {
-    border-color: rgba(255,255,255,0.45);
-    background: rgba(255,255,255,0.1);
-    color: white;
-  }
-
-  select {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    font-size: 16px;
-  }
-`;
 export const JobFiltersContainer = styled.div`
-display: grid;
-grid-template-columns: 70% 30%;
-padding: 20px 50px;
-background-color: ${COLORS.black100};
-
-@media screen and (max-width: 920px) {
-  padding: 0 20px;
   display: flex;
-  justify-content: flex-start;
-}
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 36px;
+  background-color: ${COLORS.black100};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 
+  @media screen and (max-width: 920px) {
+    padding: 10px 16px;
+    gap: 12px;
+  }
 `
 export const HomeJobWrapper = styled.div`
 display: flex;

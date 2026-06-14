@@ -156,13 +156,13 @@ export default function Homepage() {
 
         {/* Desktop search */}
         <HiddenOnMobile>
-          <Box p={"10px"} bgcolor={COLORS.black100}>
+          <div style={{ width: 260, flexShrink: 0 }}>
             <Search
               placeholder="Search for Jobs"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-          </Box>
+          </div>
         </HiddenOnMobile>
       </JobFiltersContainer>
 
