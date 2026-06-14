@@ -4,14 +4,13 @@ import {
   CardDetailsWrapper,
   JobCardWrapper,
   JobWrapperContent,
-  JobLogoWrapper,
+  CompanyAvatar,
   ChipsWrapper,
   JobChip,
   JobDetailsContainer,
   JobDetailsText,
   RadiusBtn
 } from './style';
-import Image from 'next/image';
 import CardBtn from '../Buttons/CardBtn';
 import { FlexBtw } from '@/styles/globals.styles';
 import { BookmarkSimple } from '@phosphor-icons/react';
@@ -87,6 +86,14 @@ export default function JobCard({
     );
   }
 
+  const initials = company
+    .split(" ")
+    .filter((w) => w.length > 0)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   const router = useRouter();
   const { isSaved, toggle } = useSavedJobs();
   const saved = isSaved(Number(id));
@@ -130,15 +137,7 @@ export default function JobCard({
           <Box width="75%" marginRight="5px">
             <FontRR500>{highlightMatch(role, query)}</FontRR500>
           </Box>
-          <JobLogoWrapper>
-            <Image
-              src={logo}
-              alt={`${company} logo`}
-              width={30}
-              height={30}
-              style={{ objectFit: 'contain' }}
-            />
-          </JobLogoWrapper>
+          <CompanyAvatar>{initials}</CompanyAvatar>
         </JobWrapperContent>
 
         <ChipsWrapper>

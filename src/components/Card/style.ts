@@ -87,25 +87,25 @@ export const Location = styled.div`
     }
 `;
 
-export const JobLogoWrapper = styled.div`
+export const CompanyAvatar = styled.div`
     width: 50px;
     height: 50px;
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.82);
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    flex-wrap: nowrap;
-
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.72);
+    flex-shrink: 0;
+    letter-spacing: -0.5px;
 
     @media screen and (max-width: 560px) {
-        width: 35px; 
-        height: 35px;
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
     }
 `;
 
