@@ -139,6 +139,7 @@ export default function Homepage() {
             placeholder="Search for Jobs"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onClear={() => setQuery("")}
           />
         </Box>
       </HiddenOnDesktop>
@@ -161,6 +162,7 @@ export default function Homepage() {
               placeholder="Search for Jobs"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onClear={() => setQuery("")}
             />
           </div>
         </HiddenOnMobile>

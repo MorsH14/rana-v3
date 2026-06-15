@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { CaretDown, Check, X, Suitcase, Money, MapPin } from "@phosphor-icons/react/dist/ssr";
+import { useState } from "react";
+import {
+  CaretDown,
+  Check,
+  X,
+  Suitcase,
+  Money,
+  MapPin,
+} from "@phosphor-icons/react/dist/ssr";
 import styled from "@emotion/styled";
 import { FilterPillsBar } from "./home.styles";
 import { options, amount, location } from "@/utils/constants";
 
-/* ─── local pill + dropdown styles ─── */
+/* ─── styles ─── */
 
 const PillWrap = styled.div`
   position: relative;
@@ -61,10 +68,16 @@ const ClearDot = styled.button`
   }
 `;
 
+/* Transparent backdrop — catches clicks outside to close the dropdown */
+const Backdrop = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+`;
+
+/* position: fixed so parent overflow never clips it */
 const DropPanel = styled.div`
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
+  position: fixed;
   min-width: 210px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
@@ -107,6 +120,11 @@ const getLabel = (
 
 type Panel = "category" | "price" | "location" | null;
 
+interface DropPos {
+  top: number;
+  left: number;
+}
+
 interface SelectPropProps {
   selectedCategory: string;
   setSelectedCategory: (v: string) => void;
@@ -125,144 +143,139 @@ export default function SelectProp({
   setSelectedLocation,
 }: SelectPropProps) {
   const [open, setOpen] = useState<Panel>(null);
-  const barRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<DropPos>({ top: 0, left: 0 });
 
-  useEffect(() => {
-    const h = (e: MouseEvent) => {
-      if (barRef.current && !barRef.current.contains(e.target as Node)) {
-        setOpen(null);
-      }
-    };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
+  const openPanel = (p: Panel, e: React.MouseEvent<HTMLButtonElement>) => {
+    if (open === p) {
+      setOpen(null);
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    const dropW = 210;
+    const left =
+      rect.left + dropW > window.innerWidth
+        ? window.innerWidth - dropW - 8
+        : rect.left;
+    setPos({ top: rect.bottom + 8, left });
+    setOpen(p);
+  };
 
-  const toggle = (p: Panel) => setOpen((prev) => (prev === p ? null : p));
+  const close = () => setOpen(null);
 
   const categoryActive = selectedCategory !== "all";
   const priceActive = selectedPrice !== "price";
   const locationActive = selectedLocation !== "state";
 
+  const renderDrop = (
+    panel: Panel,
+    opts: { value: string | number; label: string }[],
+    current: string | number,
+    select: (v: string | number) => void
+  ) =>
+    open === panel ? (
+      <>
+        <Backdrop onClick={close} />
+        <DropPanel style={{ top: pos.top, left: pos.left }}>
+          {opts.map((o) => {
+            const isActive =
+              current === o.value || String(current) === String(o.value);
+            return (
+              <DropOption
+                key={o.value}
+                active={isActive}
+                onClick={() => {
+                  select(o.value);
+                  close();
+                }}
+              >
+                {o.label}
+                {isActive && (
+                  <Check size={13} weight="bold" color="#6366f1" />
+                )}
+              </DropOption>
+            );
+          })}
+        </DropPanel>
+      </>
+    ) : null;
+
   return (
-    <div ref={barRef} style={{ display: "contents" }}>
-      <FilterPillsBar>
-        {/* Category */}
-        <PillWrap>
-          <PillBtn active={categoryActive} onClick={() => toggle("category")}>
-            <Suitcase size={14} weight="bold" />
-            <span>{getLabel(options, selectedCategory)}</span>
-            {categoryActive ? (
-              <ClearDot
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedCategory("all");
-                }}
-              >
-                <X size={8} weight="bold" />
-              </ClearDot>
-            ) : (
-              <CaretDown size={11} weight="bold" style={{ opacity: 0.55 }} />
-            )}
-          </PillBtn>
-          {open === "category" && (
-            <DropPanel>
-              {options.map((o) => (
-                <DropOption
-                  key={o.value}
-                  active={selectedCategory === String(o.value)}
-                  onClick={() => {
-                    setSelectedCategory(String(o.value));
-                    setOpen(null);
-                  }}
-                >
-                  {o.label}
-                  {selectedCategory === String(o.value) && (
-                    <Check size={13} weight="bold" color="#6366f1" />
-                  )}
-                </DropOption>
-              ))}
-            </DropPanel>
+    <FilterPillsBar>
+      {/* Category */}
+      <PillWrap>
+        <PillBtn
+          active={categoryActive}
+          onClick={(e) => openPanel("category", e)}
+        >
+          <Suitcase size={14} weight="bold" />
+          <span>{getLabel(options, selectedCategory)}</span>
+          {categoryActive ? (
+            <ClearDot
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedCategory("all");
+                close();
+              }}
+            >
+              <X size={8} weight="bold" />
+            </ClearDot>
+          ) : (
+            <CaretDown size={11} weight="bold" style={{ opacity: 0.55 }} />
           )}
-        </PillWrap>
+        </PillBtn>
+        {renderDrop("category", options, selectedCategory, (v) =>
+          setSelectedCategory(String(v))
+        )}
+      </PillWrap>
 
-        {/* Price */}
-        <PillWrap>
-          <PillBtn active={priceActive} onClick={() => toggle("price")}>
-            <Money size={14} weight="bold" />
-            <span>{getLabel(amount, selectedPrice)}</span>
-            {priceActive ? (
-              <ClearDot
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedPrice("price");
-                }}
-              >
-                <X size={8} weight="bold" />
-              </ClearDot>
-            ) : (
-              <CaretDown size={11} weight="bold" style={{ opacity: 0.55 }} />
-            )}
-          </PillBtn>
-          {open === "price" && (
-            <DropPanel>
-              {amount.map((o) => (
-                <DropOption
-                  key={o.value}
-                  active={selectedPrice === o.value}
-                  onClick={() => {
-                    setSelectedPrice(o.value);
-                    setOpen(null);
-                  }}
-                >
-                  {o.label}
-                  {selectedPrice === o.value && (
-                    <Check size={13} weight="bold" color="#6366f1" />
-                  )}
-                </DropOption>
-              ))}
-            </DropPanel>
+      {/* Price */}
+      <PillWrap>
+        <PillBtn active={priceActive} onClick={(e) => openPanel("price", e)}>
+          <Money size={14} weight="bold" />
+          <span>{getLabel(amount, selectedPrice)}</span>
+          {priceActive ? (
+            <ClearDot
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPrice("price");
+                close();
+              }}
+            >
+              <X size={8} weight="bold" />
+            </ClearDot>
+          ) : (
+            <CaretDown size={11} weight="bold" style={{ opacity: 0.55 }} />
           )}
-        </PillWrap>
+        </PillBtn>
+        {renderDrop("price", amount, selectedPrice, setSelectedPrice)}
+      </PillWrap>
 
-        {/* Location */}
-        <PillWrap>
-          <PillBtn active={locationActive} onClick={() => toggle("location")}>
-            <MapPin size={14} weight="bold" />
-            <span>{getLabel(location, selectedLocation)}</span>
-            {locationActive ? (
-              <ClearDot
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedLocation("state");
-                }}
-              >
-                <X size={8} weight="bold" />
-              </ClearDot>
-            ) : (
-              <CaretDown size={11} weight="bold" style={{ opacity: 0.55 }} />
-            )}
-          </PillBtn>
-          {open === "location" && (
-            <DropPanel>
-              {location.map((o) => (
-                <DropOption
-                  key={o.value}
-                  active={selectedLocation === String(o.value)}
-                  onClick={() => {
-                    setSelectedLocation(String(o.value));
-                    setOpen(null);
-                  }}
-                >
-                  {o.label}
-                  {selectedLocation === String(o.value) && (
-                    <Check size={13} weight="bold" color="#6366f1" />
-                  )}
-                </DropOption>
-              ))}
-            </DropPanel>
+      {/* Location */}
+      <PillWrap>
+        <PillBtn
+          active={locationActive}
+          onClick={(e) => openPanel("location", e)}
+        >
+          <MapPin size={14} weight="bold" />
+          <span>{getLabel(location, selectedLocation)}</span>
+          {locationActive ? (
+            <ClearDot
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedLocation("state");
+                close();
+              }}
+            >
+              <X size={8} weight="bold" />
+            </ClearDot>
+          ) : (
+            <CaretDown size={11} weight="bold" style={{ opacity: 0.55 }} />
           )}
-        </PillWrap>
-      </FilterPillsBar>
-    </div>
+        </PillBtn>
+        {renderDrop("location", location, selectedLocation, (v) =>
+          setSelectedLocation(String(v))
+        )}
+      </PillWrap>
+    </FilterPillsBar>
   );
 }
