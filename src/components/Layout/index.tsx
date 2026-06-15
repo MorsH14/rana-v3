@@ -13,6 +13,7 @@ interface UserProfile {
   profileImage: string;
   notifications: number;
   role?: string;
+  accountType?: "worker" | "client";
 }
 
 interface LayoutProps {

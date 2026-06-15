@@ -2,7 +2,7 @@
 import { HiddenOnDesktop } from "@/styles/globals.styles";
 import { FooterWrapper } from "./styles";
 import Link from "next/link";
-import { FooterLink } from "@/utils/constants";
+import { WorkerFooterLink, ClientFooterLink } from "@/utils/constants";
 import * as PhosphorIcons from "@phosphor-icons/react";
 import { IconProps } from "@phosphor-icons/react";
 import { Box } from "@mui/material";
@@ -34,11 +34,12 @@ const NavBadge = styled.div`
 export default function Footer() {
   const pathname = usePathname();
   const [user] = useLocalStorage("rana-user-profile", initialUserData);
+  const navLinks = user.accountType === "client" ? ClientFooterLink : WorkerFooterLink;
 
   return (
     <HiddenOnDesktop>
       <FooterWrapper>
-        {FooterLink.map((item, index) => {
+        {navLinks.map((item, index) => {
           const IconComponent =
             item.icon && item.icon in PhosphorIcons
               ? (PhosphorIcons[item.icon as keyof typeof PhosphorIcons] as React.FC<IconProps>)

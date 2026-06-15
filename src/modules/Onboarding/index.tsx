@@ -97,7 +97,7 @@ export default function OnboardingWizard() {
           ...existing,
           ...(location && { location }),
           ...(profileImage && { profileImage }),
-          role: role === "seeker" ? "Job Seeker" : role === "hirer" ? "Employer" : existing.role,
+          accountType: role === "seeker" ? "worker" : "client",
         })
       );
       const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");

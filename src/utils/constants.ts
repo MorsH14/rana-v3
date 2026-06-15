@@ -1,27 +1,39 @@
 interface HeaderLinkProps {
-    label: string;
-    route: string;
-  }
-  
-export const HeaderLink: HeaderLinkProps[] = [
-    {label: "Find job", route: "/" },
-    {label: "Post a service", route: "/post-job" },
-    {label: "Messages", route: "/Messages" },
-]
+  label: string;
+  route: string;
+}
+
+export const WorkerHeaderLink: HeaderLinkProps[] = [
+  { label: "My listings", route: "/" },
+  { label: "Post a service", route: "/post-job" },
+  { label: "Messages", route: "/Messages" },
+];
+
+export const ClientHeaderLink: HeaderLinkProps[] = [
+  { label: "Find job", route: "/" },
+  { label: "Messages", route: "/Messages" },
+];
 
 interface FooterLinkProps {
-    label: string;
-    route: string;
-    icon: string; 
-  }
+  label: string;
+  route: string;
+  icon: string;
+}
 
-  export const FooterLink: FooterLinkProps[] = [
-    { label: "Home", route: "/", icon: "House" },
-    { label: "Post", route: "/post-job", icon: "PlusCircle" },
-    { label: "Messages", route: "/Messages", icon: "ChatCircle" },
-    { label: "Alerts", route: "/notification", icon: "Bell" },
-    { label: "Profile", route: "/profile", icon: "UserCircle" },
-  ];
+export const WorkerFooterLink: FooterLinkProps[] = [
+  { label: "Home", route: "/", icon: "House" },
+  { label: "Post", route: "/post-job", icon: "PlusCircle" },
+  { label: "Messages", route: "/Messages", icon: "ChatCircle" },
+  { label: "Alerts", route: "/notification", icon: "Bell" },
+  { label: "Profile", route: "/profile", icon: "UserCircle" },
+];
+
+export const ClientFooterLink: FooterLinkProps[] = [
+  { label: "Home", route: "/", icon: "House" },
+  { label: "Messages", route: "/Messages", icon: "ChatCircle" },
+  { label: "Alerts", route: "/notification", icon: "Bell" },
+  { label: "Profile", route: "/profile", icon: "UserCircle" },
+];
 
     // FILTER DROP DOWN
   export const options = [

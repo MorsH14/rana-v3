@@ -16,7 +16,7 @@ import { COLORS } from "@/utils/colors.util";
 import RoundedBtn from "../Buttons/RoundedBtn";
 import Badge from "../Badge/badge";
 import { HiddenOnMobile } from "@/styles/globals.styles";
-import { HeaderLink } from "@/utils/constants";
+import { WorkerHeaderLink, ClientHeaderLink } from "@/utils/constants";
 import { usePathname } from "next/navigation";
 import { initialUserData } from "@/db";
 
@@ -122,6 +122,7 @@ interface UserProfile {
   profileImage: string;
   notifications: number;
   role?: string;
+  accountType?: "worker" | "client";
 }
 
 interface HeaderProps {
@@ -130,6 +131,7 @@ interface HeaderProps {
 
 export default function Header({ user }: HeaderProps) {
   const pathname = usePathname();
+  const navLinks = user.accountType === "client" ? ClientHeaderLink : WorkerHeaderLink;
   const [locationOpen, setLocationOpen] = useState(false);
   const [displayLocation, setDisplayLocation] = useState(user.location);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -173,7 +175,7 @@ export default function Header({ user }: HeaderProps) {
 
         {/* Navigation Links */}
         <ATags>
-          {HeaderLink.map((item, index) => (
+          {navLinks.map((item, index) => (
             <StyledLink
               key={index}
               href={item.route}

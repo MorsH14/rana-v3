@@ -99,6 +99,12 @@ export default function PostJobWizard() {
   const [user] = useLocalStorage("rana-user-profile", initialUserData);
   const [, setPostedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
 
+  // Clients cannot post services — redirect them to the browse page
+  if (user.accountType === "client") {
+    router.replace("/");
+    return null;
+  }
+
   const [step, setStep] = useState<Step>(1);
 
   // Step 1

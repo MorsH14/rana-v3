@@ -186,6 +186,7 @@ interface UserData {
   verifiedDate: string;
   jobsPosted: number;
   coinsLeft: number;
+  accountType: "worker" | "client";
 }
 
 interface ProfileEditProps {
