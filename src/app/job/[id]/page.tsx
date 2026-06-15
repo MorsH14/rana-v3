@@ -11,7 +11,7 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
-import { MapPin, Briefcase, X, CheckCircle, ArrowLeft } from "@phosphor-icons/react";
+import { MapPin, Briefcase, X, CheckCircle, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { jobData } from "@/db";
 import { COLORS } from "@/utils/colors.util";
 import StarRating from "@/components/StarRating";
@@ -26,19 +26,23 @@ import {
 } from "@/utils/typography";
 import CardBtn from "@/components/Buttons/CardBtn";
 import { useRouter } from "next/navigation";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import type { PostedJob } from "@/types";
 
 export default function JobDetailsPage() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
 
+  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
   const { isSaved, toggle } = useSavedJobs();
 
   const [applyOpen, setApplyOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
 
-  const job = jobData.find((j) => j.id.toString() === id);
+  const allJobs = [...postedJobs, ...jobData];
+  const job = allJobs.find((j) => j.id.toString() === id);
 
   const bgColor = useMemo(() => {
     const colors = ["#e79c469d", "#92e7acb3", "#ce93d38d", "#8dd6ecb9", "#b597ebb8", "#c4e7469d"];

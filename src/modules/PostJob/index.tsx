@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle, X } from "@phosphor-icons/react/dist/ssr";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { initialUserData } from "@/db";
+import type { PostedJob } from "@/types";
 import {
   PostJobWrapper,
   PostJobHeader,
@@ -67,22 +68,6 @@ const NIGERIAN_STATES = [
   "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara",
 ];
 
-type PostedJob = {
-  id: string;
-  company: string;
-  role: string;
-  date: string;
-  salary: string;
-  salaryValue: number;
-  location: string;
-  logo: string;
-  category: string;
-  description: string;
-  chips: string[];
-  rating?: number;
-  reviewCount?: number;
-};
-
 function formatDate(d: Date) {
   const day = d.getDate();
   const suffix =
@@ -99,26 +84,20 @@ export default function PostJobWizard() {
   const [user] = useLocalStorage("rana-user-profile", initialUserData);
   const [, setPostedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
 
+  const [step, setStep] = useState<Step>(1);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [amount, setAmount] = useState("");
+  const [unit, setUnit] = useState("/month");
+  const [stateLocation, setStateLocation] = useState("");
+
   // Clients cannot post services — redirect them to the browse page
   if (user.accountType === "client") {
     router.replace("/");
     return null;
   }
-
-  const [step, setStep] = useState<Step>(1);
-
-  // Step 1
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-
-  // Step 2
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-
-  // Step 3
-  const [amount, setAmount] = useState("");
-  const [unit, setUnit] = useState("/month");
-  const [stateLocation, setStateLocation] = useState("");
 
   const toggleTag = (tag: string) =>
     setTags((prev) =>

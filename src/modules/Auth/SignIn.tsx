@@ -72,9 +72,12 @@ export default function SignIn() {
   const handleVerify = () => {
     if (otp.join("") === "1234") {
       localStorage.setItem("rana-auth", JSON.stringify({ phone: `0${phone}`, isLoggedIn: true }));
-      document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}`;
+      document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
       const params = new URLSearchParams(window.location.search);
-      router.push(params.get("from") || "/");
+      const from = params.get("from");
+      // Guard against open redirect: only follow relative paths
+      const safeTo = from && from.startsWith("/") && !from.startsWith("//") ? from : "/";
+      router.push(safeTo);
     } else {
       setError("Incorrect code. Use 1234 for demo.");
     }

@@ -3,17 +3,17 @@ export const jobProfiles = [
   {
     title: "Lesson Teacher",
     description: "I teach primary 3-6 Maths and English language and computer subjects only.",
-    skills: ["Mathematics", "English Language", "Computer Science", "Computer Science"]
+    skills: ["Mathematics", "English Language", "Computer Science"]
   },
   {
     title: "Lesson Teacher",
     description: "I teach primary 3-6 Maths and English language and computer subjects only.",
-    skills: ["Mathematics", "English Language", "Computer Science", "Computer Science"]
+    skills: ["Mathematics", "English Language", "Computer Science"]
   },
   {
     title: "Lesson Teacher",
     description: "I teach primary 3-6 Maths and English language and computer subjects only.",
-    skills: ["Mathematics", "English Language", "Computer Science", "Computer Science"]
+    skills: ["Mathematics", "English Language", "Computer Science"]
   },
 
 ];

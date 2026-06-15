@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Bell, Briefcase, Star, Info, ArrowRight, X } from "@phosphor-icons/react/dist/ssr";
 import { notificationsData } from "@/db";
 import { COLORS } from "@/utils/colors.util";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { useState } from "react";
 import { FlexCenter } from "@/styles/globals.styles";
 import {
   NotificationsWrapper,
@@ -65,7 +66,8 @@ function getConfig(type: string) {
 }
 
 export default function NotificationsPage() {
-  const [items, setItems] = useState<Notification[]>(
+  const [items, setItems] = useLocalStorage<Notification[]>(
+    "rana-notifications",
     notificationsData.map((n) => ({ ...n }))
   );
   const [expandedId, setExpandedId] = useState<number | null>(null);

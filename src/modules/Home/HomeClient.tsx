@@ -23,9 +23,37 @@ import SortSelect from "@/components/Select/Select";
 import { SortWrapper } from "@/components/Layout/styles";
 import JobList from "@/components/Card/main";
 import { useState } from "react";
+import styled from "@emotion/styled";
 import { MobileH3SM, MobilePM } from "@/utils/typography";
 import { jobData } from "@/db";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+
+const ClearFiltersBtn = styled.button`
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 99px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+  }
+`;
+
+function parseSortableDate(dateStr: string): number {
+  // "2nd June 2025" → strip ordinal suffix → "2 June 2025" → valid Date
+  const cleaned = dateStr.replace(/(\d+)(st|nd|rd|th)/i, "$1");
+  const d = new Date(cleaned);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
 
 const sortOptions = [
   { value: "recommended", label: "Recommended" },
@@ -54,6 +82,23 @@ export default function HomeClient() {
     setSelectedEmploymentTypes((prev) =>
       prev.includes(label) ? prev.filter((s) => s !== label) : [...prev, label]
     );
+
+  const hasActiveFilters =
+    selectedCategory !== "all" ||
+    selectedPrice !== "price" ||
+    selectedLocation !== "state" ||
+    selectedSchedules.length > 0 ||
+    selectedEmploymentTypes.length > 0 ||
+    query.length > 0;
+
+  const clearAllFilters = () => {
+    setSelectedCategory("all");
+    setSelectedPrice("price");
+    setSelectedLocation("state");
+    setSelectedSchedules([]);
+    setSelectedEmploymentTypes([]);
+    setQuery("");
+  };
 
   const [postedJobs] = useLocalStorage<typeof jobData>("rana-posted-jobs", []);
   const allJobs = [...postedJobs, ...jobData];
@@ -89,7 +134,7 @@ export default function HomeClient() {
       return matchesSearch && matchesCategory && matchesPrice && matchesLocation && matchesSchedule && matchesEmployment;
     })
     .sort((a, b) => {
-      if (sortOption === "newest") return new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (sortOption === "newest") return parseSortableDate(b.date) - parseSortableDate(a.date);
       if (sortOption === "lowest") return a.salaryValue - b.salaryValue;
       if (sortOption === "highest") return b.salaryValue - a.salaryValue;
       return 0;
@@ -117,6 +162,9 @@ export default function HomeClient() {
           selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}
         />
+        {hasActiveFilters && (
+          <ClearFiltersBtn onClick={clearAllFilters}>Clear filters</ClearFiltersBtn>
+        )}
         <HiddenOnMobile>
           <div style={{ width: 260, flexShrink: 0 }}>
             <Search

@@ -13,7 +13,7 @@ import {
 } from './style';
 import CardBtn from '../Buttons/CardBtn';
 import { FlexBtw } from '@/styles/globals.styles';
-import { BookmarkSimple } from '@phosphor-icons/react';
+import { BookmarkSimple } from '@phosphor-icons/react/dist/ssr';
 import {
   Font50016,
   FontRR500,
@@ -58,10 +58,14 @@ export default function JobCard({
     return colors[seed % colors.length];
   }, [id]);
 
-  function highlightMatch(text: string, keyword: string) {
-    if (!keyword) return text;
+  function escapeRegex(str: string) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
 
-    const regex = new RegExp(`(${keyword})`, 'i');
+  function highlightMatch(text: string, keyword: string) {
+    if (!keyword.trim()) return text;
+
+    const regex = new RegExp(`(${escapeRegex(keyword)})`, 'gi');
     const parts = text.split(regex);
 
     return (
@@ -96,7 +100,7 @@ export default function JobCard({
 
   const router = useRouter();
   const { isSaved, toggle } = useSavedJobs();
-  const saved = isSaved(Number(id));
+  const saved = isSaved(id);
 
   const handleDetailsClick = () => {
     router.push(`/job/${id}`);
@@ -119,7 +123,7 @@ export default function JobCard({
             />
           </Stack>
           <RadiusBtn
-            onClick={() => toggle(Number(id))}
+            onClick={() => toggle(id)}
             style={{ background: saved ? COLORS.blueNormal : COLORS.white100 }}
           >
             <BookmarkSimple

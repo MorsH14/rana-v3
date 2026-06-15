@@ -106,7 +106,7 @@ export default function SignUp() {
       JSON.stringify({ ...existingProfile, name: trimmedName, phone: fullPhone })
     );
 
-    document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}`;
+    document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
     router.push("/onboarding");
   };
 

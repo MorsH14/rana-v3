@@ -14,24 +14,7 @@ import {
 import { COLORS } from "@/utils/colors.util";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { initialUserData, messagesData } from "@/db";
-
-/* ─── types ─── */
-
-type PostedJob = {
-  id: string;
-  company: string;
-  role: string;
-  date: string;
-  salary: string;
-  salaryValue: number;
-  location: string;
-  logo: string;
-  category: string;
-  description: string;
-  chips: string[];
-  rating?: number;
-  reviewCount?: number;
-};
+import type { PostedJob } from "@/types";
 
 /* ─── styled components ─── */
 
@@ -330,7 +313,7 @@ export default function HomeWorker() {
           <StatIcon>
             <Briefcase size={16} weight="fill" color={COLORS.Blue500} />
           </StatIcon>
-          <StatNum>{user.jobsPosted}</StatNum>
+          <StatNum>{postedJobs.length}</StatNum>
           <StatLabel>Listings</StatLabel>
         </StatCard>
         <StatCard>

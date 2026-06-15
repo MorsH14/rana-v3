@@ -1,5 +1,6 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import styled from "@emotion/styled";
 import {
   ProfileWrapper,
   ProfileHeroBanner,
@@ -20,6 +21,24 @@ import {
   SectionLabel,
   VerifiedWrapper,
 } from "./styles";
+
+const CoinToast = styled.div<{ visible: boolean }>`
+  background: #1a1a1a;
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: ${({ visible }) => (visible ? 1 : 0)};
+  transform: ${({ visible }) => (visible ? "translateY(0)" : "translateY(-6px)")};
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+`;
 import {
   CheckCircle,
   Gear,
@@ -52,7 +71,17 @@ const HERO_GRADIENTS = [
 export default function ProfilePage() {
   const [user, setUser] = useLocalStorage("rana-user-profile", initialUserData);
   const [filters, setFilters] = useLocalStorage("rana-saved-filters", savedFilters);
+  const [coinToast, setCoinToast] = useState(false);
   const router = useRouter();
+
+  const handleBuyCoins = () => {
+    setCoinToast(true);
+    setTimeout(() => setCoinToast(false), 2500);
+  };
+
+  useEffect(() => {
+    return () => setCoinToast(false);
+  }, []);
 
   const handleSignOut = () => {
     document.cookie = "rana-session=; path=/; max-age=0";
@@ -177,10 +206,13 @@ export default function ProfilePage() {
         </StatCard>
       </StatsRow>
 
-      <BuyCoinBtn>
+      <BuyCoinBtn onClick={handleBuyCoins}>
         <Plus size={14} />
         Buy coins
       </BuyCoinBtn>
+      <CoinToast visible={coinToast}>
+        🪙 Coins feature coming soon — stay tuned!
+      </CoinToast>
 
       {/* Saved Jobs */}
       <SectionLabel>Saved Jobs</SectionLabel>

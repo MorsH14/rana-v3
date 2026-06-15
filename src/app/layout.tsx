@@ -6,9 +6,9 @@ import AppWrapper from "@/components/AppWrapper";
 
 
 export const metadata: Metadata = {
-  title: "Rana - Find Your Next Job",
-  description: "Rana connects job seekers with top opportunities in tech, teaching, and more.",
-  keywords: "jobs, hiring, tech, teaching, remote work",
+  title: "Ranajob - Find Work Near You",
+  description: "Connect with thousands of opportunities across Nigeria. From tech to teaching, home services to fashion — your next gig is here.",
+  keywords: "jobs Nigeria, freelance, hire professionals, service providers, Lagos jobs, Abuja, Port Harcourt, lesson teacher, home services",
 };
 
 export const viewport = {
