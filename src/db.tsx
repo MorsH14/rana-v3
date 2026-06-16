@@ -318,5 +318,5 @@ export const initialUserData = {
   verifiedDate: "2025-01-01T00:00:00.000Z",
   jobsPosted: 12,
   coinsLeft: 300,
-  accountType: "worker" as "worker" | "client",
+  accountType: "client" as "worker" | "client",
 };
