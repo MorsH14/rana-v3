@@ -4,7 +4,6 @@ interface HeaderLinkProps {
 }
 
 export const WorkerHeaderLink: HeaderLinkProps[] = [
-  { label: "My listings", route: "/" },
   { label: "Post a service", route: "/post-job" },
   { label: "Messages", route: "/Messages" },
 ];

@@ -45,16 +45,20 @@ export const StyledLink = styled(Link, {
 })<StyledLinkProp>`
   font-size: 14px;
   font-weight: 600;
-  color: ${COLORS.gray200};
+  color: ${({ isActive }) => (isActive ? "white" : COLORS.gray200)};
   text-decoration: none;
-  padding-bottom: 4px;
   cursor: pointer;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 2px solid ${({ isActive }) => (isActive ? COLORS.NeutralSolid0 : "transparent")};
+  transition: color 0.15s, border-color 0.15s;
 
-  border-bottom: ${({isActive}) => (isActive ? `2px solid ${COLORS.NeutralSolid0}` : 0)};
+  &:hover {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.35);
+  }
 `;
 
 export const HeaderLocation = styled.div`
