@@ -14,13 +14,29 @@ import { useRouter } from "next/navigation";
 import CardBtn from "@/components/Buttons/CardBtn";
 import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
 import { jobData } from "@/db";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { PostedJob } from "@/types";
 import StarRating from "@/components/StarRating";
+
+type DisplayJob = {
+  id: string | number;
+  role: string;
+  company: string;
+  salary: string;
+  location: string;
+  rating?: number;
+  reviewCount?: number;
+};
 
 export default function SavedJobs() {
   const { savedIds, toggle } = useSavedJobs();
+  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
   const router = useRouter();
 
-  const savedJobs = jobData.filter((job) => savedIds.includes(job.id));
+  const allJobs: DisplayJob[] = [...postedJobs, ...jobData];
+  const savedJobs = allJobs.filter((job) =>
+    savedIds.some((id) => String(id) === String(job.id))
+  );
 
   return (
     <AccordionWrapper>
@@ -45,7 +61,7 @@ export default function SavedJobs() {
           ) : (
             savedJobs.map((job) => (
               <Box
-                key={job.id}
+                key={String(job.id)}
                 sx={{
                   border: `1px solid ${COLORS.NeutralSolid50}`,
                   borderRadius: "12px",

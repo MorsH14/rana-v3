@@ -18,9 +18,9 @@ import {
   StatValue,
   StatLabel,
   BuyCoinBtn,
-  SectionLabel,
   VerifiedWrapper,
 } from "./styles";
+import { COLORS } from "@/utils/colors.util";
 
 const CoinToast = styled.div<{ visible: boolean }>`
   background: #1a1a1a;
@@ -39,6 +39,60 @@ const CoinToast = styled.div<{ visible: boolean }>`
   transition: opacity 0.2s, transform 0.2s;
   pointer-events: none;
 `;
+
+const PostServiceBtn = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  border: 1.5px dashed rgba(71, 110, 251, 0.45);
+  border-radius: 12px;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #476efb;
+  text-decoration: none;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  background: rgba(71, 110, 251, 0.04);
+
+  &:hover {
+    background: rgba(71, 110, 251, 0.09);
+    border-color: rgba(71, 110, 251, 0.75);
+  }
+`;
+
+const SignOutArea = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 0;
+  margin-top: 20px;
+  border-top: 1px solid ${COLORS.NeutralSolid50};
+`;
+
+const SignOutBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: ${COLORS.Red500};
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(247, 98, 65, 0.08);
+  }
+`;
+
 import {
   CheckCircle,
   Gear,
@@ -49,15 +103,17 @@ import {
   Briefcase,
   Wallet,
   Plus,
+  Bookmark,
 } from "@phosphor-icons/react/dist/ssr";
-import SavedFilterDropdown from "./Accordion";
 import SavedJobs from "./SavedJobs";
 import DrawerBasic from "@/components/Drawer/Drawer";
 import ProfileEdit from "./ProfileEdit";
-import { initialUserData, savedFilters } from "@/db";
+import { initialUserData } from "@/db";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { PostedJob } from "@/types";
+import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
 
 const AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#e11d48"];
 const HERO_GRADIENTS = [
@@ -70,7 +126,8 @@ const HERO_GRADIENTS = [
 
 export default function ProfilePage() {
   const [user, setUser] = useLocalStorage("rana-user-profile", initialUserData);
-  const [filters, setFilters] = useLocalStorage("rana-saved-filters", savedFilters);
+  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
+  const { savedIds } = useSavedJobs();
   const [coinToast, setCoinToast] = useState(false);
   const router = useRouter();
 
@@ -89,23 +146,6 @@ export default function ProfilePage() {
     router.push("/signin");
   };
 
-  const handleUpdateFilter = (
-    index: number,
-    updatedFilter: { title: string; location: string; distance: string; price: string }
-  ) => {
-    const newFilters = [...filters];
-    newFilters[index] = updatedFilter;
-    setFilters(newFilters);
-  };
-
-  const handleDeleteFilter = (index: number) => {
-    setFilters(filters.filter((_, i) => i !== index));
-  };
-
-  const handleClearAllFilters = () => {
-    setFilters([]);
-  };
-
   const initials = useMemo(
     () =>
       user.name
@@ -121,6 +161,15 @@ export default function ProfilePage() {
   const colorIdx = user.name.charCodeAt(0) % AVATAR_COLORS.length;
   const avatarColor = AVATAR_COLORS[colorIdx];
   const heroGradient = HERO_GRADIENTS[colorIdx];
+
+  const isWorker = user.accountType === "worker";
+  const firstStatValue = isWorker ? postedJobs.length : savedIds.length;
+  const firstStatLabel = isWorker ? "Active Listings" : "Saved Jobs";
+  const FirstStatIcon = isWorker ? Briefcase : Bookmark;
+  const firstStatColor = isWorker ? "#476EFB" : "#10b981";
+  const firstStatBg = isWorker
+    ? "rgba(71, 110, 251, 0.1)"
+    : "rgba(16, 185, 129, 0.1)";
 
   return (
     <ProfileWrapper>
@@ -157,7 +206,7 @@ export default function ProfilePage() {
         </ProfileMeta>
       </ProfileInfo>
 
-      {/* Action buttons */}
+      {/* Action buttons — Sign Out moved to bottom danger zone */}
       <ProfileActions>
         <Link href="/settings" style={{ textDecoration: "none" }}>
           <ProfileActionBtn variant="outline">
@@ -176,22 +225,25 @@ export default function ProfilePage() {
         >
           <ProfileEdit user={user} setUser={setUser} />
         </DrawerBasic>
-
-        <ProfileActionBtn variant="danger" onClick={handleSignOut}>
-          <SignOut size={14} />
-          Sign out
-        </ProfileActionBtn>
       </ProfileActions>
 
-      {/* Stats cards */}
+      {/* Worker shortcut — only shown to workers */}
+      {isWorker && (
+        <PostServiceBtn href="/post-job">
+          <Plus size={15} />
+          Post a new service
+        </PostServiceBtn>
+      )}
+
+      {/* Stats — first card is role-aware */}
       <StatsRow>
         <StatCard>
-          <StatIconBox bg="rgba(71, 110, 251, 0.1)">
-            <Briefcase size={18} color="#476EFB" weight="fill" />
+          <StatIconBox bg={firstStatBg}>
+            <FirstStatIcon size={18} color={firstStatColor} weight="fill" />
           </StatIconBox>
           <div>
-            <StatValue>{user.jobsPosted ?? 0}</StatValue>
-            <StatLabel>Jobs Posted</StatLabel>
+            <StatValue>{firstStatValue}</StatValue>
+            <StatLabel>{firstStatLabel}</StatLabel>
           </div>
         </StatCard>
 
@@ -215,17 +267,15 @@ export default function ProfilePage() {
       </CoinToast>
 
       {/* Saved Jobs */}
-      <SectionLabel>Saved Jobs</SectionLabel>
       <SavedJobs />
 
-      {/* Saved Filters */}
-      <SectionLabel>Saved Filters</SectionLabel>
-      <SavedFilterDropdown
-        filters={filters}
-        onUpdate={handleUpdateFilter}
-        onDelete={handleDeleteFilter}
-        onClearAll={handleClearAllFilters}
-      />
+      {/* Sign out — isolated at the bottom so it's never hit accidentally */}
+      <SignOutArea>
+        <SignOutBtn onClick={handleSignOut}>
+          <SignOut size={15} />
+          Sign out
+        </SignOutBtn>
+      </SignOutArea>
     </ProfileWrapper>
   );
 }
