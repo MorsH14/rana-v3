@@ -200,22 +200,6 @@ export default function JobDetailsPage() {
         <WebBody2MSolidGray400 style={{ lineHeight: 1.8 }}>{job.description}</WebBody2MSolidGray400>
       </Box>
 
-      {/* Skills */}
-      <Box mb={4}>
-        <Font50016 style={{ display: "block", marginBottom: "10px" }}>Skills required</Font50016>
-        <Divider sx={{ mb: 2 }} />
-        <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-          {job.chips?.map((chip) => (
-            <Chip
-              key={chip}
-              label={chip}
-              variant="outlined"
-              sx={{ fontSize: "12px", borderRadius: "20px" }}
-            />
-          ))}
-        </Stack>
-      </Box>
-
       {/* Actions */}
       <Stack direction="row" spacing={2} justifyContent="flex-end">
         <Box
@@ -234,7 +218,7 @@ export default function JobDetailsPage() {
         >
           {isSaved(job.id) ? "Saved ✓" : "Save"}
         </Box>
-        <CardBtn label="Apply Now" onClick={() => setApplyOpen(true)} />
+        <CardBtn label="Send Enquiry" onClick={() => setApplyOpen(true)} />
       </Stack>
 
       {/* Apply Modal */}
@@ -246,7 +230,7 @@ export default function JobDetailsPage() {
         PaperProps={{ sx: { borderRadius: "20px", p: 1 } }}
       >
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Font50020>{submitted ? "Application Sent!" : `Apply for ${job.role}`}</Font50020>
+          <Font50020>{submitted ? "Enquiry Sent!" : "Send Enquiry"}</Font50020>
           <IconButton onClick={handleClose} size="small">
             <X size={20} />
           </IconButton>
@@ -257,11 +241,11 @@ export default function JobDetailsPage() {
             <Box sx={{ textAlign: "center", py: 4 }}>
               <CheckCircle size={64} color={COLORS.Green100} weight="fill" />
               <Box mt={2}>
-                <Font50016 style={{ display: "block" }}>Your application has been submitted.</Font50016>
+                <Font50016 style={{ display: "block" }}>Your enquiry has been sent.</Font50016>
               </Box>
               <Box mt={1}>
                 <WebBody2MSolidGray400>
-                  {job.company} will review your profile and get back to you soon.
+                  {job.company} will reach out to you on WhatsApp shortly.
                 </WebBody2MSolidGray400>
               </Box>
               <Box mt={3}>
@@ -271,11 +255,11 @@ export default function JobDetailsPage() {
           ) : (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
               <WebBody2MSolidGray400>
-                Applying to <strong>{job.role}</strong> at <strong>{job.company}</strong>
+                Enquiring about <strong>{job.role}</strong> offered by <strong>{job.company}</strong>
               </WebBody2MSolidGray400>
 
               <TextField
-                label="Full Name"
+                label="Your Name"
                 placeholder="Your full name"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -285,7 +269,7 @@ export default function JobDetailsPage() {
               />
 
               <TextField
-                label="Phone Number"
+                label="Your WhatsApp Number"
                 placeholder="e.g. 08012345678"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -295,20 +279,20 @@ export default function JobDetailsPage() {
               />
 
               <TextField
-                label="Cover Message"
-                placeholder="Tell them why you're the right fit..."
+                label="Message (optional)"
+                placeholder="Describe what you need, when, and where..."
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 fullWidth
                 multiline
-                rows={4}
+                rows={3}
                 size="small"
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
 
               <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
                 <CardBtn
-                  label="Submit Application"
+                  label="Send Enquiry"
                   onClick={handleSubmit}
                 />
               </Box>
