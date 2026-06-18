@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle, X } from "@phosphor-icons/react/dist/ssr";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
@@ -93,11 +93,12 @@ export default function PostJobWizard() {
   const [unit, setUnit] = useState("/month");
   const [stateLocation, setStateLocation] = useState("");
 
-  // Clients cannot post services — redirect them to the browse page
-  if (user.accountType === "client") {
-    router.replace("/");
-    return null;
-  }
+  // Clients cannot post services — redirect them away
+  useEffect(() => {
+    if (user.accountType === "client") router.replace("/");
+  }, [user.accountType, router]);
+
+  if (user.accountType === "client") return null;
 
   const toggleTag = (tag: string) =>
     setTags((prev) =>
@@ -335,7 +336,7 @@ export default function PostJobWizard() {
 
           <NavRow style={{ width: "100%" }}>
             <ContinueBtn onClick={() => router.push("/")}>
-              Browse listings
+              Go to my dashboard →
             </ContinueBtn>
           </NavRow>
         </SuccessWrapper>

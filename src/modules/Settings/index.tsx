@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -36,7 +36,6 @@ import {
   ToggleSlider,
   ChipsRow,
   PrefChip,
-  SaveBtn,
   SavedBadge,
   DangerRow,
   DangerLabel,
@@ -91,16 +90,19 @@ export default function SettingsPage() {
   };
 
   const toggleCategory = (val: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(val) ? prev.filter((c) => c !== val) : [...prev, val]
-    );
-    setPrefSaved(false);
-  };
-
-  const savePrefs = () => {
-    setPrefs({ ...prefs, categories: selectedCategories });
+    const updated = selectedCategories.includes(val)
+      ? selectedCategories.filter((c) => c !== val)
+      : [...selectedCategories, val];
+    setSelectedCategories(updated);
+    setPrefs((p) => ({ ...p, categories: updated }));
     setPrefSaved(true);
   };
+
+  useEffect(() => {
+    if (!prefSaved) return;
+    const t = setTimeout(() => setPrefSaved(false), 2000);
+    return () => clearTimeout(t);
+  }, [prefSaved]);
 
   const handleSignOut = () => {
     document.cookie = "rana-session=; path=/; max-age=0";
@@ -280,10 +282,11 @@ export default function SettingsPage() {
             </SettingRow>
           </Card>
 
-          <div style={{ padding: "12px 0 0", display: "flex", alignItems: "center", gap: 12 }}>
-            <SaveBtn onClick={savePrefs}>Save preferences</SaveBtn>
-            {prefSaved && <SavedBadge>✓ Saved</SavedBadge>}
-          </div>
+          {prefSaved && (
+            <div style={{ padding: "6px 0 0" }}>
+              <SavedBadge>✓ Preferences saved</SavedBadge>
+            </div>
+          )}
         </Section>
 
         {/* ── Danger zone ── */}

@@ -100,6 +100,13 @@ export default function OnboardingWizard() {
           accountType: role === "seeker" ? "worker" : "client",
         })
       );
+      // Persist selected categories into rana-prefs so Settings reflects them
+      const defaultPrefs = { categories: [], locationVisible: true, phoneVisible: true };
+      const existingPrefs = JSON.parse(localStorage.getItem("rana-prefs") || "{}");
+      localStorage.setItem(
+        "rana-prefs",
+        JSON.stringify({ ...defaultPrefs, ...existingPrefs, categories: selectedCategories })
+      );
       const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
       localStorage.setItem("rana-auth", JSON.stringify({ ...auth, isOnboarded: true }));
     } catch {
@@ -257,11 +264,11 @@ export default function OnboardingWizard() {
             <SuccessTitle>You&apos;re all set, {userName}!</SuccessTitle>
             <SuccessSubtitle>
               {role === "seeker"
-                ? "Start exploring jobs near you. Your next opportunity is just a tap away."
-                : "Find skilled workers around you. Post your first job and get responses fast."}
+                ? "Post your first service and start receiving enquiries from clients near you."
+                : "Browse skilled workers near you and reach out directly via WhatsApp."}
             </SuccessSubtitle>
             <OnboardingButton onClick={() => router.push("/")}>
-              Start exploring →
+              {role === "seeker" ? "Go to my dashboard →" : "Start browsing →"}
             </OnboardingButton>
           </SuccessWrapper>
         )}
