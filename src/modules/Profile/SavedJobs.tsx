@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { ArrowsDownUp, BookmarkSimple, Trash } from "@phosphor-icons/react/dist/ssr";
@@ -13,30 +14,19 @@ import { COLORS } from "@/utils/colors.util";
 import { useRouter } from "next/navigation";
 import CardBtn from "@/components/Buttons/CardBtn";
 import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
-import { jobData } from "@/db";
-import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
-import { PostedJob } from "@/types";
+import { fetchListingsByIds } from "@/lib/listings";
+import type { PostedJob } from "@/types";
 import StarRating from "@/components/StarRating";
-
-type DisplayJob = {
-  id: string | number;
-  role: string;
-  company: string;
-  salary: string;
-  location: string;
-  rating?: number;
-  reviewCount?: number;
-};
 
 export default function SavedJobs() {
   const { savedIds, toggle } = useSavedJobs();
-  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
   const router = useRouter();
+  const [savedListings, setSavedListings] = useState<PostedJob[]>([]);
 
-  const allJobs: DisplayJob[] = [...postedJobs, ...jobData];
-  const savedJobs = allJobs.filter((job) =>
-    savedIds.some((id) => String(id) === String(job.id))
-  );
+  useEffect(() => {
+    if (savedIds.length === 0) { setSavedListings([]); return; }
+    fetchListingsByIds(savedIds).then(setSavedListings);
+  }, [savedIds.join(",")]);
 
   return (
     <AccordionWrapper>
@@ -45,11 +35,11 @@ export default function SavedJobs() {
           expandIcon={<ArrowsDownUp />}
           sx={{ borderBottom: `1px solid ${COLORS.NeutralSolid50}` }}
         >
-          <WebBody2B>SAVED JOBS ({savedJobs.length})</WebBody2B>
+          <WebBody2B>SAVED JOBS ({savedListings.length})</WebBody2B>
         </AccordionSummary>
 
         <AccordionDetails sx={{ px: 0 }}>
-          {savedJobs.length === 0 ? (
+          {savedListings.length === 0 ? (
             <Box py={3} textAlign="center">
               <BookmarkSimple size={36} color={COLORS.SolidGray300} />
               <Box mt={1}>
@@ -59,7 +49,7 @@ export default function SavedJobs() {
               </Box>
             </Box>
           ) : (
-            savedJobs.map((job) => (
+            savedListings.map((job) => (
               <Box
                 key={String(job.id)}
                 sx={{
@@ -89,13 +79,7 @@ export default function SavedJobs() {
                     <WebCC2Gray700>{job.company}</WebCC2Gray700>
                   </Box>
                   <Box mt={0.5} display="flex" alignItems="center" gap={1} flexWrap="wrap">
-                    <span
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: COLORS.blueNormal,
-                      }}
-                    >
+                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.blueNormal }}>
                       {job.salary}
                     </span>
                     <WebCC2Gray300>· {job.location}</WebCC2Gray300>

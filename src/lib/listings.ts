@@ -52,6 +52,17 @@ export async function fetchListingById(id: string): Promise<PostedJob | null> {
   return mapRow(data);
 }
 
+export async function fetchListingsByIds(ids: string[]): Promise<PostedJob[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await getSupabase()
+    .from("listings")
+    .select("*")
+    .in("id", ids);
+
+  if (error || !data) return [];
+  return data.map(mapRow);
+}
+
 export async function fetchWorkerListings(workerId: string): Promise<PostedJob[]> {
   const { data, error } = await getSupabase()
     .from("listings")
