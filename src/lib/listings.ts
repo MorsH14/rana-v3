@@ -51,3 +51,47 @@ export async function fetchListingById(id: string): Promise<PostedJob | null> {
   if (error || !data) return null;
   return mapRow(data);
 }
+
+export async function fetchWorkerListings(workerId: string): Promise<PostedJob[]> {
+  const { data, error } = await getSupabase()
+    .from("listings")
+    .select("*")
+    .eq("worker_id", workerId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+
+  if (error || !data) return [];
+  return data.map(mapRow);
+}
+
+export async function postListing(workerId: string, listing: {
+  title: string;
+  company: string;
+  category: string;
+  description: string;
+  salary: string;
+  salary_value: number;
+  location: string;
+  logo?: string | null;
+  chips: string[];
+}): Promise<string | null> {
+  const { data, error } = await getSupabase()
+    .from("listings")
+    .insert({
+      worker_id: workerId,
+      title: listing.title,
+      company: listing.company,
+      category: listing.category,
+      description: listing.description,
+      salary: listing.salary,
+      salary_value: listing.salary_value,
+      location: listing.location,
+      logo: listing.logo ?? null,
+      chips: listing.chips,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return null;
+  return data.id;
+}

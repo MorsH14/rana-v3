@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import {
@@ -15,6 +16,8 @@ import { COLORS } from "@/utils/colors.util";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { initialUserData, messagesData } from "@/db";
 import type { PostedJob } from "@/types";
+import { getSession } from "@/lib/auth";
+import { fetchWorkerListings } from "@/lib/listings";
 
 /* ─── styled components ─── */
 
@@ -275,7 +278,17 @@ function getGreeting() {
 
 export default function HomeWorker() {
   const [user] = useLocalStorage("rana-user-profile", initialUserData);
-  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
+  const [localPostedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
+  const [dbListings, setDbListings] = useState<PostedJob[]>([]);
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) fetchWorkerListings(session.user.id).then(setDbListings);
+    });
+  }, []);
+
+  // Prefer Supabase listings; fall back to localStorage if session not available
+  const postedJobs = dbListings.length > 0 ? dbListings : localPostedJobs;
 
   const avatarColor = AVATAR_COLORS[user.name.charCodeAt(0) % AVATAR_COLORS.length];
   const initials = user.name

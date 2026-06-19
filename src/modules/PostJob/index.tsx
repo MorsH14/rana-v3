@@ -6,6 +6,8 @@ import { ArrowLeft, CheckCircle, X } from "@phosphor-icons/react/dist/ssr";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { initialUserData } from "@/db";
 import type { PostedJob } from "@/types";
+import { getSession } from "@/lib/auth";
+import { postListing } from "@/lib/listings";
 import {
   PostJobWrapper,
   PostJobHeader,
@@ -85,6 +87,7 @@ export default function PostJobWizard() {
   const [, setPostedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
 
   const [step, setStep] = useState<Step>(1);
+  const [posting, setPosting] = useState(false);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -105,33 +108,47 @@ export default function PostJobWizard() {
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
 
-  const handlePost = () => {
-    const categoryLabel =
-      CATEGORIES.find((c) => c.value === category)?.label ?? category;
-
-    const chips = [
-      categoryLabel,
-      ...tags.slice(0, 2),
-    ];
-
+  const handlePost = async () => {
+    const categoryLabel = CATEGORIES.find((c) => c.value === category)?.label ?? category;
+    const chips = [categoryLabel, ...tags.slice(0, 2)];
     const salaryValue = parseInt(amount.replace(/,/g, ""), 10) || 0;
     const salaryDisplay = `₦${Number(amount.replace(/,/g, "")).toLocaleString("en-NG")}${unit}`;
 
-    const newJob: PostedJob = {
-      id: `posted-${Date.now()}`,
-      company: user.name,
-      role: title,
-      date: formatDate(new Date()),
-      salary: salaryDisplay,
-      salaryValue,
-      location: stateLocation,
-      logo: user.profileImage || "/assets/images/logo.jpeg",
-      category,
-      description,
-      chips,
-    };
+    setPosting(true);
 
-    setPostedJobs((prev) => [newJob, ...prev]);
+    const session = await getSession();
+
+    if (session) {
+      await postListing(session.user.id, {
+        title,
+        company: user.name,
+        category,
+        description,
+        salary: salaryDisplay,
+        salary_value: salaryValue,
+        location: stateLocation,
+        logo: user.profileImage || null,
+        chips,
+      });
+    } else {
+      // Fallback: save to localStorage if no Supabase session
+      const newJob: PostedJob = {
+        id: `posted-${Date.now()}`,
+        company: user.name,
+        role: title,
+        date: formatDate(new Date()),
+        salary: salaryDisplay,
+        salaryValue,
+        location: stateLocation,
+        logo: user.profileImage || "/assets/images/logo.jpeg",
+        category,
+        description,
+        chips,
+      };
+      setPostedJobs((prev) => [newJob, ...prev]);
+    }
+
+    setPosting(false);
     setStep("done");
   };
 
@@ -302,8 +319,8 @@ export default function PostJobWizard() {
             <BackBtn type="button" onClick={() => setStep(2)}>
               <ArrowLeft size={15} weight="bold" /> Back
             </BackBtn>
-            <ContinueBtn disabled={!canContinue3} onClick={handlePost}>
-              Post listing
+            <ContinueBtn disabled={!canContinue3 || posting} onClick={handlePost}>
+              {posting ? "Posting…" : "Post listing"}
             </ContinueBtn>
           </NavRow>
         </>
