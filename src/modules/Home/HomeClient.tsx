@@ -22,11 +22,12 @@ import { ArrowsDownUp } from "@phosphor-icons/react/dist/ssr";
 import SortSelect from "@/components/Select/Select";
 import { SortWrapper } from "@/components/Layout/styles";
 import JobList from "@/components/Card/main";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { MobileH3SM, MobilePM } from "@/utils/typography";
-import { jobData } from "@/db";
+import { fetchListings } from "@/lib/listings";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import type { PostedJob } from "@/types";
 
 const ClearFiltersBtn = styled.button`
   background: none;
@@ -49,7 +50,6 @@ const ClearFiltersBtn = styled.button`
 `;
 
 function parseSortableDate(dateStr: string): number {
-  // "2nd June 2025" → strip ordinal suffix → "2 June 2025" → valid Date
   const cleaned = dateStr.replace(/(\d+)(st|nd|rd|th)/i, "$1");
   const d = new Date(cleaned);
   return isNaN(d.getTime()) ? 0 : d.getTime();
@@ -100,8 +100,13 @@ export default function HomeClient() {
     setQuery("");
   };
 
-  const [postedJobs] = useLocalStorage<typeof jobData>("rana-posted-jobs", []);
-  const allJobs = [...postedJobs, ...jobData];
+  const [dbListings, setDbListings] = useState<PostedJob[]>([]);
+  useEffect(() => {
+    fetchListings().then(setDbListings);
+  }, []);
+
+  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
+  const allJobs = [...postedJobs, ...dbListings];
 
   const filteredJobs = allJobs
     .filter((job) => {

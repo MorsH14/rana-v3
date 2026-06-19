@@ -1,11 +1,11 @@
-import { jobData } from '@/db';
 import JobCard from '.';
 import { JobFilterWrapper } from './style';
 import NoListItemCard from './NoItemCard';
 import { Warehouse } from '@phosphor-icons/react/dist/ssr';
+import type { PostedJob } from '@/types';
 
 interface JobListProps {
-  jobs: typeof jobData;  // your job data type
+  jobs: PostedJob[];
   query: string;
 }
 

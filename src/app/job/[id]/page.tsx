@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Chip,
@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { MapPin, Briefcase, X, CheckCircle, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
-import { jobData } from "@/db";
+import { fetchListingById } from "@/lib/listings";
 import { COLORS } from "@/utils/colors.util";
 import StarRating from "@/components/StarRating";
 import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
@@ -40,9 +40,13 @@ export default function JobDetailsPage() {
   const [applyOpen, setApplyOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const [job, setJob] = useState<PostedJob | null | undefined>(undefined);
 
-  const allJobs = [...postedJobs, ...jobData];
-  const job = allJobs.find((j) => j.id.toString() === id);
+  useEffect(() => {
+    const local = postedJobs.find((j) => String(j.id) === id);
+    if (local) { setJob(local); return; }
+    fetchListingById(id).then((result) => setJob(result ?? null));
+  }, [id]);
 
   const bgColor = useMemo(() => {
     const colors = ["#e79c469d", "#92e7acb3", "#ce93d38d", "#8dd6ecb9", "#b597ebb8", "#c4e7469d"];
@@ -63,7 +67,11 @@ export default function JobDetailsPage() {
       .toUpperCase();
   }, [job?.company]);
 
-  if (!job) {
+  if (job === undefined) {
+    return <Box sx={{ textAlign: "center", mt: 10 }}><MobileLightRS12>Loading...</MobileLightRS12></Box>;
+  }
+
+  if (job === null) {
     return (
       <Box sx={{ textAlign: "center", mt: 10 }}>
         <Font50020 style={{ color: COLORS.Red500 }}>Job not found</Font50020>
