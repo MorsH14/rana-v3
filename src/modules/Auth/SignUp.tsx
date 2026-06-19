@@ -32,6 +32,7 @@ import {
   NigeriaFlag,
 } from "./auth.styles";
 import { initialUserData } from "@/db";
+import { createAnonymousSession } from "@/lib/auth";
 
 type Phase = "phone" | "otp" | "name";
 
@@ -41,6 +42,7 @@ export default function SignUp() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -85,29 +87,40 @@ export default function SignUp() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!name.trim()) {
       setError("Please enter your name");
       return;
     }
+    setLoading(true);
+    setError("");
+
     const trimmedName = name.trim();
     const fullPhone = `0${phone}`;
 
-    localStorage.setItem(
-      "rana-auth",
-      JSON.stringify({ phone: fullPhone, name: trimmedName, isLoggedIn: true, isOnboarded: false })
-    );
+    try {
+      const session = await createAnonymousSession();
+      const userId = session?.user.id ?? null;
 
-    const existingProfile = JSON.parse(
-      localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData)
-    );
-    localStorage.setItem(
-      "rana-user-profile",
-      JSON.stringify({ ...existingProfile, name: trimmedName, phone: fullPhone })
-    );
+      localStorage.setItem(
+        "rana-auth",
+        JSON.stringify({ phone: fullPhone, name: trimmedName, isLoggedIn: true, isOnboarded: false, userId })
+      );
 
-    document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
-    router.push("/onboarding");
+      const existingProfile = JSON.parse(
+        localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData)
+      );
+      localStorage.setItem(
+        "rana-user-profile",
+        JSON.stringify({ ...existingProfile, name: trimmedName, phone: fullPhone })
+      );
+
+      document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
+      router.push("/onboarding");
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   };
 
   const brandTitles: Record<Phase, string> = {
@@ -231,8 +244,8 @@ export default function SignUp() {
 
               {error && <AuthError>{error}</AuthError>}
 
-              <AuthButton onClick={handleContinue} disabled={!name.trim()} style={{ marginTop: 8 }}>
-                Continue
+              <AuthButton onClick={handleContinue} disabled={!name.trim() || loading} style={{ marginTop: 8 }}>
+                {loading ? "Creating account…" : "Continue"}
               </AuthButton>
             </>
           )}

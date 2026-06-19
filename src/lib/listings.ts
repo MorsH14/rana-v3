@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { getSupabase } from "./supabase";
 import type { PostedJob } from "@/types";
 
 function formatDate(isoString: string): string {
@@ -31,7 +31,7 @@ function mapRow(row: Record<string, unknown>): PostedJob {
 }
 
 export async function fetchListings(): Promise<PostedJob[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("listings")
     .select("*")
     .eq("is_active", true)
@@ -42,7 +42,7 @@ export async function fetchListings(): Promise<PostedJob[]> {
 }
 
 export async function fetchListingById(id: string): Promise<PostedJob | null> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("listings")
     .select("*")
     .eq("id", id)

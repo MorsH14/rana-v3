@@ -30,6 +30,7 @@ import {
 } from "./onboarding.styles";
 import { COLORS } from "@/utils/colors.util";
 import { initialUserData } from "@/db";
+import { getSession, saveProfileToSupabase, savePreferencesToSupabase } from "@/lib/auth";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -86,7 +87,8 @@ export default function OnboardingWizard() {
     reader.readAsDataURL(file);
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    const accountType = role === "seeker" ? "worker" : "client";
     try {
       const existing = JSON.parse(
         localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData)
@@ -97,10 +99,9 @@ export default function OnboardingWizard() {
           ...existing,
           ...(location && { location }),
           ...(profileImage && { profileImage }),
-          accountType: role === "seeker" ? "worker" : "client",
+          accountType,
         })
       );
-      // Persist selected categories into rana-prefs so Settings reflects them
       const defaultPrefs = { categories: [], locationVisible: true, phoneVisible: true };
       const existingPrefs = JSON.parse(localStorage.getItem("rana-prefs") || "{}");
       localStorage.setItem(
@@ -109,8 +110,17 @@ export default function OnboardingWizard() {
       );
       const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
       localStorage.setItem("rana-auth", JSON.stringify({ ...auth, isOnboarded: true }));
+
+      // Save to Supabase (best-effort — don't block UI if it fails)
+      const session = await getSession();
+      if (session) {
+        const name = auth.name || existing.name || "User";
+        const phone = auth.phone || existing.phone || "";
+        await saveProfileToSupabase(session.user.id, { name, phone, accountType, location: location || undefined });
+        await savePreferencesToSupabase(session.user.id, selectedCategories);
+      }
     } catch {
-      // continue even if localStorage fails
+      // continue even if storage or Supabase fails
     }
     setStep("done");
   };

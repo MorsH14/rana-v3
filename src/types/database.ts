@@ -3,6 +3,10 @@ export type NotifType = "application" | "job" | "interview" | "system";
 
 export type Database = {
   public: {
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
     Tables: {
       profiles: {
         Row: {
@@ -40,6 +44,7 @@ export type Database = {
           coins_left?: number;
           verified?: boolean;
         };
+        Relationships: [];
       };
 
       listings: {
@@ -87,6 +92,7 @@ export type Database = {
           chips?: string[];
           is_active?: boolean;
         };
+        Relationships: [];
       };
 
       saved_jobs: {
@@ -100,7 +106,8 @@ export type Database = {
           user_id: string;
           listing_id: string;
         };
-        Update: never;
+        Update: Record<string, never>;
+        Relationships: [];
       };
 
       conversations: {
@@ -124,6 +131,7 @@ export type Database = {
           last_message?: string | null;
           last_message_at?: string | null;
         };
+        Relationships: [];
       };
 
       messages: {
@@ -144,6 +152,7 @@ export type Database = {
         Update: {
           read?: boolean;
         };
+        Relationships: [];
       };
 
       notifications: {
@@ -168,6 +177,7 @@ export type Database = {
         Update: {
           read?: boolean;
         };
+        Relationships: [];
       };
 
       user_preferences: {
@@ -201,6 +211,7 @@ export type Database = {
           notif_profile_tips?: boolean;
           notif_reviews?: boolean;
         };
+        Relationships: [];
       };
     };
   };

@@ -1,6 +1,7 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getSession } from "@/lib/auth";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import {
@@ -36,6 +37,19 @@ export default function SignIn() {
   const [error, setError] = useState("");
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Auto-restore existing Supabase session (same device / browser)
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
+        const params = new URLSearchParams(window.location.search);
+        const from = params.get("from");
+        const safeTo = from && from.startsWith("/") && !from.startsWith("//") ? from : "/";
+        router.push(safeTo);
+      }
+    });
+  }, [router]);
 
   const handleSendOTP = () => {
     const digits = phone.replace(/\D/g, "");
