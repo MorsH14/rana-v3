@@ -34,6 +34,8 @@ const NavBadge = styled.div`
 export default function Footer() {
   const pathname = usePathname();
   const [user] = useLocalStorage("rana-user-profile", initialUserData);
+  const [notifs] = useLocalStorage<Array<{ read: boolean }>>("rana-notifications", []);
+  const unreadCount = notifs.filter((n) => !n.read).length;
   const navLinks = user.accountType === "client" ? ClientFooterLink : WorkerFooterLink;
 
   return (
@@ -45,7 +47,7 @@ export default function Footer() {
               ? (PhosphorIcons[item.icon as keyof typeof PhosphorIcons] as React.FC<IconProps>)
               : null;
           const isActive = pathname === item.route;
-          const showBadge = item.route === "/notification" && user.notifications > 0;
+          const showBadge = item.route === "/notification" && unreadCount > 0;
 
           return (
             <Link href={item.route} key={index} style={{ textDecoration: "none" }}>
@@ -61,9 +63,7 @@ export default function Footer() {
                     <IconComponent size={22} weight={isActive ? "fill" : "regular"} />
                   )}
                   {showBadge && (
-                    <NavBadge>
-                      {user.notifications > 9 ? "9+" : user.notifications}
-                    </NavBadge>
+                    <NavBadge>{unreadCount > 9 ? "9+" : unreadCount}</NavBadge>
                   )}
                 </Box>
                 <Font50016 style={{ fontSize: 10, marginTop: 2 }}>{item.label}</Font50016>

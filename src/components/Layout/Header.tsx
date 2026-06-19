@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import Link from "next/link";
 import {
   ATags,
@@ -206,6 +207,8 @@ export default function Header({ user }: HeaderProps) {
   const navLinks = user.accountType === "client" ? ClientHeaderLink : WorkerHeaderLink;
   const [displayLocation, setDisplayLocation] = useState(user.location);
   const [detecting, setDetecting] = useState(false);
+  const [notifs] = useLocalStorage<Array<{ read: boolean }>>("rana-notifications", []);
+  const unreadCount = notifs.filter((n) => !n.read).length;
 
   useEffect(() => {
     setDisplayLocation(user.location);
@@ -314,7 +317,7 @@ export default function Header({ user }: HeaderProps) {
           </Link>
 
           <Link href="/notification">
-            <Badge badgeContent={user.notifications}>
+            <Badge badgeContent={unreadCount}>
               <RoundedBtn icon="Bell" />
             </Badge>
           </Link>
