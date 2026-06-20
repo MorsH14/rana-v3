@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { Bell, Briefcase, Star, Info, ArrowRight, X } from "@phosphor-icons/react/dist/ssr";
-import { notificationsData } from "@/db";
 import { COLORS } from "@/utils/colors.util";
-import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlexCenter } from "@/styles/globals.styles";
+import { getSession } from "@/lib/auth";
+import {
+  fetchNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  dismissNotification,
+  type UINotification,
+} from "@/lib/notifications";
 import {
   NotificationsWrapper,
   NotificationsHeader,
@@ -29,35 +35,33 @@ import {
   SectionLabel,
 } from "./notifications.styles";
 
-type Notification = (typeof notificationsData)[number] & { read: boolean };
-
 const TYPE_CONFIG: Record<
   string,
-  { icon: React.ReactNode; bg: string; actionLabel: string; actionHref: string }
+  { icon: React.ReactNode; bg: string; actionLabel: string; fallbackHref: string }
 > = {
   application: {
     icon: <Briefcase size={18} color={COLORS.white100} weight="fill" />,
     bg: COLORS.Blue500,
     actionLabel: "Open Messages",
-    actionHref: "/Messages",
+    fallbackHref: "/messages",
   },
   job: {
     icon: <Bell size={18} color={COLORS.white100} weight="fill" />,
     bg: COLORS.Green100,
     actionLabel: "Browse listings",
-    actionHref: "/",
+    fallbackHref: "/",
   },
   interview: {
     icon: <Star size={18} color={COLORS.white100} weight="fill" />,
     bg: "#F59E0B",
     actionLabel: "View profile",
-    actionHref: "/profile",
+    fallbackHref: "/profile",
   },
   system: {
     icon: <Info size={18} color={COLORS.white100} weight="fill" />,
     bg: COLORS.SolidGray400,
     actionLabel: "Update profile",
-    actionHref: "/profile",
+    fallbackHref: "/profile",
   },
 };
 
@@ -66,30 +70,40 @@ function getConfig(type: string) {
 }
 
 export default function NotificationsPage() {
-  const [items, setItems] = useLocalStorage<Notification[]>(
-    "rana-notifications",
-    notificationsData.map((n) => ({ ...n }))
-  );
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [items, setItems] = useState<UINotification[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getSession().then(async (session) => {
+      if (!session) return;
+      setUserId(session.user.id);
+      const notifs = await fetchNotifications(session.user.id);
+      setItems(notifs);
+    });
+  }, []);
 
   const unreadItems = items.filter((n) => !n.read);
   const readItems = items.filter((n) => n.read);
   const hasUnread = unreadItems.length > 0;
 
-  const handleTap = (id: number) => {
+  const handleTap = async (id: string) => {
     setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
     setExpandedId((prev) => (prev === id ? null : id));
+    await markNotificationRead(id);
   };
 
-  const dismiss = (e: React.MouseEvent, id: number) => {
+  const dismiss = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     setItems((prev) => prev.filter((n) => n.id !== id));
     if (expandedId === id) setExpandedId(null);
+    await dismissNotification(id);
   };
 
-  const markAllRead = () => {
+  const handleMarkAllRead = async () => {
     setItems((prev) => prev.map((n) => ({ ...n, read: true })));
     setExpandedId(null);
+    if (userId) await markAllNotificationsRead(userId);
   };
 
   if (items.length === 0) {
@@ -106,8 +120,9 @@ export default function NotificationsPage() {
     );
   }
 
-  const renderItem = (n: Notification) => {
-    const { icon, bg, actionLabel, actionHref } = getConfig(n.type);
+  const renderItem = (n: UINotification) => {
+    const { icon, bg, actionLabel, fallbackHref } = getConfig(n.type);
+    const href = n.action_href ?? fallbackHref;
     const isExpanded = expandedId === n.id;
 
     return (
@@ -126,7 +141,7 @@ export default function NotificationsPage() {
 
         {isExpanded && (
           <ExpandedArea onClick={(e) => e.stopPropagation()}>
-            <Link href={actionHref} passHref legacyBehavior>
+            <Link href={href} passHref legacyBehavior>
               <ActionBtn>
                 {actionLabel} <ArrowRight size={12} weight="bold" />
               </ActionBtn>
@@ -146,7 +161,7 @@ export default function NotificationsPage() {
         <NotificationsHeader>
           <NotificationsTitle>Notifications</NotificationsTitle>
           {hasUnread && (
-            <MarkAllRead onClick={markAllRead}>Mark all as read</MarkAllRead>
+            <MarkAllRead onClick={handleMarkAllRead}>Mark all as read</MarkAllRead>
           )}
         </NotificationsHeader>
 

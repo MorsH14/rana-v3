@@ -14,10 +14,11 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { COLORS } from "@/utils/colors.util";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
-import { initialUserData, messagesData } from "@/db";
+import { initialUserData } from "@/db";
 import type { PostedJob } from "@/types";
 import { getSession } from "@/lib/auth";
 import { fetchWorkerListings } from "@/lib/listings";
+import { fetchConversationCount } from "@/lib/notifications";
 
 /* ─── styled components ─── */
 
@@ -280,10 +281,13 @@ export default function HomeWorker() {
   const [user] = useLocalStorage("rana-user-profile", initialUserData);
   const [localPostedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
   const [dbListings, setDbListings] = useState<PostedJob[]>([]);
+  const [enquiryCount, setEnquiryCount] = useState(0);
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) fetchWorkerListings(session.user.id).then(setDbListings);
+      if (!session) return;
+      fetchWorkerListings(session.user.id).then(setDbListings);
+      fetchConversationCount(session.user.id).then(setEnquiryCount);
     });
   }, []);
 
@@ -301,7 +305,6 @@ export default function HomeWorker() {
 
   const firstName = user.name.split(" ")[0];
   const city = user.location.split(",")[0].trim();
-  const enquiryCount = messagesData.length;
 
   return (
     <Page>
