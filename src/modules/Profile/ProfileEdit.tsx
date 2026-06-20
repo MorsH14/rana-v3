@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useMemo } from "react";
-import { Camera, Lock, EnvelopeSimple, User, MapPin, Briefcase } from "@phosphor-icons/react/dist/ssr";
+import { Camera, Lock, User, MapPin, Briefcase, Phone } from "@phosphor-icons/react/dist/ssr";
 import styled from "@emotion/styled";
 import { COLORS } from "@/utils/colors.util";
 import { getSession } from "@/lib/auth";
@@ -313,28 +313,14 @@ export default function ProfileEdit({ user, setUser }: ProfileEditProps) {
       <SectionTitle>Contact</SectionTitle>
       <FormStack>
         <FieldWrap>
-          <FieldLabel htmlFor="pe-email">Email address</FieldLabel>
-          <InputWrap>
-            <EnvelopeSimple size={15} color={COLORS.SolidGray300} />
-            <FormInput
-              id="pe-email"
-              type="email"
-              placeholder="your@email.com"
-              value={localUser.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-            />
-          </InputWrap>
-        </FieldWrap>
-
-        <FieldWrap>
           <FieldLabel>Phone number</FieldLabel>
           <InputWrap>
-            <Lock size={15} color={COLORS.SolidGray300} />
+            <Phone size={15} color={COLORS.SolidGray300} />
             <FormInput type="tel" value={localUser.phone} disabled />
           </InputWrap>
           <ReadOnlyHint>
             <Lock size={10} />
-            To change your number, sign in with a new phone
+            Contact support to change your number
           </ReadOnlyHint>
         </FieldWrap>
       </FormStack>

@@ -1,6 +1,5 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
-import styled from "@emotion/styled";
 import {
   ProfileWrapper,
   ProfileHeroBanner,
@@ -17,28 +16,32 @@ import {
   StatIconBox,
   StatValue,
   StatLabel,
-  BuyCoinBtn,
   VerifiedWrapper,
 } from "./styles";
+import styled from "@emotion/styled";
 import { COLORS } from "@/utils/colors.util";
-
-const CoinToast = styled.div<{ visible: boolean }>`
-  background: #1a1a1a;
-  color: white;
-  font-family: Inter, sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin: 0 0 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
-  transform: ${({ visible }) => (visible ? "translateY(0)" : "translateY(-6px)")};
-  transition: opacity 0.2s, transform 0.2s;
-  pointer-events: none;
-`;
+import {
+  CheckCircle,
+  Gear,
+  Pen,
+  SignOut,
+  MapPin,
+  Phone,
+  Briefcase,
+  Plus,
+  Bookmark,
+} from "@phosphor-icons/react/dist/ssr";
+import SavedJobs from "./SavedJobs";
+import DrawerBasic from "@/components/Drawer/Drawer";
+import ProfileEdit from "./ProfileEdit";
+import { initialUserData } from "@/db";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
+import { getSession, signOut } from "@/lib/auth";
+import { fetchProfile } from "@/lib/profile";
+import { fetchWorkerListings } from "@/lib/listings";
 
 const PostServiceBtn = styled.a`
   display: flex;
@@ -93,30 +96,6 @@ const SignOutBtn = styled.button`
   }
 `;
 
-import {
-  CheckCircle,
-  Gear,
-  Pen,
-  SignOut,
-  MapPin,
-  WhatsappLogo,
-  Briefcase,
-  Wallet,
-  Plus,
-  Bookmark,
-} from "@phosphor-icons/react/dist/ssr";
-import SavedJobs from "./SavedJobs";
-import DrawerBasic from "@/components/Drawer/Drawer";
-import ProfileEdit from "./ProfileEdit";
-import { initialUserData } from "@/db";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
-import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
-import { getSession, signOut } from "@/lib/auth";
-import { fetchProfile } from "@/lib/profile";
-import { fetchWorkerListings } from "@/lib/listings";
-
 const AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#e11d48"];
 const HERO_GRADIENTS = [
   "linear-gradient(135deg, #ede9fe, #e0e7ff)",
@@ -129,11 +108,9 @@ const HERO_GRADIENTS = [
 export default function ProfilePage() {
   const [user, setUser] = useLocalStorage("rana-user-profile", initialUserData);
   const { savedIds } = useSavedJobs();
-  const [coinToast, setCoinToast] = useState(false);
   const [workerListingsCount, setWorkerListingsCount] = useState(0);
   const router = useRouter();
 
-  // Hydrate profile from Supabase and fetch worker listing count
   useEffect(() => {
     getSession().then(async (session) => {
       if (!session) return;
@@ -146,7 +123,6 @@ export default function ProfilePage() {
           location: profile.location ?? prev.location,
           role: profile.role ?? prev.role,
           profileImage: profile.profile_image ?? prev.profileImage,
-          coinsLeft: profile.coins_left ?? prev.coinsLeft,
           verified: profile.verified ?? prev.verified,
           accountType: (profile.account_type as "worker" | "client") ?? prev.accountType,
         }));
@@ -157,15 +133,6 @@ export default function ProfilePage() {
       }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleBuyCoins = () => {
-    setCoinToast(true);
-    setTimeout(() => setCoinToast(false), 2500);
-  };
-
-  useEffect(() => {
-    return () => setCoinToast(false);
   }, []);
 
   const handleSignOut = async () => {
@@ -192,24 +159,20 @@ export default function ProfilePage() {
   const heroGradient = HERO_GRADIENTS[colorIdx];
 
   const isWorker = user.accountType === "worker";
-  const firstStatValue = isWorker ? workerListingsCount : savedIds.length;
-  const firstStatLabel = isWorker ? "Active Listings" : "Saved Jobs";
-  const FirstStatIcon = isWorker ? Briefcase : Bookmark;
-  const firstStatColor = isWorker ? "#476EFB" : "#10b981";
-  const firstStatBg = isWorker
-    ? "rgba(71, 110, 251, 0.1)"
-    : "rgba(16, 185, 129, 0.1)";
+  const statValue = isWorker ? workerListingsCount : savedIds.length;
+  const statLabel = isWorker ? "Active Listings" : "Saved Jobs";
+  const StatIcon = isWorker ? Briefcase : Bookmark;
+  const statColor = isWorker ? "#476EFB" : "#10b981";
+  const statBg = isWorker ? "rgba(71, 110, 251, 0.1)" : "rgba(16, 185, 129, 0.1)";
 
   return (
     <ProfileWrapper>
-      {/* Hero banner with overlapping avatar */}
       <ProfileHeroBanner bg={heroGradient}>
         <ProfileAvatarWrap>
           <ProfileAvatarInner bg={avatarColor}>{initials}</ProfileAvatarInner>
         </ProfileAvatarWrap>
       </ProfileHeroBanner>
 
-      {/* Name, role, location, phone */}
       <ProfileInfo>
         <ProfileNameRow>
           <ProfileName>{user.name}</ProfileName>
@@ -229,13 +192,14 @@ export default function ProfilePage() {
           </ProfileMeta>
         )}
 
-        <ProfileMeta>
-          <WhatsappLogo size={13} color="#25D366" />
-          {user.phone}
-        </ProfileMeta>
+        {user.phone && (
+          <ProfileMeta>
+            <Phone size={12} />
+            {user.phone}
+          </ProfileMeta>
+        )}
       </ProfileInfo>
 
-      {/* Action buttons — Sign Out moved to bottom danger zone */}
       <ProfileActions>
         <Link href="/settings" style={{ textDecoration: "none" }}>
           <ProfileActionBtn variant="outline">
@@ -256,7 +220,6 @@ export default function ProfilePage() {
         </DrawerBasic>
       </ProfileActions>
 
-      {/* Worker shortcut — only shown to workers */}
       {isWorker && (
         <PostServiceBtn href="/post-job">
           <Plus size={15} />
@@ -264,41 +227,20 @@ export default function ProfilePage() {
         </PostServiceBtn>
       )}
 
-      {/* Stats — first card is role-aware */}
       <StatsRow>
         <StatCard>
-          <StatIconBox bg={firstStatBg}>
-            <FirstStatIcon size={18} color={firstStatColor} weight="fill" />
+          <StatIconBox bg={statBg}>
+            <StatIcon size={18} color={statColor} weight="fill" />
           </StatIconBox>
           <div>
-            <StatValue>{firstStatValue}</StatValue>
-            <StatLabel>{firstStatLabel}</StatLabel>
-          </div>
-        </StatCard>
-
-        <StatCard>
-          <StatIconBox bg="rgba(245, 158, 11, 0.12)">
-            <Wallet size={18} color="#f59e0b" weight="fill" />
-          </StatIconBox>
-          <div>
-            <StatValue>{user.coinsLeft ?? 0}</StatValue>
-            <StatLabel>Coins Left</StatLabel>
+            <StatValue>{statValue}</StatValue>
+            <StatLabel>{statLabel}</StatLabel>
           </div>
         </StatCard>
       </StatsRow>
 
-      <BuyCoinBtn onClick={handleBuyCoins}>
-        <Plus size={14} />
-        Buy coins
-      </BuyCoinBtn>
-      <CoinToast visible={coinToast}>
-        🪙 Coins feature coming soon — stay tuned!
-      </CoinToast>
-
-      {/* Saved Jobs */}
       <SavedJobs />
 
-      {/* Sign out — isolated at the bottom so it's never hit accidentally */}
       <SignOutArea>
         <SignOutBtn onClick={handleSignOut}>
           <SignOut size={15} />
