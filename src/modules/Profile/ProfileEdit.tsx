@@ -4,6 +4,8 @@ import React, { useState, useRef, useMemo } from "react";
 import { Camera, Lock, EnvelopeSimple, User, MapPin, Briefcase } from "@phosphor-icons/react/dist/ssr";
 import styled from "@emotion/styled";
 import { COLORS } from "@/utils/colors.util";
+import { getSession } from "@/lib/auth";
+import { updateProfile } from "@/lib/profile";
 
 /* ─── form inputs ─── */
 const FormInput = styled.input`
@@ -224,8 +226,17 @@ export default function ProfileEdit({ user, setUser }: ProfileEditProps) {
     reader.readAsDataURL(file);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setUser(localUser);
+    const session = await getSession();
+    if (session) {
+      await updateProfile(session.user.id, {
+        name: localUser.name,
+        role: localUser.role || null,
+        location: localUser.location || null,
+        profile_image: localUser.profileImage || null,
+      });
+    }
   };
 
   return (

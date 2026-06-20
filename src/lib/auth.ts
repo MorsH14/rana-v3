@@ -27,6 +27,10 @@ export async function saveProfileToSupabase(userId: string, profile: {
   return error;
 }
 
+export async function signOut() {
+  await getSupabase().auth.signOut();
+}
+
 export async function savePreferencesToSupabase(userId: string, categories: string[]) {
   const { error } = await getSupabase().from("user_preferences").upsert({
     user_id: userId,

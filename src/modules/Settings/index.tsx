@@ -12,6 +12,8 @@ import {
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { initialUserData } from "@/db";
 import DrawerBasic from "@/components/Drawer/Drawer";
+import { getSession, signOut } from "@/lib/auth";
+import { updatePreferences } from "@/lib/profile";
 import ProfileEdit from "@/modules/Profile/ProfileEdit";
 import { FlexCenter } from "@/styles/globals.styles";
 import {
@@ -85,8 +87,20 @@ export default function SettingsPage() {
     prefs.categories
   );
 
+  const syncPrefs = async (patch: Parameters<typeof updatePreferences>[1]) => {
+    const session = await getSession();
+    if (session) await updatePreferences(session.user.id, patch);
+  };
+
   const toggleNotif = (key: keyof NotifPrefs) => {
-    setNotifPrefs({ ...notifPrefs, [key]: !notifPrefs[key] });
+    const updated = { ...notifPrefs, [key]: !notifPrefs[key] };
+    setNotifPrefs(updated);
+    syncPrefs({
+      notif_job_matches: updated.jobMatches,
+      notif_application_updates: updated.applicationUpdates,
+      notif_profile_tips: updated.profileTips,
+      notif_reviews: updated.reviews,
+    });
   };
 
   const toggleCategory = (val: string) => {
@@ -96,6 +110,7 @@ export default function SettingsPage() {
     setSelectedCategories(updated);
     setPrefs((p) => ({ ...p, categories: updated }));
     setPrefSaved(true);
+    syncPrefs({ categories: updated });
   };
 
   useEffect(() => {
@@ -104,7 +119,8 @@ export default function SettingsPage() {
     return () => clearTimeout(t);
   }, [prefSaved]);
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await signOut();
     document.cookie = "rana-session=; path=/; max-age=0";
     localStorage.removeItem("rana-auth");
     router.push("/signin");
@@ -255,8 +271,9 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={prefs.locationVisible}
                   onChange={() => {
-                    setPrefs({ ...prefs, locationVisible: !prefs.locationVisible });
-                    setPrefSaved(false);
+                    const v = !prefs.locationVisible;
+                    setPrefs({ ...prefs, locationVisible: v });
+                    syncPrefs({ location_visible: v });
                   }}
                 />
                 <ToggleSlider />
@@ -273,8 +290,9 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={prefs.phoneVisible}
                   onChange={() => {
-                    setPrefs({ ...prefs, phoneVisible: !prefs.phoneVisible });
-                    setPrefSaved(false);
+                    const v = !prefs.phoneVisible;
+                    setPrefs({ ...prefs, phoneVisible: v });
+                    syncPrefs({ phone_visible: v });
                   }}
                 />
                 <ToggleSlider />

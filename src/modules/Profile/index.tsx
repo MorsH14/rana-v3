@@ -112,8 +112,10 @@ import { initialUserData } from "@/db";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
-import { PostedJob } from "@/types";
 import { useSavedJobs } from "@/utils/hooks/useSavedJobs";
+import { getSession, signOut } from "@/lib/auth";
+import { fetchProfile } from "@/lib/profile";
+import { fetchWorkerListings } from "@/lib/listings";
 
 const AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#e11d48"];
 const HERO_GRADIENTS = [
@@ -126,10 +128,36 @@ const HERO_GRADIENTS = [
 
 export default function ProfilePage() {
   const [user, setUser] = useLocalStorage("rana-user-profile", initialUserData);
-  const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
   const { savedIds } = useSavedJobs();
   const [coinToast, setCoinToast] = useState(false);
+  const [workerListingsCount, setWorkerListingsCount] = useState(0);
   const router = useRouter();
+
+  // Hydrate profile from Supabase and fetch worker listing count
+  useEffect(() => {
+    getSession().then(async (session) => {
+      if (!session) return;
+      const profile = await fetchProfile(session.user.id);
+      if (profile) {
+        setUser((prev) => ({
+          ...prev,
+          name: profile.name ?? prev.name,
+          phone: profile.phone ?? prev.phone,
+          location: profile.location ?? prev.location,
+          role: profile.role ?? prev.role,
+          profileImage: profile.profile_image ?? prev.profileImage,
+          coinsLeft: profile.coins_left ?? prev.coinsLeft,
+          verified: profile.verified ?? prev.verified,
+          accountType: (profile.account_type as "worker" | "client") ?? prev.accountType,
+        }));
+      }
+      if (profile?.account_type === "worker") {
+        const listings = await fetchWorkerListings(session.user.id);
+        setWorkerListingsCount(listings.length);
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleBuyCoins = () => {
     setCoinToast(true);
@@ -140,7 +168,8 @@ export default function ProfilePage() {
     return () => setCoinToast(false);
   }, []);
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await signOut();
     document.cookie = "rana-session=; path=/; max-age=0";
     localStorage.removeItem("rana-auth");
     router.push("/signin");
@@ -163,7 +192,7 @@ export default function ProfilePage() {
   const heroGradient = HERO_GRADIENTS[colorIdx];
 
   const isWorker = user.accountType === "worker";
-  const firstStatValue = isWorker ? postedJobs.length : savedIds.length;
+  const firstStatValue = isWorker ? workerListingsCount : savedIds.length;
   const firstStatLabel = isWorker ? "Active Listings" : "Saved Jobs";
   const FirstStatIcon = isWorker ? Briefcase : Bookmark;
   const firstStatColor = isWorker ? "#476EFB" : "#10b981";
