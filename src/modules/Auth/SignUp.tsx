@@ -21,7 +21,6 @@ import {
   AuthFooterText,
   AuthLink,
   AuthBackButton,
-  AuthDemoHint,
   AuthError,
   OTPWrapper,
   OTPBox,
@@ -32,35 +31,51 @@ import {
   NigeriaFlag,
 } from "./auth.styles";
 import { initialUserData } from "@/db";
-import { createAnonymousSession } from "@/lib/auth";
+import { getSession, sendPhoneOTP, verifyPhoneOTP, saveProfileToSupabase } from "@/lib/auth";
 
 type Phase = "phone" | "otp" | "name";
 
 export default function SignUp() {
   const [phase, setPhase] = useState<Phase>("phone");
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const handleSendOTP = () => {
+  const handleSendOTP = async () => {
     const digits = phone.replace(/\D/g, "");
     if (digits.length < 10) {
       setError("Enter a valid phone number");
       return;
     }
     setError("");
+    setLoading(true);
+    const err = await sendPhoneOTP(`+234${digits}`);
+    setLoading(false);
+    if (err) {
+      setError(err);
+      return;
+    }
     setPhase("otp");
+  };
+
+  const handleResend = async () => {
+    setOtp(["", "", "", ""]);
+    setError("");
+    setLoading(true);
+    const err = await sendPhoneOTP(`+234${phone.replace(/\D/g, "")}`);
+    setLoading(false);
+    if (err) setError(err);
   };
 
   const handleOTPChange = (index: number, char: string) => {
     const newOtp = [...otp];
     newOtp[index] = char.replace(/\D/g, "").slice(-1);
     setOtp(newOtp);
-    if (char && index < 3) inputRefs.current[index + 1]?.focus();
+    if (char && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -71,20 +86,24 @@ export default function SignUp() {
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
-    const newOtp = ["", "", "", ""];
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const newOtp = ["", "", "", "", "", ""];
     pasted.split("").forEach((char, i) => { newOtp[i] = char; });
     setOtp(newOtp);
-    inputRefs.current[Math.min(pasted.length, 3)]?.focus();
+    inputRefs.current[Math.min(pasted.length, 5)]?.focus();
   };
 
-  const handleVerifyOTP = () => {
-    if (otp.join("") === "1234") {
-      setError("");
-      setPhase("name");
-    } else {
-      setError("Incorrect code. Use 1234 for demo.");
+  const handleVerifyOTP = async () => {
+    setError("");
+    setLoading(true);
+    const err = await verifyPhoneOTP(`+234${phone.replace(/\D/g, "")}`, otp.join(""));
+    setLoading(false);
+    if (err) {
+      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend OTP" : "Incorrect code, try again");
+      return;
     }
+    // Supabase session is now live — move to name collection
+    setPhase("name");
   };
 
   const handleContinue = async () => {
@@ -99,7 +118,8 @@ export default function SignUp() {
     const fullPhone = `0${phone}`;
 
     try {
-      const session = await createAnonymousSession();
+      // Session was already created by verifyPhoneOTP — just fetch the user ID
+      const session = await getSession();
       const userId = session?.user.id ?? null;
 
       localStorage.setItem(
@@ -114,6 +134,10 @@ export default function SignUp() {
         "rana-user-profile",
         JSON.stringify({ ...existingProfile, name: trimmedName, phone: fullPhone })
       );
+
+      if (userId) {
+        await saveProfileToSupabase(userId, { name: trimmedName, phone: fullPhone, accountType: "client" });
+      }
 
       document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
       router.push("/onboarding");
@@ -166,8 +190,8 @@ export default function SignUp() {
 
               {error && <AuthError>{error}</AuthError>}
 
-              <AuthButton onClick={handleSendOTP} disabled={phone.length < 10}>
-                Send OTP
+              <AuthButton onClick={handleSendOTP} disabled={phone.length < 10 || loading}>
+                {loading ? "Sending…" : "Send OTP"}
               </AuthButton>
 
               <AuthFooterText>
@@ -190,12 +214,8 @@ export default function SignUp() {
               <AuthTitle>Verify number</AuthTitle>
               <AuthSubtitle>Enter the 4-digit code sent to +234{phone}</AuthSubtitle>
 
-              <AuthDemoHint>
-                Demo mode — use code <strong>1234</strong>
-              </AuthDemoHint>
-
               <OTPWrapper>
-                {[0, 1, 2, 3].map((i) => (
+                {[0, 1, 2, 3, 4, 5].map((i) => (
                   <OTPBox
                     key={i}
                     ref={(el) => { inputRefs.current[i] = el; }}
@@ -213,13 +233,13 @@ export default function SignUp() {
 
               {error && <AuthError style={{ textAlign: "center" }}>{error}</AuthError>}
 
-              <AuthButton onClick={handleVerifyOTP} disabled={otp.join("").length < 4}>
-                Verify
+              <AuthButton onClick={handleVerifyOTP} disabled={otp.join("").length < 6 || loading}>
+                {loading ? "Verifying…" : "Verify"}
               </AuthButton>
 
               <ResendText>
                 Didn&apos;t receive a code?{" "}
-                <AuthLink onClick={() => setOtp(["", "", "", ""])}>Resend OTP</AuthLink>
+                <AuthLink onClick={handleResend}>Resend OTP</AuthLink>
               </ResendText>
             </>
           )}

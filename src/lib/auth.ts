@@ -38,3 +38,22 @@ export async function savePreferencesToSupabase(userId: string, categories: stri
   });
   return error;
 }
+
+// Sends a real SMS OTP via Supabase Phone Auth.
+// Requires a phone provider (e.g. Twilio / Termii) to be configured in the
+// Supabase dashboard under Authentication → Providers → Phone.
+export async function sendPhoneOTP(e164Phone: string): Promise<string | null> {
+  const { error } = await getSupabase().auth.signInWithOtp({ phone: e164Phone });
+  return error?.message ?? null;
+}
+
+// Verifies the OTP sent by sendPhoneOTP. On success Supabase creates (or
+// restores) a full authenticated session — getSession() will return it.
+export async function verifyPhoneOTP(e164Phone: string, token: string): Promise<string | null> {
+  const { error } = await getSupabase().auth.verifyOtp({
+    phone: e164Phone,
+    token,
+    type: "sms",
+  });
+  return error?.message ?? null;
+}
