@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChatCircleDots, PaperPlaneRight } from "@phosphor-icons/react/dist/ssr";
-import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
-import { messagesData, type Conversation, type ChatMessage } from "@/db";
+import { getSession } from "@/lib/auth";
+import {
+  fetchConversations,
+  fetchMessages,
+  markMessagesRead,
+  sendMessage as sendMsg,
+  subscribeToMessages,
+  type UIConversation,
+  type UIMessage,
+} from "@/lib/messages";
 import {
   MessagesLayout,
   ConvoListPanel,
@@ -35,51 +43,91 @@ import {
 } from "./messages.styles";
 
 export default function MessagesPage() {
-  const [conversations, setConversations] = useLocalStorage<Conversation[]>(
-    "rana-conversations",
-    messagesData
-  );
-
+  const [conversations, setConversations] = useState<UIConversation[]>([]);
+  const [messages, setMessages] = useState<UIMessage[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const unsubRef = useRef<(() => void) | null>(null);
 
-  const activeConvo = conversations.find((c) => c.id === activeId) ?? null;
-  const isMobileChat = activeId !== null;
+  useEffect(() => {
+    getSession().then(async (session) => {
+      if (!session) return;
+      setUserId(session.user.id);
+      const convos = await fetchConversations(session.user.id);
+      setConversations(convos);
+    });
+  }, []);
 
-  const openConvo = (id: string) => {
-    setActiveId(id);
-    setDraft("");
-    // mark as read
+  useEffect(() => () => { unsubRef.current?.(); }, []);
+
+  const openConvo = useCallback(
+    async (id: string) => {
+      if (!userId) return;
+      setActiveId(id);
+      setDraft("");
+      setConversations((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, unread: 0 } : c))
+      );
+
+      const msgs = await fetchMessages(id, userId);
+      setMessages(msgs);
+      await markMessagesRead(id, userId);
+
+      unsubRef.current?.();
+      unsubRef.current = subscribeToMessages(
+        id,
+        (newMsg) => {
+          setMessages((prev) => {
+            if (newMsg.senderId === "me") {
+              const idx = prev.findIndex(
+                (m) => m.id.startsWith("optimistic-") && m.text === newMsg.text
+              );
+              if (idx !== -1) {
+                const updated = [...prev];
+                updated[idx] = newMsg;
+                return updated;
+              }
+            }
+            if (prev.some((m) => m.id === newMsg.id)) return prev;
+            return [...prev, newMsg];
+          });
+          setConversations((prev) =>
+            prev.map((c) =>
+              c.id === id ? { ...c, lastMessage: newMsg.text, lastTime: newMsg.time } : c
+            )
+          );
+        },
+        userId
+      );
+    },
+    [userId]
+  );
+
+  const sendMessage = useCallback(async () => {
+    if (!draft.trim() || !activeId || !userId) return;
+    const text = draft.trim();
+    const now = new Date().toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" });
+
+    const optimisticId = `optimistic-${Date.now()}`;
+    setMessages((prev) => [...prev, { id: optimisticId, senderId: "me", text, time: now }]);
     setConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, unread: 0 } : c))
-    );
-  };
-
-  const sendMessage = () => {
-    if (!draft.trim() || !activeId) return;
-    const newMsg: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      senderId: "me",
-      text: draft.trim(),
-      time: new Date().toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" }),
-    };
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === activeId
-          ? { ...c, messages: [...c.messages, newMsg], lastMessage: newMsg.text, lastTime: newMsg.time }
-          : c
-      )
+      prev.map((c) => (c.id === activeId ? { ...c, lastMessage: text, lastTime: now } : c))
     );
     setDraft("");
     inputRef.current?.focus();
-  };
 
-  // scroll to bottom when messages change
+    await sendMsg(activeId, userId, text);
+  }, [draft, activeId, userId]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [activeConvo?.messages.length]);
+  }, [messages.length]);
+
+  const activeConvo = conversations.find((c) => c.id === activeId) ?? null;
+  const isMobileChat = activeId !== null;
 
   return (
     <MessagesLayout>
@@ -89,23 +137,30 @@ export default function MessagesPage() {
           <ConvoListTitle>Messages</ConvoListTitle>
         </ConvoListHeader>
         <ConvoList>
-          {conversations.map((convo) => (
-            <ConvoItem
-              key={convo.id}
-              active={activeId === convo.id}
-              onClick={() => openConvo(convo.id)}
-            >
-              <ConvoAvatar bg={convo.avatarColor}>{convo.initials}</ConvoAvatar>
-              <ConvoMeta>
-                <ConvoTopRow>
-                  <ConvoName unread={convo.unread > 0}>{convo.name}</ConvoName>
-                  <ConvoTime>{convo.lastTime}</ConvoTime>
-                </ConvoTopRow>
-                <ConvoPreview unread={convo.unread > 0}>{convo.lastMessage}</ConvoPreview>
-              </ConvoMeta>
-              {convo.unread > 0 && <UnreadBadge>{convo.unread}</UnreadBadge>}
-            </ConvoItem>
-          ))}
+          {conversations.length === 0 ? (
+            <EmptyChat style={{ padding: "48px 20px" }}>
+              <ChatCircleDots size={40} weight="thin" />
+              <p>No conversations yet</p>
+            </EmptyChat>
+          ) : (
+            conversations.map((convo) => (
+              <ConvoItem
+                key={convo.id}
+                active={activeId === convo.id}
+                onClick={() => openConvo(convo.id)}
+              >
+                <ConvoAvatar bg={convo.avatarColor}>{convo.initials}</ConvoAvatar>
+                <ConvoMeta>
+                  <ConvoTopRow>
+                    <ConvoName unread={convo.unread > 0}>{convo.name}</ConvoName>
+                    <ConvoTime>{convo.lastTime}</ConvoTime>
+                  </ConvoTopRow>
+                  <ConvoPreview unread={convo.unread > 0}>{convo.lastMessage}</ConvoPreview>
+                </ConvoMeta>
+                {convo.unread > 0 && <UnreadBadge>{convo.unread}</UnreadBadge>}
+              </ConvoItem>
+            ))
+          )}
         </ConvoList>
       </ConvoListPanel>
 
@@ -127,7 +182,7 @@ export default function MessagesPage() {
             </ChatHeader>
 
             <ChatMessages>
-              {activeConvo.messages.map((msg) => {
+              {messages.map((msg) => {
                 const mine = msg.senderId === "me";
                 return (
                   <MessageGroup key={msg.id} mine={mine}>
