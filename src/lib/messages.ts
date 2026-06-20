@@ -132,6 +132,31 @@ export async function markMessagesRead(conversationId: string, userId: string) {
     .eq("read", false);
 }
 
+export async function createOrFetchConversation(
+  clientId: string,
+  workerId: string,
+  listingId: string
+): Promise<string | null> {
+  const { data: existing } = await getSupabase()
+    .from("conversations")
+    .select("id")
+    .eq("client_id", clientId)
+    .eq("worker_id", workerId)
+    .eq("listing_id", listingId)
+    .maybeSingle();
+
+  if (existing) return existing.id;
+
+  const { data, error } = await getSupabase()
+    .from("conversations")
+    .insert({ client_id: clientId, worker_id: workerId, listing_id: listingId })
+    .select("id")
+    .single();
+
+  if (error || !data) return null;
+  return data.id;
+}
+
 export function subscribeToMessages(
   conversationId: string,
   onNew: (msg: UIMessage) => void,

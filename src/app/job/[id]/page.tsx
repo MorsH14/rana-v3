@@ -28,6 +28,9 @@ import CardBtn from "@/components/Buttons/CardBtn";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import type { PostedJob } from "@/types";
+import { initialUserData } from "@/db";
+import { getSession } from "@/lib/auth";
+import { createOrFetchConversation, sendMessage as sendConversationMessage } from "@/lib/messages";
 
 export default function JobDetailsPage() {
   const params = useParams();
@@ -35,12 +38,25 @@ export default function JobDetailsPage() {
   const router = useRouter();
 
   const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
+  const [user] = useLocalStorage("rana-user-profile", initialUserData);
   const { isSaved, toggle } = useSavedJobs();
 
   const [applyOpen, setApplyOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [job, setJob] = useState<PostedJob | null | undefined>(undefined);
+
+  // Pre-fill form from profile when dialog opens
+  useEffect(() => {
+    if (applyOpen) {
+      setForm((prev) => ({
+        ...prev,
+        name: prev.name || user.name,
+        phone: prev.phone || user.phone,
+      }));
+    }
+  }, [applyOpen]);
 
   useEffect(() => {
     const local = postedJobs.find((j) => String(j.id) === id);
@@ -82,9 +98,24 @@ export default function JobDetailsPage() {
     );
   }
 
-  const handleSubmit = () => {
-    if (!form.name.trim() || !form.phone.trim()) return;
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    if (!form.name.trim() || !form.phone.trim() || !job) return;
+    setSending(true);
+    try {
+      if (job.workerId) {
+        const session = await getSession();
+        if (session && session.user.id !== job.workerId) {
+          const convId = await createOrFetchConversation(session.user.id, job.workerId, job.id);
+          if (convId) {
+            const text = form.message.trim() || `Hi, I'm interested in your ${job.role} listing.`;
+            await sendConversationMessage(convId, session.user.id, text);
+          }
+        }
+      }
+    } finally {
+      setSending(false);
+      setSubmitted(true);
+    }
   };
 
   const handleClose = () => {
@@ -300,7 +331,7 @@ export default function JobDetailsPage() {
 
               <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
                 <CardBtn
-                  label="Send Enquiry"
+                  label={sending ? "Sending…" : "Send Enquiry"}
                   onClick={handleSubmit}
                 />
               </Box>

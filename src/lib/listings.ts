@@ -15,6 +15,7 @@ function formatDate(isoString: string): string {
 function mapRow(row: Record<string, unknown>): PostedJob {
   return {
     id: row.id as string,
+    workerId: row.worker_id as string,
     company: row.company as string,
     role: row.title as string,
     date: formatDate(row.created_at as string),

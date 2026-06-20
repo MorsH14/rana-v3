@@ -1,5 +1,6 @@
 export type PostedJob = {
   id: string;
+  workerId?: string;
   company: string;
   role: string;
   date: string;
