@@ -8,7 +8,7 @@ import AppWrapper from "@/components/AppWrapper";
 export const metadata: Metadata = {
   title: "Ranajob - Find Work Near You",
   description: "Connect with thousands of opportunities across Nigeria. From tech to teaching, home services to fashion — your next gig is here.",
-  keywords: "jobs Nigeria, freelance, hire professionals, service providers, Lagos jobs, Abuja, Port Harcourt, lesson teacher, home services",
+  keywords: "jobs Nigeria, freelance, hire professionals, service providers, Lagos jobs, Abuja, Port Harcourt, Ibadan, lesson teacher, home services, catering, tailoring",
 };
 
 export const viewport = {
