@@ -31,10 +31,12 @@ function mapRow(row: Record<string, unknown>): PostedJob {
   };
 }
 
+const LISTING_COLS = "id,worker_id,title,company,category,description,salary,salary_value,location,logo,chips,rating,review_count,created_at";
+
 export async function fetchListings(): Promise<PostedJob[]> {
   const { data, error } = await getSupabase()
     .from("listings")
-    .select("*")
+    .select(LISTING_COLS)
     .eq("is_active", true)
     .order("created_at", { ascending: false });
 
@@ -57,7 +59,7 @@ export async function fetchListingsByIds(ids: string[]): Promise<PostedJob[]> {
   if (ids.length === 0) return [];
   const { data, error } = await getSupabase()
     .from("listings")
-    .select("*")
+    .select(LISTING_COLS)
     .in("id", ids);
 
   if (error || !data) return [];

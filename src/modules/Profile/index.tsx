@@ -114,7 +114,11 @@ export default function ProfilePage() {
   useEffect(() => {
     getSession().then(async (session) => {
       if (!session) return;
-      const profile = await fetchProfile(session.user.id);
+      const isWorker = user.accountType === "worker";
+      const [profile, listings] = await Promise.all([
+        fetchProfile(session.user.id),
+        isWorker ? fetchWorkerListings(session.user.id) : Promise.resolve([]),
+      ]);
       if (profile) {
         setUser((prev) => ({
           ...prev,
@@ -127,10 +131,7 @@ export default function ProfilePage() {
           accountType: (profile.account_type as "worker" | "client") ?? prev.accountType,
         }));
       }
-      if (profile?.account_type === "worker") {
-        const listings = await fetchWorkerListings(session.user.id);
-        setWorkerListingsCount(listings.length);
-      }
+      if (isWorker) setWorkerListingsCount(listings.length);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

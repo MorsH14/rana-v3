@@ -59,18 +59,16 @@ export async function fetchConversations(userId: string): Promise<UIConversation
     : { data: [] };
   const listingMap = new Map((listings ?? []).map((l) => [l.id, l.title]));
 
-  const unreadResults = await Promise.all(
-    convos.map((c) =>
-      getSupabase()
-        .from("messages")
-        .select("id", { count: "exact", head: true })
-        .eq("conversation_id", c.id)
-        .eq("read", false)
-        .neq("sender_id", userId)
-        .then(({ count }) => ({ id: c.id, count: count ?? 0 }))
-    )
-  );
-  const unreadMap = new Map(unreadResults.map((u) => [u.id, u.count]));
+  const { data: unreadMsgs } = await getSupabase()
+    .from("messages")
+    .select("conversation_id")
+    .in("conversation_id", convos.map((c) => c.id))
+    .eq("read", false)
+    .neq("sender_id", userId);
+  const unreadMap = new Map<string, number>();
+  (unreadMsgs ?? []).forEach((m) => {
+    unreadMap.set(m.conversation_id, (unreadMap.get(m.conversation_id) ?? 0) + 1);
+  });
 
   return convos.map((c, i) => {
     const otherId = c.client_id === userId ? c.worker_id : c.client_id;

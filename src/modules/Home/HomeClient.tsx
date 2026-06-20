@@ -29,6 +29,27 @@ import { fetchListings } from "@/lib/listings";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import type { PostedJob } from "@/types";
 
+const SkeletonCard = styled.div`
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f3f4f6;
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  height: 160px;
+`;
+
+const SkeletonGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+`;
+
 const ClearFiltersBtn = styled.button`
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -101,8 +122,9 @@ export default function HomeClient() {
   };
 
   const [dbListings, setDbListings] = useState<PostedJob[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetchListings().then(setDbListings);
+    fetchListings().then((data) => { setDbListings(data); setLoading(false); });
   }, []);
 
   const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
@@ -211,7 +233,13 @@ export default function HomeClient() {
               />
             </SortWrapper>
           </JobsHeaderWrapper>
-          <JobList jobs={filteredJobs} query={query} />
+          {loading ? (
+            <SkeletonGrid>
+              {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
+            </SkeletonGrid>
+          ) : (
+            <JobList jobs={filteredJobs} query={query} />
+          )}
         </JobListWrapper>
       </HomeJobWrapper>
     </>
