@@ -372,3 +372,21 @@ VALUES
     '₦30,000/occasion', 30000, 'Lagos', '/assets/images/logo.jpeg',
     ARRAY['Fashion','Home Visit','Bridal'], 4.9, 311
   );
+
+
+-- ── 11. ROLE GRANTS ───────────────────────────────────────────
+-- Required because tables were created via SQL editor (not dashboard UI).
+-- Without these, the authenticated/anon roles have no table-level access
+-- even if RLS policies exist.
+
+GRANT SELECT ON public.listings TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.listings TO authenticated;
+
+GRANT SELECT ON public.profiles TO anon, authenticated;
+GRANT INSERT, UPDATE ON public.profiles TO authenticated;
+
+GRANT SELECT, INSERT, DELETE ON public.saved_jobs TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.conversations TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.messages TO authenticated;
+GRANT SELECT, UPDATE, DELETE ON public.notifications TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.user_preferences TO authenticated;

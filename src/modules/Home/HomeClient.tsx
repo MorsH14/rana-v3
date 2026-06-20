@@ -102,9 +102,7 @@ export default function HomeClient() {
 
   const [dbListings, setDbListings] = useState<PostedJob[]>([]);
   useEffect(() => {
-    fetchListings()
-      .then((data) => { console.log("[rana] listings fetched:", data.length); setDbListings(data); })
-      .catch((err) => console.error("[rana] fetchListings error:", err));
+    fetchListings().then(setDbListings);
   }, []);
 
   const [postedJobs] = useLocalStorage<PostedJob[]>("rana-posted-jobs", []);
