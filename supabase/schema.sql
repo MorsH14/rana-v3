@@ -249,7 +249,7 @@ BEGIN
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', 'New User'),
-    COALESCE(NEW.phone, '')
+    COALESCE(NEW.phone, NEW.id::text)
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
