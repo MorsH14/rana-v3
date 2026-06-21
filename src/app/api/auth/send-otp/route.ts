@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-);
+import crypto from "crypto";
 
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+function buildCookieValue(email: string, code: string): string {
+  const exp = Date.now() + 5 * 60 * 1000;
+  const payload = Buffer.from(JSON.stringify({ email, code, exp })).toString("base64url");
+  const sig = crypto
+    .createHmac("sha256", process.env.OTP_SECRET ?? "dev-secret")
+    .update(payload)
+    .digest("hex");
+  return `${payload}.${sig}`;
 }
 
 async function sendResendEmail(email: string, code: string): Promise<string | null> {
@@ -52,39 +56,41 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
   }
 
-  // Rate-limit: reject if a code was sent less than 60s ago
-  const { data: existing } = await supabaseAdmin
-    .from("otp_codes")
-    .select("created_at")
-    .eq("phone", email)
-    .single();
-
-  if (existing) {
-    const ageMs = Date.now() - new Date(existing.created_at).getTime();
-    if (ageMs < 60_000) {
-      return NextResponse.json(
-        { error: "Please wait a moment before requesting a new code" },
-        { status: 429 }
-      );
+  // Rate-limit: reject if a code was sent less than 60s ago (check existing cookie)
+  const existingCookie = req.cookies.get("otp_session")?.value;
+  if (existingCookie) {
+    try {
+      const [payload] = existingCookie.split(".");
+      const { exp } = JSON.parse(Buffer.from(payload, "base64url").toString());
+      const sentAt = exp - 5 * 60 * 1000;
+      if (Date.now() - sentAt < 60_000) {
+        return NextResponse.json(
+          { error: "Please wait a moment before requesting a new code" },
+          { status: 429 }
+        );
+      }
+    } catch {
+      // Malformed cookie — allow the request through
     }
   }
 
   const code = generateOTP();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+  const cookieValue = buildCookieValue(email, code);
 
-  const { error: dbError } = await supabaseAdmin
-    .from("otp_codes")
-    .upsert({ phone: email, code, expires_at: expiresAt, created_at: new Date().toISOString() });
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    maxAge: 5 * 60,
+    path: "/",
+  };
 
-  if (dbError) {
-    console.error("[send-otp] DB error:", dbError);
-    return NextResponse.json({ error: `DB: ${dbError.message}` }, { status: 500 });
-  }
-
-  // No API key → print to terminal for local dev without Resend
+  // No Resend key → print code to terminal for local dev
   if (!process.env.RESEND_API_KEY) {
     console.log(`\n📧 OTP for ${email}: ${code}\n`);
-    return NextResponse.json({ success: true });
+    const res = NextResponse.json({ success: true });
+    res.cookies.set("otp_session", cookieValue, cookieOptions);
+    return res;
   }
 
   const emailError = await sendResendEmail(email, code);
@@ -92,5 +98,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: emailError }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true });
+  const res = NextResponse.json({ success: true });
+  res.cookies.set("otp_session", cookieValue, cookieOptions);
+  return res;
 }

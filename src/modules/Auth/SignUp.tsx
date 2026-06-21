@@ -91,7 +91,7 @@ export default function SignUp() {
     const err = await verifyEmailOTP(email.trim(), otp.join(""));
     setLoading(false);
     if (err) {
-      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend" : "Incorrect code, try again");
+      setError(err);
       return;
     }
     setPhase("name");

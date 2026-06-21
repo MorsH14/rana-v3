@@ -108,7 +108,7 @@ export default function SignIn() {
     const err = await verifyEmailOTP(email.trim(), otp.join(""));
     setLoading(false);
     if (err) {
-      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend" : "Incorrect code, try again");
+      setError(err);
       return;
     }
     const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
