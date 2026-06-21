@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, sendEmailOTP, verifyEmailOTP } from "@/lib/auth";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
@@ -28,6 +28,12 @@ import {
   AuthInput,
 } from "./auth.styles";
 
+function getRedirectTarget(): string {
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get("from");
+  return from && from.startsWith("/") && !from.startsWith("//") ? from : "/";
+}
+
 export default function SignIn() {
   const [phase, setPhase] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
@@ -37,26 +43,15 @@ export default function SignIn() {
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const redirectAfterAuth = useCallback(() => {
-    const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
-    if (!auth.isOnboarded) {
-      router.push("/onboarding");
-      return;
-    }
-    const params = new URLSearchParams(window.location.search);
-    const from = params.get("from");
-    const safeTo = from && from.startsWith("/") && !from.startsWith("//") ? from : "/";
-    router.push(safeTo);
-  }, [router]);
-
+  // If already logged in, skip straight to home (or the page they came from)
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
         document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
-        redirectAfterAuth();
+        router.push(getRedirectTarget());
       }
     });
-  }, [redirectAfterAuth]);
+  }, [router]);
 
   const handleSendOTP = async () => {
     if (!email.trim() || !email.includes("@")) {
@@ -111,10 +106,14 @@ export default function SignIn() {
       setError(err);
       return;
     }
+    // Returning user — always go home, never onboarding
     const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
-    localStorage.setItem("rana-auth", JSON.stringify({ ...auth, email: email.trim(), isLoggedIn: true }));
+    localStorage.setItem(
+      "rana-auth",
+      JSON.stringify({ ...auth, email: email.trim(), isLoggedIn: true, isOnboarded: true })
+    );
     document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
-    redirectAfterAuth();
+    router.push(getRedirectTarget());
   };
 
   return (
