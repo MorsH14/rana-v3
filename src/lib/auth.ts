@@ -39,40 +39,14 @@ export async function savePreferencesToSupabase(userId: string, categories: stri
   return error;
 }
 
-// Sends a 6-digit OTP to the given E.164 phone number via Termii SMS.
-export async function sendPhoneOTP(e164Phone: string): Promise<string | null> {
-  try {
-    const res = await fetch("/api/auth/send-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone: e164Phone }),
-    });
-    const data = await res.json();
-    return data.error ?? null;
-  } catch {
-    return "Network error. Please try again.";
-  }
+// Sends a 6-digit OTP to the user's email via Supabase (no third-party setup needed).
+export async function sendEmailOTP(email: string): Promise<string | null> {
+  const { error } = await getSupabase().auth.signInWithOtp({ email });
+  return error?.message ?? null;
 }
 
-// Verifies the OTP and establishes a Supabase session for the user.
-// On success, the session is set on the Supabase client and null is returned.
-export async function verifyPhoneOTP(e164Phone: string, token: string): Promise<string | null> {
-  try {
-    const res = await fetch("/api/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone: e164Phone, code: token }),
-    });
-    const data = await res.json();
-    if (data.error) return data.error;
-
-    // Restore the verified session on the Supabase client
-    await getSupabase().auth.setSession({
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-    });
-    return null;
-  } catch {
-    return "Network error. Please try again.";
-  }
+// Verifies the email OTP. On success Supabase sets the session automatically.
+export async function verifyEmailOTP(email: string, token: string): Promise<string | null> {
+  const { error } = await getSupabase().auth.verifyOtp({ email, token, type: "email" });
+  return error?.message ?? null;
 }

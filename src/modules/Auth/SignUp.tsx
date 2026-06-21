@@ -14,9 +14,6 @@ import {
   AuthMobileLogo,
   AuthTitle,
   AuthSubtitle,
-  PhoneInputWrapper,
-  PhonePrefix,
-  PhoneInput,
   AuthButton,
   AuthFooterText,
   AuthLink,
@@ -28,16 +25,15 @@ import {
   AuthInputGroup,
   AuthInputLabel,
   AuthInput,
-  NigeriaFlag,
 } from "./auth.styles";
 import { initialUserData } from "@/db";
-import { getSession, sendPhoneOTP, verifyPhoneOTP, saveProfileToSupabase } from "@/lib/auth";
+import { getSession, sendEmailOTP, verifyEmailOTP, saveProfileToSupabase } from "@/lib/auth";
 
-type Phase = "phone" | "otp" | "name";
+type Phase = "email" | "otp" | "name";
 
 export default function SignUp() {
-  const [phase, setPhase] = useState<Phase>("phone");
-  const [phone, setPhone] = useState("");
+  const [phase, setPhase] = useState<Phase>("email");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
@@ -46,27 +42,23 @@ export default function SignUp() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleSendOTP = async () => {
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 10) {
-      setError("Enter a valid phone number");
+    if (!email.trim() || !email.includes("@")) {
+      setError("Enter a valid email address");
       return;
     }
     setError("");
     setLoading(true);
-    const err = await sendPhoneOTP(`+234${digits}`);
+    const err = await sendEmailOTP(email.trim());
     setLoading(false);
-    if (err) {
-      setError(err);
-      return;
-    }
+    if (err) { setError(err); return; }
     setPhase("otp");
   };
 
   const handleResend = async () => {
-    setOtp(["", "", "", ""]);
+    setOtp(["", "", "", "", "", ""]);
     setError("");
     setLoading(true);
-    const err = await sendPhoneOTP(`+234${phone.replace(/\D/g, "")}`);
+    const err = await sendEmailOTP(email.trim());
     setLoading(false);
     if (err) setError(err);
   };
@@ -96,47 +88,36 @@ export default function SignUp() {
   const handleVerifyOTP = async () => {
     setError("");
     setLoading(true);
-    const err = await verifyPhoneOTP(`+234${phone.replace(/\D/g, "")}`, otp.join(""));
+    const err = await verifyEmailOTP(email.trim(), otp.join(""));
     setLoading(false);
     if (err) {
-      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend OTP" : "Incorrect code, try again");
+      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend" : "Incorrect code, try again");
       return;
     }
-    // Supabase session is now live — move to name collection
     setPhase("name");
   };
 
   const handleContinue = async () => {
-    if (!name.trim()) {
-      setError("Please enter your name");
-      return;
-    }
+    if (!name.trim()) { setError("Please enter your name"); return; }
     setLoading(true);
     setError("");
-
     const trimmedName = name.trim();
-    const fullPhone = `0${phone}`;
-
     try {
-      // Session was already created by verifyPhoneOTP — just fetch the user ID
       const session = await getSession();
       const userId = session?.user.id ?? null;
 
       localStorage.setItem(
         "rana-auth",
-        JSON.stringify({ phone: fullPhone, name: trimmedName, isLoggedIn: true, isOnboarded: false, userId })
+        JSON.stringify({ email: email.trim(), name: trimmedName, isLoggedIn: true, isOnboarded: false, userId })
       );
-
-      const existingProfile = JSON.parse(
-        localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData)
-      );
+      const existing = JSON.parse(localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData));
       localStorage.setItem(
         "rana-user-profile",
-        JSON.stringify({ ...existingProfile, name: trimmedName, phone: fullPhone })
+        JSON.stringify({ ...existing, name: trimmedName, email: email.trim() })
       );
 
       if (userId) {
-        await saveProfileToSupabase(userId, { name: trimmedName, phone: fullPhone, accountType: "client" });
+        await saveProfileToSupabase(userId, { name: trimmedName, phone: email.trim(), accountType: "client" });
       }
 
       document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
@@ -148,7 +129,7 @@ export default function SignUp() {
   };
 
   const brandTitles: Record<Phase, string> = {
-    phone: "Start your journey",
+    email: "Start your journey",
     otp: "Start your journey",
     name: "Almost there",
   };
@@ -168,30 +149,27 @@ export default function SignUp() {
         <AuthFormCard>
           <AuthMobileLogo>Ranajob</AuthMobileLogo>
 
-          {/* ── Step 1: Phone ── */}
-          {phase === "phone" && (
+          {phase === "email" && (
             <>
               <AuthTitle>Create account</AuthTitle>
-              <AuthSubtitle>Enter your WhatsApp number to get started</AuthSubtitle>
+              <AuthSubtitle>Enter your email address to get started</AuthSubtitle>
 
-              <PhoneInputWrapper>
-                <PhonePrefix><NigeriaFlag /> +234</PhonePrefix>
-                <PhoneInput
-                  type="tel"
-                  placeholder="8012345678"
-                  value={phone}
-                  onChange={(e) =>
-                    setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
-                  }
+              <AuthInputGroup>
+                <AuthInputLabel>Email address</AuthInputLabel>
+                <AuthInput
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSendOTP()}
                   autoFocus
                 />
-              </PhoneInputWrapper>
+              </AuthInputGroup>
 
               {error && <AuthError>{error}</AuthError>}
 
-              <AuthButton onClick={handleSendOTP} disabled={phone.length < 10 || loading}>
-                {loading ? "Sending…" : "Send OTP"}
+              <AuthButton onClick={handleSendOTP} disabled={!email.includes("@") || loading}>
+                {loading ? "Sending…" : "Send code"}
               </AuthButton>
 
               <AuthFooterText>
@@ -203,16 +181,13 @@ export default function SignUp() {
             </>
           )}
 
-          {/* ── Step 2: OTP ── */}
           {phase === "otp" && (
             <>
-              <AuthBackButton
-                onClick={() => { setPhase("phone"); setError(""); setOtp(["", "", "", ""]); }}
-              >
+              <AuthBackButton onClick={() => { setPhase("email"); setError(""); setOtp(["", "", "", "", "", ""]); }}>
                 <ArrowLeft size={16} /> Back
               </AuthBackButton>
-              <AuthTitle>Verify number</AuthTitle>
-              <AuthSubtitle>Enter the 4-digit code sent to +234{phone}</AuthSubtitle>
+              <AuthTitle>Check your email</AuthTitle>
+              <AuthSubtitle>We sent a 6-digit code to {email}</AuthSubtitle>
 
               <OTPWrapper>
                 {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -238,13 +213,12 @@ export default function SignUp() {
               </AuthButton>
 
               <ResendText>
-                Didn&apos;t receive a code?{" "}
-                <AuthLink onClick={handleResend}>Resend OTP</AuthLink>
+                Didn&apos;t get the email?{" "}
+                <AuthLink onClick={handleResend}>Resend code</AuthLink>
               </ResendText>
             </>
           )}
 
-          {/* ── Step 3: Name ── */}
           {phase === "name" && (
             <>
               <AuthTitle>What&apos;s your name?</AuthTitle>

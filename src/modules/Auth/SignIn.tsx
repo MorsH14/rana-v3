@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getSession, sendPhoneOTP, verifyPhoneOTP } from "@/lib/auth";
+import { getSession, sendEmailOTP, verifyEmailOTP } from "@/lib/auth";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import {
@@ -15,9 +15,6 @@ import {
   AuthMobileLogo,
   AuthTitle,
   AuthSubtitle,
-  PhoneInputWrapper,
-  PhonePrefix,
-  PhoneInput,
   AuthButton,
   AuthFooterText,
   AuthLink,
@@ -26,12 +23,14 @@ import {
   OTPWrapper,
   OTPBox,
   ResendText,
-  NigeriaFlag,
+  AuthInputGroup,
+  AuthInputLabel,
+  AuthInput,
 } from "./auth.styles";
 
 export default function SignIn() {
-  const [phase, setPhase] = useState<"phone" | "otp">("phone");
-  const [phone, setPhone] = useState("");
+  const [phase, setPhase] = useState<"email" | "otp">("email");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -50,7 +49,6 @@ export default function SignIn() {
     router.push(safeTo);
   }, [router]);
 
-  // Auto-restore an existing Supabase session (same browser, token not expired)
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
@@ -61,27 +59,23 @@ export default function SignIn() {
   }, [redirectAfterAuth]);
 
   const handleSendOTP = async () => {
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 10) {
-      setError("Enter a valid phone number");
+    if (!email.trim() || !email.includes("@")) {
+      setError("Enter a valid email address");
       return;
     }
     setError("");
     setLoading(true);
-    const err = await sendPhoneOTP(`+234${digits}`);
+    const err = await sendEmailOTP(email.trim());
     setLoading(false);
-    if (err) {
-      setError(err);
-      return;
-    }
+    if (err) { setError(err); return; }
     setPhase("otp");
   };
 
   const handleResend = async () => {
-    setOtp(["", "", "", ""]);
+    setOtp(["", "", "", "", "", ""]);
     setError("");
     setLoading(true);
-    const err = await sendPhoneOTP(`+234${phone.replace(/\D/g, "")}`);
+    const err = await sendEmailOTP(email.trim());
     setLoading(false);
     if (err) setError(err);
   };
@@ -111,19 +105,14 @@ export default function SignIn() {
   const handleVerify = async () => {
     setError("");
     setLoading(true);
-    const err = await verifyPhoneOTP(`+234${phone.replace(/\D/g, "")}`, otp.join(""));
+    const err = await verifyEmailOTP(email.trim(), otp.join(""));
     setLoading(false);
     if (err) {
-      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend OTP" : "Incorrect code, try again");
+      setError(err.toLowerCase().includes("expired") ? "Code expired — tap Resend" : "Incorrect code, try again");
       return;
     }
-
-    // Supabase session is now live — stamp the auth cookie and route
     const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
-    localStorage.setItem(
-      "rana-auth",
-      JSON.stringify({ ...auth, phone: `0${phone}`, isLoggedIn: true })
-    );
+    localStorage.setItem("rana-auth", JSON.stringify({ ...auth, email: email.trim(), isLoggedIn: true }));
     document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
     redirectAfterAuth();
   };
@@ -143,42 +132,38 @@ export default function SignIn() {
         <AuthFormCard>
           <AuthMobileLogo>Ranajob</AuthMobileLogo>
 
-          {phase === "phone" && (
+          {phase === "email" && (
             <>
               <AuthTitle>Welcome back</AuthTitle>
-              <AuthSubtitle>Enter your phone number to sign in</AuthSubtitle>
+              <AuthSubtitle>Enter your email to sign in</AuthSubtitle>
 
-              <PhoneInputWrapper>
-                <PhonePrefix><NigeriaFlag /> +234</PhonePrefix>
-                <PhoneInput
-                  type="tel"
-                  placeholder="8012345678"
-                  value={phone}
-                  onChange={(e) =>
-                    setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
-                  }
+              <AuthInputGroup>
+                <AuthInputLabel>Email address</AuthInputLabel>
+                <AuthInput
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSendOTP()}
                   autoFocus
                 />
-              </PhoneInputWrapper>
+              </AuthInputGroup>
 
               {error && <AuthError>{error}</AuthError>}
 
-              <AuthButton onClick={handleSendOTP} disabled={phone.length < 10 || loading}>
-                {loading ? "Sending…" : "Send OTP"}
+              <AuthButton onClick={handleSendOTP} disabled={!email.includes("@") || loading}>
+                {loading ? "Sending…" : "Send code"}
               </AuthButton>
             </>
           )}
 
           {phase === "otp" && (
             <>
-              <AuthBackButton onClick={() => { setPhase("phone"); setError(""); setOtp(["", "", "", ""]); }}>
+              <AuthBackButton onClick={() => { setPhase("email"); setError(""); setOtp(["", "", "", "", "", ""]); }}>
                 <ArrowLeft size={16} /> Back
               </AuthBackButton>
-              <AuthTitle>Enter code</AuthTitle>
-              <AuthSubtitle>
-                A 4-digit code was sent to +234{phone}
-              </AuthSubtitle>
+              <AuthTitle>Check your email</AuthTitle>
+              <AuthSubtitle>We sent a 6-digit code to {email}</AuthSubtitle>
 
               <OTPWrapper>
                 {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -199,16 +184,13 @@ export default function SignIn() {
 
               {error && <AuthError style={{ textAlign: "center" }}>{error}</AuthError>}
 
-              <AuthButton
-                onClick={handleVerify}
-                disabled={otp.join("").length < 6 || loading}
-              >
-                {loading ? "Verifying…" : "Verify & Sign In"}
+              <AuthButton onClick={handleVerify} disabled={otp.join("").length < 6 || loading}>
+                {loading ? "Verifying…" : "Sign in"}
               </AuthButton>
 
               <ResendText>
-                Didn&apos;t get a code?{" "}
-                <AuthLink onClick={handleResend}>Resend OTP</AuthLink>
+                Didn&apos;t get the email?{" "}
+                <AuthLink onClick={handleResend}>Resend code</AuthLink>
               </ResendText>
             </>
           )}
