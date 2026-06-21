@@ -39,21 +39,40 @@ export async function savePreferencesToSupabase(userId: string, categories: stri
   return error;
 }
 
-// Sends a real SMS OTP via Supabase Phone Auth.
-// Requires a phone provider (e.g. Twilio / Termii) to be configured in the
-// Supabase dashboard under Authentication → Providers → Phone.
+// Sends a 6-digit OTP to the given E.164 phone number via Termii SMS.
 export async function sendPhoneOTP(e164Phone: string): Promise<string | null> {
-  const { error } = await getSupabase().auth.signInWithOtp({ phone: e164Phone });
-  return error?.message ?? null;
+  try {
+    const res = await fetch("/api/auth/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: e164Phone }),
+    });
+    const data = await res.json();
+    return data.error ?? null;
+  } catch {
+    return "Network error. Please try again.";
+  }
 }
 
-// Verifies the OTP sent by sendPhoneOTP. On success Supabase creates (or
-// restores) a full authenticated session — getSession() will return it.
+// Verifies the OTP and establishes a Supabase session for the user.
+// On success, the session is set on the Supabase client and null is returned.
 export async function verifyPhoneOTP(e164Phone: string, token: string): Promise<string | null> {
-  const { error } = await getSupabase().auth.verifyOtp({
-    phone: e164Phone,
-    token,
-    type: "sms",
-  });
-  return error?.message ?? null;
+  try {
+    const res = await fetch("/api/auth/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: e164Phone, code: token }),
+    });
+    const data = await res.json();
+    if (data.error) return data.error;
+
+    // Restore the verified session on the Supabase client
+    await getSupabase().auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+    return null;
+  } catch {
+    return "Network error. Please try again.";
+  }
 }
