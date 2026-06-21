@@ -37,7 +37,10 @@ async function sendResendEmail(email: string, code: string): Promise<string | nu
     }),
   });
   const data = await res.json();
-  if (!res.ok) return data.message || data.name || "Failed to send email";
+  if (!res.ok) {
+    console.error("[send-otp] Resend error:", JSON.stringify(data));
+    return data.message || data.name || "Failed to send email";
+  }
   return null;
 }
 
@@ -78,8 +81,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `DB: ${dbError.message}` }, { status: 500 });
   }
 
-  // DEV MODE: print code to terminal instead of sending email
-  if (process.env.NODE_ENV !== "production") {
+  // No API key → print to terminal for local dev without Resend
+  if (!process.env.RESEND_API_KEY) {
     console.log(`\n📧 OTP for ${email}: ${code}\n`);
     return NextResponse.json({ success: true });
   }
