@@ -2,95 +2,83 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 
-// Admin client — service role key, server-only, never exposed to browser
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
   { auth: { autoRefreshToken: false, persistSession: false } }
 );
 
-// Regular client — used for signInWithPassword to get a real user session
 const supabaseRegular = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   { auth: { autoRefreshToken: false, persistSession: false } }
 );
 
-// Derive stable email + password from a phone number.
-// Same phone → same credentials → same Supabase user (across sign-ins/devices).
-function deriveCredentials(e164Phone: string) {
-  const secret = process.env.OTP_SECRET!;
-  const stripped = e164Phone.replace("+", "");
-  const email = `${stripped}@ph.ranajob.ng`;
-  const password = crypto.createHmac("sha256", secret).update(e164Phone).digest("hex");
-  return { email, password };
+// Derive a stable password from the email so the same email always maps to
+// the same Supabase user across sign-ins and devices.
+function derivePassword(email: string): string {
+  return crypto
+    .createHmac("sha256", process.env.OTP_SECRET!)
+    .update(email)
+    .digest("hex");
 }
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  const phone: string = body?.phone ?? "";
+  const email: string = body?.email ?? "";
   const code: string = body?.code ?? "";
 
-  if (!phone || !code) {
-    return NextResponse.json({ error: "Phone and code are required" }, { status: 400 });
+  if (!email || !code) {
+    return NextResponse.json({ error: "Email and code are required" }, { status: 400 });
   }
 
-  // 1. Fetch and validate OTP
+  // 1. Validate OTP — stored under the `phone` column (used as a generic key)
   const { data: otpRow } = await supabaseAdmin
     .from("otp_codes")
     .select("code, expires_at")
-    .eq("phone", phone)
+    .eq("phone", email)
     .single();
 
   if (!otpRow) {
     return NextResponse.json({ error: "Code not found. Request a new one." }, { status: 400 });
   }
-
   if (otpRow.code !== code) {
     return NextResponse.json({ error: "Incorrect code, try again" }, { status: 400 });
   }
-
   if (new Date(otpRow.expires_at) < new Date()) {
-    return NextResponse.json({ error: "Code expired — tap Resend OTP" }, { status: 400 });
+    return NextResponse.json({ error: "Code expired — tap Resend" }, { status: 400 });
   }
 
   // 2. Delete OTP — one-time use
-  await supabaseAdmin.from("otp_codes").delete().eq("phone", phone);
+  await supabaseAdmin.from("otp_codes").delete().eq("phone", email);
 
-  // 3. Derive stable credentials and attempt sign-in (returning user)
-  const { email, password } = deriveCredentials(phone);
+  // 3. Sign in with derived credentials (returning user) or create account (new user)
+  const password = derivePassword(email);
 
-  const { data: signInData, error: signInError } = await supabaseRegular.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { data: signInData, error: signInError } =
+    await supabaseRegular.auth.signInWithPassword({ email, password });
 
   let session = signInData?.session;
-  let isNewUser = false;
 
-  // 4. If no user exists yet, create one and sign in
   if (signInError || !session) {
     const { error: createError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      email_confirm: true, // skip email confirmation — phone was already verified
+      email_confirm: true,
     });
 
     if (createError && !createError.message.includes("already registered")) {
       return NextResponse.json({ error: "Failed to create account" }, { status: 500 });
     }
 
-    const { data: retryData, error: retryError } = await supabaseRegular.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: retryData, error: retryError } =
+      await supabaseRegular.auth.signInWithPassword({ email, password });
 
     if (retryError || !retryData.session) {
       return NextResponse.json({ error: "Authentication failed. Please try again." }, { status: 500 });
     }
 
     session = retryData.session;
-    isNewUser = true;
   }
 
   return NextResponse.json({
@@ -98,6 +86,5 @@ export async function POST(req: NextRequest) {
       access_token: session.access_token,
       refresh_token: session.refresh_token,
     },
-    isNewUser,
   });
 }

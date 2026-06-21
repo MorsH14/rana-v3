@@ -39,14 +39,38 @@ export async function savePreferencesToSupabase(userId: string, categories: stri
   return error;
 }
 
-// Sends a 6-digit OTP to the user's email via Supabase (no third-party setup needed).
+// Sends a 6-digit OTP to the user's email via Resend.
 export async function sendEmailOTP(email: string): Promise<string | null> {
-  const { error } = await getSupabase().auth.signInWithOtp({ email });
-  return error?.message ?? null;
+  try {
+    const res = await fetch("/api/auth/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    return data.error ?? null;
+  } catch {
+    return "Network error. Please try again.";
+  }
 }
 
-// Verifies the email OTP. On success Supabase sets the session automatically.
+// Verifies the OTP and sets a Supabase session on the client.
 export async function verifyEmailOTP(email: string, token: string): Promise<string | null> {
-  const { error } = await getSupabase().auth.verifyOtp({ email, token, type: "email" });
-  return error?.message ?? null;
+  try {
+    const res = await fetch("/api/auth/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code: token }),
+    });
+    const data = await res.json();
+    if (data.error) return data.error;
+
+    await getSupabase().auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+    return null;
+  } catch {
+    return "Network error. Please try again.";
+  }
 }
