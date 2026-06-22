@@ -33,9 +33,13 @@ function verifyOTPCookie(
     const expectedSig = crypto
       .createHmac("sha256", process.env.OTP_SECRET ?? "dev-secret")
       .update(payload)
-      .digest("hex");
+      .digest();
 
-    if (sig !== expectedSig) return { ok: false, error: "Invalid session. Request a new code." };
+    const actualSig = Buffer.from(sig, "hex");
+    const sigsMatch =
+      actualSig.length === expectedSig.length &&
+      crypto.timingSafeEqual(actualSig, expectedSig);
+    if (!sigsMatch) return { ok: false, error: "Invalid session. Request a new code." };
 
     const { email: cookieEmail, code: storedCode, exp } = JSON.parse(
       Buffer.from(payload, "base64url").toString()

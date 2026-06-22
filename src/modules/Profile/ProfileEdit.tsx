@@ -226,16 +226,31 @@ export default function ProfileEdit({ user, setUser }: ProfileEditProps) {
     reader.readAsDataURL(file);
   };
 
+  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+
   const handleSave = async () => {
-    setUser(localUser);
-    const session = await getSession();
-    if (session) {
-      await updateProfile(session.user.id, {
-        name: localUser.name,
-        role: localUser.role || null,
-        location: localUser.location || null,
-        profile_image: localUser.profileImage || null,
-      });
+    setSaving(true);
+    setSaveStatus("idle");
+    try {
+      setUser(localUser);
+      const session = await getSession();
+      if (session) {
+        const err = await updateProfile(session.user.id, {
+          name: localUser.name,
+          phone: localUser.phone || null,
+          role: localUser.role || null,
+          location: localUser.location || null,
+          profile_image: localUser.profileImage || null,
+        });
+        if (err) throw err;
+      }
+      setSaveStatus("saved");
+    } catch {
+      setSaveStatus("error");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setSaveStatus("idle"), 3000);
     }
   };
 
@@ -313,20 +328,34 @@ export default function ProfileEdit({ user, setUser }: ProfileEditProps) {
       <SectionTitle>Contact</SectionTitle>
       <FormStack>
         <FieldWrap>
-          <FieldLabel>Phone number</FieldLabel>
+          <FieldLabel>Email address</FieldLabel>
           <InputWrap>
-            <Phone size={15} color={COLORS.SolidGray300} />
-            <FormInput type="tel" value={localUser.phone} disabled />
+            <Lock size={15} color={COLORS.SolidGray300} />
+            <FormInput type="email" value={localUser.email} disabled />
           </InputWrap>
           <ReadOnlyHint>
             <Lock size={10} />
-            Contact support to change your number
+            Email cannot be changed
           </ReadOnlyHint>
+        </FieldWrap>
+
+        <FieldWrap>
+          <FieldLabel>WhatsApp number</FieldLabel>
+          <InputWrap>
+            <Phone size={15} color={COLORS.SolidGray300} />
+            <FormInput
+              type="tel"
+              placeholder="e.g. 08012345678"
+              value={localUser.phone}
+              onChange={(e) => handleChange("phone", e.target.value)}
+            />
+          </InputWrap>
+          <ReadOnlyHint>Clients will use this to reach you</ReadOnlyHint>
         </FieldWrap>
       </FormStack>
 
-      <SaveBtn type="button" onClick={handleSave}>
-        Save changes
+      <SaveBtn type="button" onClick={handleSave} disabled={saving}>
+        {saving ? "Saving…" : saveStatus === "saved" ? "Saved ✓" : saveStatus === "error" ? "Failed — try again" : "Save changes"}
       </SaveBtn>
     </div>
   );

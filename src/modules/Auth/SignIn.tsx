@@ -2,6 +2,8 @@
 import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, sendEmailOTP, verifyEmailOTP } from "@/lib/auth";
+import { fetchProfile } from "@/lib/profile";
+import { initialUserData } from "@/db";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import {
@@ -101,18 +103,55 @@ export default function SignIn() {
     setError("");
     setLoading(true);
     const err = await verifyEmailOTP(email.trim(), otp.join(""));
-    setLoading(false);
     if (err) {
+      setLoading(false);
       setError(err);
       return;
     }
-    // Returning user — always go home, never onboarding
-    const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
-    localStorage.setItem(
-      "rana-auth",
-      JSON.stringify({ ...auth, email: email.trim(), isLoggedIn: true, isOnboarded: true })
-    );
+
+    // Hydrate real profile from Supabase so returning users see their actual data
+    try {
+      const session = await getSession();
+      if (session) {
+        const profile = await fetchProfile(session.user.id);
+        if (profile) {
+          localStorage.setItem("rana-user-profile", JSON.stringify({
+            ...initialUserData,
+            name: profile.name,
+            email: profile.email ?? email.trim(),
+            location: profile.location ?? "",
+            profileImage: profile.profile_image ?? "",
+            accountType: profile.account_type,
+          }));
+          localStorage.setItem("rana-auth", JSON.stringify({
+            email: profile.email ?? email.trim(),
+            name: profile.name,
+            isLoggedIn: true,
+            isOnboarded: true,
+            userId: session.user.id,
+          }));
+        } else {
+          // No profile yet — user signed in before completing onboarding
+          const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
+          localStorage.setItem("rana-auth", JSON.stringify({
+            ...auth,
+            email: email.trim(),
+            isLoggedIn: true,
+            isOnboarded: true,
+            userId: session.user.id,
+          }));
+        }
+      }
+    } catch {
+      // Profile fetch is best-effort; proceed to home anyway
+      const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
+      localStorage.setItem("rana-auth", JSON.stringify({
+        ...auth, email: email.trim(), isLoggedIn: true, isOnboarded: true,
+      }));
+    }
+
     document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
+    setLoading(false);
     router.push(getRedirectTarget());
   };
 

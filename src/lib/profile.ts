@@ -13,6 +13,7 @@ export async function fetchProfile(userId: string) {
 
 export async function updateProfile(userId: string, updates: {
   name?: string;
+  phone?: string | null;
   role?: string | null;
   location?: string | null;
   profile_image?: string | null;

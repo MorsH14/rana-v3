@@ -28,7 +28,6 @@ export async function saveProfileToSupabase(
     account_type: profile.accountType,
     ...(profile.location ? { location: profile.location } : {}),
     ...(profile.profileImage ? { profile_image: profile.profileImage } : {}),
-    updated_at: new Date().toISOString(),
   });
   return error;
 }
@@ -41,7 +40,6 @@ export async function savePreferencesToSupabase(userId: string, categories: stri
   const { error } = await getSupabase().from("user_preferences").upsert({
     user_id: userId,
     categories,
-    updated_at: new Date().toISOString(),
   });
   return error;
 }

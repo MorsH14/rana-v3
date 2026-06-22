@@ -40,6 +40,7 @@ export type Database = {
         Update: {
           name?: string;
           email?: string | null;
+          phone?: string | null;
           account_type?: AccountType;
           role?: string | null;
           location?: string | null;

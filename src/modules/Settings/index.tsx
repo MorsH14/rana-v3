@@ -122,7 +122,9 @@ export default function SettingsPage() {
   const handleSignOut = async () => {
     await signOut();
     document.cookie = "rana-session=; path=/; max-age=0";
-    localStorage.removeItem("rana-auth");
+    ["rana-auth", "rana-user-profile", "rana-prefs", "rana-notif-prefs"].forEach(
+      (k) => localStorage.removeItem(k)
+    );
     router.push("/signin");
   };
 
