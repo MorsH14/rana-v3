@@ -2,17 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-);
+// Lazy singletons — env vars are only available at request time, not build time
+let _admin: ReturnType<typeof createClient> | null = null;
+let _regular: ReturnType<typeof createClient> | null = null;
 
-const supabaseRegular = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-);
+function getAdmin() {
+  if (!_admin) {
+    _admin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+  }
+  return _admin;
+}
+
+function getRegular() {
+  if (!_regular) {
+    _regular = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+  }
+  return _regular;
+}
 
 function derivePassword(email: string): string {
   return crypto
@@ -82,13 +96,13 @@ export async function POST(req: NextRequest) {
   const password = derivePassword(email);
 
   const { data: signInData, error: signInError } =
-    await supabaseRegular.auth.signInWithPassword({ email, password });
+    await getRegular().auth.signInWithPassword({ email, password });
 
   console.log("[verify-otp] signInWithPassword:", signInError?.message ?? "ok");
   let session = signInData?.session;
 
   if (signInError || !session) {
-    const { error: createError } = await supabaseAdmin.auth.admin.createUser({
+    const { error: createError } = await getAdmin().auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -103,7 +117,7 @@ export async function POST(req: NextRequest) {
       ) {
         // User exists without our derived password — find and update them
         const { data: listData, error: listError } =
-          await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+          await getAdmin().auth.admin.listUsers({ perPage: 1000 });
         console.log("[verify-otp] listUsers:", listError?.message ?? "ok");
 
         const existing = listData?.users?.find((u) => u.email === email);
@@ -114,7 +128,7 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        const { error: updateError } = await getAdmin().auth.admin.updateUserById(
           existing.id,
           { password, email_confirm: true }
         );
@@ -132,7 +146,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: retryData, error: retryError } =
-      await supabaseRegular.auth.signInWithPassword({ email, password });
+      await getRegular().auth.signInWithPassword({ email, password });
 
     console.log("[verify-otp] retry signIn:", retryError?.message ?? "ok");
 
