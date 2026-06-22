@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 const PUBLIC_ROUTES = ["/signin", "/signup", "/onboarding", "/api/"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
   const session = request.cookies.get("rana-session")?.value;
