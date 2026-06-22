@@ -307,16 +307,16 @@ export const messagesData: Conversation[] = [
 ];
 
 export const initialUserData = {
-  name: "Ayodele Oluwaseyi",
-  location: "Ilorin, Kwara State",
+  name: "",
+  location: "",
   profileImage: "",
-  notifications: 5,
-  role: "UX/UI Designer",
-  email: "ayodelewaseyi@gmail.com",
-  phone: "08047748383",
-  verified: true,
-  verifiedDate: "2025-01-01T00:00:00.000Z",
-  jobsPosted: 12,
-  coinsLeft: 300,
+  notifications: 0,
+  role: "",
+  email: "",
+  phone: "",
+  verified: false,
+  verifiedDate: "",
+  jobsPosted: 0,
+  coinsLeft: 0,
   accountType: "client" as "worker" | "client",
 };

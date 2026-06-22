@@ -26,7 +26,6 @@ import {
   AuthInputLabel,
   AuthInput,
 } from "./auth.styles";
-import { initialUserData } from "@/db";
 import { getSession, sendEmailOTP, verifyEmailOTP } from "@/lib/auth";
 
 type Phase = "email" | "otp" | "name";
@@ -111,10 +110,22 @@ export default function SignUp() {
         "rana-auth",
         JSON.stringify({ email: email.trim(), name: trimmedName, isLoggedIn: true, isOnboarded: false, userId })
       );
-      const existing = JSON.parse(localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData));
       localStorage.setItem(
         "rana-user-profile",
-        JSON.stringify({ ...existing, name: trimmedName, email: email.trim() })
+        JSON.stringify({
+          name: trimmedName,
+          email: email.trim(),
+          location: "",
+          profileImage: "",
+          phone: "",
+          role: "",
+          verified: false,
+          verifiedDate: "",
+          jobsPosted: 0,
+          coinsLeft: 0,
+          accountType: "client",
+          notifications: 0,
+        })
       );
 
       document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;

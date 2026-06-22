@@ -112,26 +112,43 @@ export default function ProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
-    getSession().then(async (session) => {
-      if (!session) return;
-      const isWorker = user.accountType === "worker";
-      const [profile, listings] = await Promise.all([
-        fetchProfile(session.user.id),
-        isWorker ? fetchWorkerListings(session.user.id) : Promise.resolve([]),
-      ]);
-      if (profile) {
+    // Immediately seed email from rana-auth so the edit form has it before Supabase loads
+    try {
+      const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
+      if (auth.email || auth.name) {
         setUser((prev) => ({
           ...prev,
-          name: profile.name ?? prev.name,
-          phone: profile.phone ?? prev.phone,
-          location: profile.location ?? prev.location,
-          role: profile.role ?? prev.role,
-          profileImage: profile.profile_image ?? prev.profileImage,
-          verified: profile.verified ?? prev.verified,
-          accountType: (profile.account_type as "worker" | "client") ?? prev.accountType,
+          email: auth.email || prev.email,
+          name: auth.name || prev.name,
         }));
       }
-      if (isWorker) setWorkerListingsCount(listings.length);
+    } catch { /* ignore */ }
+
+    getSession().then(async (session) => {
+      if (!session) return;
+      const [profile, listings] = await Promise.all([
+        fetchProfile(session.user.id),
+        fetchWorkerListings(session.user.id),
+      ]);
+      if (profile) {
+        const updated = {
+          name: profile.name || "",
+          email: profile.email || session.user.email || "",
+          phone: profile.phone || "",
+          location: profile.location || "",
+          role: profile.role || "",
+          profileImage: profile.profile_image || "",
+          verified: profile.verified ?? false,
+          accountType: (profile.account_type as "worker" | "client") ?? "client",
+        };
+        setUser((prev) => ({ ...prev, ...updated }));
+        // Keep localStorage in sync
+        localStorage.setItem("rana-user-profile", JSON.stringify({
+          ...JSON.parse(localStorage.getItem("rana-user-profile") || "{}"),
+          ...updated,
+        }));
+      }
+      setWorkerListingsCount(listings.length);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -139,7 +156,9 @@ export default function ProfilePage() {
   const handleSignOut = async () => {
     await signOut();
     document.cookie = "rana-session=; path=/; max-age=0";
-    localStorage.removeItem("rana-auth");
+    ["rana-auth", "rana-user-profile", "rana-prefs", "rana-notif-prefs"].forEach((k) =>
+      localStorage.removeItem(k)
+    );
     router.push("/signin");
   };
 
@@ -155,7 +174,7 @@ export default function ProfilePage() {
     [user.name]
   );
 
-  const colorIdx = user.name.charCodeAt(0) % AVATAR_COLORS.length;
+  const colorIdx = (user.name.charCodeAt(0) || 0) % AVATAR_COLORS.length;
   const avatarColor = AVATAR_COLORS[colorIdx];
   const heroGradient = HERO_GRADIENTS[colorIdx];
 

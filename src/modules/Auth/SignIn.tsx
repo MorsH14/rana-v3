@@ -3,7 +3,6 @@ import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, sendEmailOTP, verifyEmailOTP } from "@/lib/auth";
 import { fetchProfile } from "@/lib/profile";
-import { initialUserData } from "@/db";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import {
@@ -116,11 +115,17 @@ export default function SignIn() {
         const profile = await fetchProfile(session.user.id);
         if (profile) {
           localStorage.setItem("rana-user-profile", JSON.stringify({
-            ...initialUserData,
             name: profile.name,
             email: profile.email ?? email.trim(),
             location: profile.location ?? "",
             profileImage: profile.profile_image ?? "",
+            phone: profile.phone ?? "",
+            role: profile.role ?? "",
+            verified: profile.verified ?? false,
+            verifiedDate: "",
+            jobsPosted: 0,
+            coinsLeft: 0,
+            notifications: 0,
             accountType: profile.account_type,
           }));
           localStorage.setItem("rana-auth", JSON.stringify({

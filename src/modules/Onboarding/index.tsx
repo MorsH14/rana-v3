@@ -29,7 +29,6 @@ import {
   SuccessSubtitle,
 } from "./onboarding.styles";
 import { COLORS } from "@/utils/colors.util";
-import { initialUserData } from "@/db";
 import { getSession, saveProfileToSupabase, savePreferencesToSupabase } from "@/lib/auth";
 
 const NIGERIAN_STATES = [
@@ -92,15 +91,21 @@ export default function OnboardingWizard() {
 
     // 1. Write to localStorage first — works offline, instant
     const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
-    const existing = JSON.parse(localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData));
+    const existing = JSON.parse(localStorage.getItem("rana-user-profile") || "{}");
 
     localStorage.setItem("rana-user-profile", JSON.stringify({
-      ...existing,
-      name: auth.name || existing.name,
-      email: auth.email || existing.email,
+      name: auth.name || existing.name || "",
+      email: auth.email || existing.email || "",
+      location: location || existing.location || "",
+      profileImage: profileImage || existing.profileImage || "",
+      phone: existing.phone || "",
+      role: existing.role || "",
+      verified: existing.verified || false,
+      verifiedDate: existing.verifiedDate || "",
+      jobsPosted: 0,
+      coinsLeft: 0,
+      notifications: 0,
       accountType,
-      ...(location && { location }),
-      ...(profileImage && { profileImage }),
     }));
     localStorage.setItem("rana-prefs", JSON.stringify({
       categories: selectedCategories,
