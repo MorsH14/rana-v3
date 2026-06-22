@@ -70,6 +70,15 @@ function verifyOTPCookie(
 }
 
 export async function POST(req: NextRequest) {
+  try {
+    return await handlePost(req);
+  } catch (err) {
+    console.error("[verify-otp] Unhandled error:", err);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
+}
+
+async function handlePost(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const email: string = body?.email ?? "";
   const code: string = body?.code ?? "";
