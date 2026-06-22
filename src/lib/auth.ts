@@ -11,18 +11,24 @@ export async function getSession() {
   return session;
 }
 
-export async function saveProfileToSupabase(userId: string, profile: {
-  name: string;
-  phone: string;
-  accountType: "worker" | "client";
-  location?: string;
-}) {
+export async function saveProfileToSupabase(
+  userId: string,
+  profile: {
+    name: string;
+    email: string;
+    accountType: "worker" | "client";
+    location?: string;
+    profileImage?: string;
+  }
+) {
   const { error } = await getSupabase().from("profiles").upsert({
     id: userId,
     name: profile.name,
-    phone: profile.phone,
+    email: profile.email,
     account_type: profile.accountType,
     ...(profile.location ? { location: profile.location } : {}),
+    ...(profile.profileImage ? { profile_image: profile.profileImage } : {}),
+    updated_at: new Date().toISOString(),
   });
   return error;
 }
@@ -35,11 +41,11 @@ export async function savePreferencesToSupabase(userId: string, categories: stri
   const { error } = await getSupabase().from("user_preferences").upsert({
     user_id: userId,
     categories,
+    updated_at: new Date().toISOString(),
   });
   return error;
 }
 
-// Sends a 6-digit OTP to the user's email via Resend.
 export async function sendEmailOTP(email: string): Promise<string | null> {
   try {
     const res = await fetch("/api/auth/send-otp", {
@@ -54,7 +60,6 @@ export async function sendEmailOTP(email: string): Promise<string | null> {
   }
 }
 
-// Verifies the OTP and sets a Supabase session on the client.
 export async function verifyEmailOTP(email: string, token: string): Promise<string | null> {
   try {
     const res = await fetch("/api/auth/verify-otp", {

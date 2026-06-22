@@ -27,7 +27,7 @@ import {
   AuthInput,
 } from "./auth.styles";
 import { initialUserData } from "@/db";
-import { getSession, sendEmailOTP, verifyEmailOTP, saveProfileToSupabase } from "@/lib/auth";
+import { getSession, sendEmailOTP, verifyEmailOTP } from "@/lib/auth";
 
 type Phase = "email" | "otp" | "name";
 
@@ -106,6 +106,7 @@ export default function SignUp() {
       const session = await getSession();
       const userId = session?.user.id ?? null;
 
+      // Persist auth identity — profile/role saved after onboarding when we have all the data
       localStorage.setItem(
         "rana-auth",
         JSON.stringify({ email: email.trim(), name: trimmedName, isLoggedIn: true, isOnboarded: false, userId })
@@ -115,10 +116,6 @@ export default function SignUp() {
         "rana-user-profile",
         JSON.stringify({ ...existing, name: trimmedName, email: email.trim() })
       );
-
-      if (userId) {
-        await saveProfileToSupabase(userId, { name: trimmedName, phone: email.trim(), accountType: "client" });
-      }
 
       document.cookie = `rana-session=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`;
       router.push("/onboarding");

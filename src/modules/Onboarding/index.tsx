@@ -89,39 +89,51 @@ export default function OnboardingWizard() {
 
   const handleFinish = async () => {
     const accountType = role === "seeker" ? "worker" : "client";
-    try {
-      const existing = JSON.parse(
-        localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData)
-      );
-      localStorage.setItem(
-        "rana-user-profile",
-        JSON.stringify({
-          ...existing,
-          ...(location && { location }),
-          ...(profileImage && { profileImage }),
-          accountType,
-        })
-      );
-      const defaultPrefs = { categories: [], locationVisible: true, phoneVisible: true };
-      const existingPrefs = JSON.parse(localStorage.getItem("rana-prefs") || "{}");
-      localStorage.setItem(
-        "rana-prefs",
-        JSON.stringify({ ...defaultPrefs, ...existingPrefs, categories: selectedCategories })
-      );
-      const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
-      localStorage.setItem("rana-auth", JSON.stringify({ ...auth, isOnboarded: true }));
 
-      // Save to Supabase (best-effort — don't block UI if it fails)
+    // 1. Write to localStorage first — works offline, instant
+    const auth = JSON.parse(localStorage.getItem("rana-auth") || "{}");
+    const existing = JSON.parse(localStorage.getItem("rana-user-profile") || JSON.stringify(initialUserData));
+
+    localStorage.setItem("rana-user-profile", JSON.stringify({
+      ...existing,
+      name: auth.name || existing.name,
+      email: auth.email || existing.email,
+      accountType,
+      ...(location && { location }),
+      ...(profileImage && { profileImage }),
+    }));
+    localStorage.setItem("rana-prefs", JSON.stringify({
+      categories: selectedCategories,
+      locationVisible: true,
+      phoneVisible: true,
+    }));
+    localStorage.setItem("rana-auth", JSON.stringify({ ...auth, isOnboarded: true }));
+
+    // 2. Persist to Supabase — best-effort, errors are logged not thrown
+    try {
       const session = await getSession();
       if (session) {
-        const name = auth.name || existing.name || "User";
-        const phone = auth.phone || existing.phone || "";
-        await saveProfileToSupabase(session.user.id, { name, phone, accountType, location: location || undefined });
-        await savePreferencesToSupabase(session.user.id, selectedCategories);
+        const name = auth.name || "User";
+        const email = auth.email || session.user.email || "";
+
+        const profileError = await saveProfileToSupabase(session.user.id, {
+          name,
+          email,
+          accountType,
+          ...(location ? { location } : {}),
+          ...(profileImage ? { profileImage } : {}),
+        });
+        if (profileError) console.error("[onboarding] Profile save failed:", profileError.message);
+
+        const prefsError = await savePreferencesToSupabase(session.user.id, selectedCategories);
+        if (prefsError) console.error("[onboarding] Prefs save failed:", prefsError.message);
+      } else {
+        console.warn("[onboarding] No active session — Supabase save skipped");
       }
-    } catch {
-      // continue even if storage or Supabase fails
+    } catch (e) {
+      console.error("[onboarding] Unexpected Supabase error:", e);
     }
+
     setStep("done");
   };
 
